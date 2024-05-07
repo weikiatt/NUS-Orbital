@@ -8,5 +8,17 @@ namespace NUS_Orbital.Controllers
         {
             return View();
         }
+
+        public IActionResult Login()
+        {
+            return View("Login");
+        }
+
+     
+        [HttpGet]
+        public ActionResult Register()
+        {
+            return RedirectToAction("Create", "Student");
+        }
     }
 }
