@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NUS_Orbital.Models.Module>
+﻿@model NUS_Orbital.Models.ModulePost
 
 
 <!DOCTYPE html>
@@ -20,23 +20,20 @@
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </head>
 <body>
+    <div class="container d-flex">
+        <div class="text-center w-100">
+            <h1>@Model.module.moduleCode</h1>
+            <p>@Model.module.moduleName</p>
+        </div>
+        <div>@Model.module.description</div>
+        
+    </div>
     <div class="container">
-
-        @if (Model.ToList().Count > 0)
+        @foreach (var post in Model.posts)
         {
-            <div class="list-group">
-                @foreach (var module in Model)
-                {
-                    <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action">
-                        <h5 class="mb-1">@module.moduleCode @module.moduleName</h5>
-                        <p class="mb-1">@module.description</p>
-                    </a>
-                }
-             </div>
-        }
-        else
-        {
-            <p> none </p>
+            <div class="container">
+                @post.description posted by @post.student.name at @post.postTime
+            </div>
         }
     </div>
 </body>

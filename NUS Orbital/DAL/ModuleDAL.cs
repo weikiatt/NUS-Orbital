@@ -1,0 +1,118 @@
+﻿using System.Data;
+using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Relational;
+using NUS_Orbital.Models;
+
+namespace NUS_Orbital.DAL
+{
+    public class ModuleDAL
+    {
+        private IConfiguration Configuration { get; set; }
+        private MySqlConnection conn;
+
+        //Constructor
+        public ModuleDAL()
+        {
+            string connstring = "server=localhost;uid=root;pwd=T0117905A;database=NUS_Orbital";
+            this.conn = new MySqlConnection();
+            this.conn.ConnectionString = connstring;
+        }
+
+        // Get all modules
+        public List<Module> GetAllModules() 
+        {
+            MySqlCommand cmd = new MySqlCommand(
+            "SELECT * FROM MODULES ORDER BY ModuleCode", conn);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "ModuleDetails");
+            conn.Close();
+            List<Module> moduleList = new List<Module>();
+            foreach (DataRow row in result.Tables["ModuleDetails"].Rows)
+            {
+                moduleList.Add(new Module
+                (
+                    row["ModuleCode"].ToString(),
+                    row["ModuleName"].ToString(),
+                    row["Description"].ToString()
+                ));
+            }
+            return moduleList;
+        }
+
+        public bool DoesModuleExist(string moduleCode)
+        {
+            MySqlCommand cmd = new MySqlCommand
+            ("SELECT ModuleCode FROM MODULES WHERE ModuleCode=@selectedModule", conn);
+            cmd.Parameters.AddWithValue("@selectedModule", moduleCode);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "ModuleCode");
+            conn.Close();
+            if (result.Tables["ModuleCode"].Rows.Count > 0)
+                return true; // Module code exists
+            return false; // Module code does not exist
+        }
+
+        public Module getModuleDetails(string moduleCode)
+        {
+            MySqlCommand cmd = new MySqlCommand
+            ("SELECT * FROM MODULES WHERE ModuleCode=@selectedModule", conn);
+            cmd.Parameters.AddWithValue("@selectedModule", moduleCode);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "ModuleCode");
+            conn.Close();
+            if (result.Tables["ModuleCode"].Rows.Count > 0)
+            {
+                DataTable table = result.Tables["ModuleCode"];
+                return new Module(moduleCode, table.Rows[0]["ModuleName"].ToString(), table.Rows[0]["Description"].ToString());
+            }
+            return new Module(moduleCode, "none", "none");
+
+        }
+
+        public List<Post> GetAllPosts(Module module)
+        {
+            StudentDAL studentContext = new StudentDAL();
+
+            MySqlCommand cmd = new MySqlCommand(
+            "SELECT * FROM POST WHERE ModuleCode=@selectedModule ORDER BY PostTime", conn);
+            cmd.Parameters.AddWithValue("@selectedModule", module.moduleCode);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Posts");
+            conn.Close();
+            List<Post> postList = new List<Post>();
+            foreach (DataRow row in result.Tables["Posts"].Rows)
+            {
+                postList.Add(new Post
+                (
+                    module,
+                    Convert.ToInt32(row["PostID"]),
+                    Convert.ToDateTime(row["PostTime"]),
+                    row["Description"].ToString(),
+                    Convert.ToInt32(row["upvotes"]),
+                    Convert.ToInt32(row["downvotes"]),
+                    studentContext.GetStudentDetails(Convert.ToInt32(row["StudentID"]))
+                ));
+            }
+            return postList;
+        }
+    }
+}
+
+/*
+ * this.module = module;
+            this.postId = postId;
+            this.postTime = postTime;
+            this.description = description;
+            this.upvotes = upvotes;
+            this.downvotes = downvotes;
+        }
+*/

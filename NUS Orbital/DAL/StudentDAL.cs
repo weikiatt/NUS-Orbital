@@ -7,17 +7,20 @@ using System.IO;
 using System.Data;
 using System.Data.SqlClient;
 using NUS_Orbital.Models;
+using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Relational;
 
 namespace NUS_Orbital.DAL
 {
     public class StudentDAL
     {
         private IConfiguration Configuration { get; set; }
-        private SqlConnection conn;
+        private MySqlConnection conn;
 
         //Constructor
         public StudentDAL()
         {
+            /*
             //Locate the appsettings.json file
             var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -27,26 +30,103 @@ namespace NUS_Orbital.DAL
             string strConn = Configuration.GetConnectionString("NUS_Orbital");
             //Instantiate a SqlConnection object with the
             //Connection String read.
-            conn = new SqlConnection(strConn);
+            conn = new SqlConnection(strConn);*/
+
+            string connstring = "server=localhost;uid=root;pwd=T0117905A;database=nus_orbital";
+            this.conn = new MySqlConnection();
+            this.conn.ConnectionString = connstring;
         }
 
 
-        public bool DoesEmailExist(string email)
+
+        public bool doesLoginCredentialExist(string email, string password)
         {
-            SqlCommand cmd = new SqlCommand
-            ("SELECT id FROM Student WHERE Email=@selectedEmail", conn);
-            cmd.Parameters.AddWithValue("@selectedEmail", email);
-            SqlDataAdapter daEmail = new SqlDataAdapter(cmd);
+            MySqlCommand cmd = new MySqlCommand
+            ("SELECT * FROM STUDENTS WHERE Email = @email AND Password = @password", conn);
+            cmd.Parameters.AddWithValue("@email", email);
+            cmd.Parameters.AddWithValue("@password", password);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
-            //Use DataAdapter to fetch data to a table "EmailDetails" in DataSet.
-            daEmail.Fill(result, "Email");
+            da.Fill(result, "LoginInfo");
             conn.Close();
-            if (result.Tables["Email"].Rows.Count > 0)
-                return true; //The email exists 
+            if (result.Tables["LoginInfo"].Rows.Count > 0)
+                return true; //login info correct
             else
-                return false; // The email given does not exist
+                return false;
         }
+
+        public bool doesEmailExist(string email)
+        {
+            MySqlCommand cmd = new MySqlCommand
+            ("SELECT * FROM STUDENTS WHERE Email=@selectedEmail", conn);
+            cmd.Parameters.AddWithValue("@selectedEmail", email);
+            MySqlDataAdapter daEmail = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            daEmail.Fill(result, "EmailDetails");
+            conn.Close();
+            if (result.Tables["EmailDetails"].Rows.Count > 0)
+                return true;
+            else
+                return false;
+        }
+
+        public void Add(String email, String name, String password)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("INSERT INTO STUDENTS (Email, Name, Password) VALUES(@email, @name, @password)", conn);
+
+            cmd.Parameters.AddWithValue("@name", email);
+            cmd.Parameters.AddWithValue("@email", name);
+            cmd.Parameters.AddWithValue("@password", password);
+
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public string GetName(String email)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("SELECT * FROM STUDENTS WHERE Email=@email", conn);
+
+            cmd.Parameters.AddWithValue("@email", email);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "StudentInfo");
+            conn.Close();
+            return result.Tables["StudentInfo"].Rows[0]["Name"].ToString();
+        }
+
+        public Student GetStudentDetails(int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+            ("SELECT * FROM STUDENTS WHERE StudentID=@selectedStudent", conn);
+            cmd.Parameters.AddWithValue("@selectedStudent", studentId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Student");
+            conn.Close();
+            if (result.Tables["Student"].Rows.Count > 0)
+            {
+                DataTable table = result.Tables["Student"];
+                return new Student(
+                    studentId,
+                    table.Rows[0]["Name"].ToString(),
+                    table.Rows[0]["Email"].ToString(),
+                    table.Rows[0]["Course"].ToString(),
+                    Convert.ToDateTime(table.Rows[0]["DOB"]),
+                    table.Rows[0]["Description"].ToString()
+
+                );
+                //return new Module(moduleCode, table.Rows[0]["ModuleName"].ToString(), table.Rows[0]["Description"].ToString());
+            }
+            return new Student();
+        }
+
 
     }
 }

@@ -9,15 +9,14 @@ namespace NUS_Orbital.Models
 {
     public class ValidateEmailExists : ValidationAttribute
     {
-        /*
+       
         private StudentDAL studentContext = new StudentDAL();
         public override bool IsValid(object value)
         {
             string email = Convert.ToString(value);
-            if (studentContext.IsEmailExist(email))
+            if (studentContext.doesEmailExist(email))
                 return false; // validation failed
-            else
-                return true; // validation passed
-        }*/
+            return true; // validation passed
+        }
     }
 }
