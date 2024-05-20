@@ -19,9 +19,9 @@ namespace NUS_Orbital.Controllers
 
         public IActionResult Index()
         {
-            
+            /*
             HttpContext.Session.SetString("authenticated", "true");
-            HttpContext.Session.SetString("name", "temp name");
+            HttpContext.Session.SetString("name", "temp name");*/
             return View();
         }
 
@@ -30,8 +30,6 @@ namespace NUS_Orbital.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-
 
         public IActionResult Register()
         {
@@ -51,30 +49,28 @@ namespace NUS_Orbital.Controllers
 			if (studentContext.doesLoginCredentialExist(email, password))
 			{
                 HttpContext.Session.SetString("authenticated", "true");
+                HttpContext.Session.SetString("Email", email);
                 HttpContext.Session.SetString("name", studentContext.GetName(email));
                 return View("Index");
             }
 			TempData["InvalidLogin"] = "Invalid login credentials!";
-			return View("Login", "Home");
+			return View("Login", "Home");   
 		}
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(IFormCollection formData)
+        public ActionResult Register(Student student)
         {
-            string email = formData["email"].ToString().ToLower();
-            string name = formData["name"].ToString();
-            string password = formData["password"].ToString();
-            if (studentContext.doesEmailExist(email))
+            if (ModelState.IsValid)
             {
-                TempData["EmailAlreadyExists"] = "Email already exists!";
-                return View("Register");
+                HttpContext.Session.SetString("authenticated", "true");
+                HttpContext.Session.SetString("Email", student.email);
+                HttpContext.Session.SetString("name", student.name);
+                studentContext.Add(student);
+                return View("Index");
             }
-            HttpContext.Session.SetString("authenticated", "true");
-            HttpContext.Session.SetString("name", name);
-            studentContext.Add(email, name, password);
-            return View("Index");
+            return View(student);
+
         }
 
         public ActionResult Logout()

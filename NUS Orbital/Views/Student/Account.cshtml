@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NUS_Orbital.Models.Module>
+﻿@model NUS_Orbital.Models.Student
 
 
 <!DOCTYPE html>
@@ -21,25 +21,9 @@
 </head>
 <body>
     <div class="container">
-        <form class="mt-3" method="get" asp-controller="Module" asp-action="Index" >
-            <input placeholder="Module code, module name" class="form-control" id="query" name="query">
-        </form>
-        @if (Model.ToList().Count > 0)
-        {
-            <div class="list-group mt-3">
-                @foreach (var module in Model)
-                {
-                    <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action">
-                        <h5 class="mb-1 font-green">@module.moduleCode @module.moduleName</h5>
-                        <p class="mb-1">@module.description</p>
-                    </a>
-                }
-             </div>
-        }
-        else
-        {
-            <p> none </p>
-        }
+        account page
+        @Model.course
+        @Model.name 
     </div>
 </body>
 </html>

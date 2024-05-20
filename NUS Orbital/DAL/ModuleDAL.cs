@@ -3,6 +3,9 @@ using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Relational;
 using NUS_Orbital.Models;
+using Microsoft.AspNetCore.Mvc;
+using NUS_Orbital.DAL;
+using NUS_Orbital.Models;
 
 namespace NUS_Orbital.DAL
 {
@@ -99,10 +102,27 @@ namespace NUS_Orbital.DAL
                     row["Description"].ToString(),
                     Convert.ToInt32(row["upvotes"]),
                     Convert.ToInt32(row["downvotes"]),
-                    studentContext.GetStudentDetails(Convert.ToInt32(row["StudentID"]))
+                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"]))
                 ));
             }
             return postList;
+        }
+
+        public void addPost(String moduleCode, String description, int studentId)
+        {
+            StudentDAL studentContext = new StudentDAL();
+            MySqlCommand cmd = new MySqlCommand
+                ("INSERT INTO POST(ModuleCode, PostTime, `Description`, StudentID)" +
+                "VALUES (@moduleCode, @postTime, @description, @studentID)", conn);
+
+            cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
+            cmd.Parameters.AddWithValue("@postTime", DateTime.Now);
+            cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@studentID", studentId);
+            
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
         }
     }
 }

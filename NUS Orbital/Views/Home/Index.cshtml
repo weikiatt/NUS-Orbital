@@ -18,24 +18,21 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="bg-img">
+
+    <div class="container pt-5">
     @if (Context.Session.GetString("authenticated") == null || Context.Session.GetString("authenticated") == "false")
     {   
-        <div class="row" style="height:30vh;">
-            <div class="col align-items-center justify-content-center d-flex">
-                <h1 class="">Welcome to TFT</h1>
-            </div>
+        <div class="col">
+            <h4 class="row">Welcome to</h4>
+            <h4 class="row text-decoration-underline">The Forum Talk</h4>
+            <br />
+            <h4 class="row">Connect with others today!</h4>
+            <form class="row" action="~/Home/Register">
+                <button class="btn-green">GET STARTED</button>
+            </form>
         </div>
-        <div class="row" style="height:20vh">
-            <div class="col text-center">
-                <h3>Connect with others today!</h3>
-                <a asp-controller="Home" asp-action="Register" class="">Register</a>
-            </div>
-            <div class="col text-center">
-                <p>temp</p>
-                <a href="~/Home/Login">Learn more</a>
-            </div>
-        </div>
+        
 
     } else
     {
@@ -45,6 +42,8 @@
             </div>
         </div>
     }
+    </div>
+
     </div>
 </body>
 </html>

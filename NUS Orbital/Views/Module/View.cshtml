@@ -20,21 +20,53 @@
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container d-flex">
-        <div class="text-center w-100">
-            <h1>@Model.module.moduleCode</h1>
-            <p>@Model.module.moduleName</p>
-        </div>
-        <div>@Model.module.description</div>
-        
-    </div>
+
     <div class="container">
-        @foreach (var post in Model.posts)
-        {
-            <div class="container">
-                @post.description posted by @post.student.name at @post.postTime
+        <div class="row">
+            <div class="col-lg-3 col-md-4 text-center">
+                <h1>@Model.module.moduleCode</h1>
+                <p>@Model.module.moduleName</p>
             </div>
-        }
+            <div class="col text-justify">
+                <p>@Model.module.description</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-3">
+
+        <h5>Reviews and Discussions</h5>
+
+        <div class="row">
+            <div class="col-1"> 
+                <img class="rounded-circle w-100" src="~/images/StudentPhotos/@Model.student.photo" />
+            </div>
+            <form class="col" method="post" action="~/Module/Post">
+                <input hidden value="@Model.module.moduleCode" name="moduleCode" />
+                <h6>Let others how you feel about this module!</h6>
+                <input class="w-100 form-control" placeholder="join the discussion..." name="description"/> <button>Post</button>
+            </form>
+        </div>
+        
+
+        <div class="mt-3">
+            @foreach (var post in Model.posts)
+            {
+                <div class="row">
+                    <div class="col-1">
+                        <img class="rounded-circle w-100" src="~/images/StudentPhotos/@post.student.photo" />
+                    </div>
+                    <div class="col">
+                        <h5 class="text-orange">@post.student.name</h5>
+                        <p class="text-secondary">@post.student.course Student</p>
+                        <p class="text-secondary">@post.postTime</p>
+                        <p>@post.description</p>
+                    </div>
+                </div>
+
+            }
+        </div>
+        
     </div>
 </body>
 </html>

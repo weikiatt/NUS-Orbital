@@ -18,23 +18,25 @@
 </head>
 
 <body>
-    <div class="container justify-content-center align-items-center d-flex flex-column" style="height:50vh;">
-        <div>
-            <p class="text-danger">@TempData["ModuleLogin"]</p>
-            <p class="text-danger">@TempData["InvalidLogin"]</p>
+    <div class="bg-img">
+        <div class="container justify-content-center align-items-center d-flex flex-column">
+           
+            <form class="mt-5 bg-green p-5" method="post" action="~/Home/Login">
+                <div>
+                    <p class="text-danger">@TempData["ModuleLogin"]</p>
+                    <p class="text-danger">@TempData["InvalidLogin"]</p>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <button class="btn-green">Login</button>
+            </form>
         </div>
-        <form method="post" action="~/Home/Login">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email">
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password">
-            </div>
-            <button class="btn btn-primary">Login</button>
-        </form>
     </div>
-    
 </body>
 </html>
