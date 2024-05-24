@@ -21,7 +21,7 @@ namespace NUS_Orbital.Models
         [Required(ErrorMessage = "Please enter your email")]
         [Display(Name = "Email Address")]
         [EmailAddress]
-        [ValidateEmailExists(ErrorMessage = "Email address already exists!")]
+        //[ValidateEmailExists(ErrorMessage = "Email address already exists!")]
         public String email { get; set; }
 
         [Required(ErrorMessage = "Please enter your password")]
@@ -36,9 +36,12 @@ namespace NUS_Orbital.Models
         [Display(Name = "Date of Birth")]
         public DateTime dob { get; set; }
 
+        [Display(Name = "Description")]
         public String description { get; set; }
 
         public IFormFile? fileToUpload { get; set; }
+
+        [Display(Name = "Photo")]
         public string photo { get; set; }
 
         public Student(String email, String name, String password)

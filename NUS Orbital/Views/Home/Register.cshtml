@@ -19,34 +19,36 @@
 </head>
 <body>
     <div class="bg-img">
-
-    <div class="container justify-content-center align-items-center d-flex flex-column">
-
-        <form class="mt-5 bg-green p-5" method="post" asp-action="Register">
-            <div class="mb-3">
-                <label asp-for="email" class="form-label"></label>
-                <input asp-for="email" type="email" class="form-control" id="email">
-                <span asp-validation-for="email" class="text-danger"></span>
+        <div class="container justify-content-center align-items-baseline d-flex flex-column">
+            <div class="mt-5 bg-green p-5">
+                <form method="post" asp-action="Register">
+                    <div class="mb-3">
+                        <label asp-for="email" class="form-label"></label>
+                        <input asp-for="email" type="email" class="form-control" id="email">
+                        <span asp-validation-for="email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="name" class="form-label"></label>
+                        <input asp-for="name" class="form-control" id="name">
+                        <span asp-validation-for="name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="password" class="form-label"></label>
+                        <input asp-for="password" type="password" class="form-control" id="password">
+                        <span asp-validation-for="password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="dob" class="form-label"></label>
+                        <input asp-for="dob" type="date" class="form-control" id="dob">
+                        <span asp-validation-for="dob" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn-green w300-h40">Register</button>
+                </form>
+                <div class="row justify-content-center mt-3">
+                    <a href="~/Home/Login">Already have an account? Login here!</a>
+                </div>
             </div>
-            <div class="mb-3">
-                <label asp-for="name" class="form-label"></label>
-                <input asp-for="name" class="form-control" id="name">
-                <span asp-validation-for="name" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="password" class="form-label"></label>
-                <input asp-for="password" type="password" class="form-control" id="password">
-                <span asp-validation-for="password" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="dob" class="form-label"></label>
-                <input asp-for="dob" type="date" class="form-control" id="dob">
-                <span asp-validation-for="dob" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn-green">Register</button>
-        </form>
-    </div>
-
+        </div>
     </div>
 </body>
 </html>

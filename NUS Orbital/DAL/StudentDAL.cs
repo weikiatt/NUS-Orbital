@@ -185,5 +185,23 @@ namespace NUS_Orbital.DAL
             return count;
         }
 
+
+        public void UpdateStudent(Student oldStudent, Student updatedStudent)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                 ("UPDATE STUDENTS SET Name=@name, DOB=@dob, Course=@course, Description=@description" +
+                 " WHERE StudentID = @selectedStudentID", conn);
+
+
+            cmd.Parameters.AddWithValue("@name", updatedStudent.name);
+            cmd.Parameters.AddWithValue("@dob", updatedStudent.dob);
+            cmd.Parameters.AddWithValue("@course", updatedStudent.course);
+            cmd.Parameters.AddWithValue("@description", updatedStudent.description);
+            cmd.Parameters.AddWithValue("@selectedStudentID", oldStudent.studentId);
+
+            conn.Open();
+            int count = cmd.ExecuteNonQuery();
+            conn.Close();
+        }
     }
 }

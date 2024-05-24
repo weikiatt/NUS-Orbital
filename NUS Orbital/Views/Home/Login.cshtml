@@ -19,23 +19,29 @@
 
 <body>
     <div class="bg-img">
-        <div class="container justify-content-center align-items-center d-flex flex-column">
-           
-            <form class="mt-5 bg-green p-5" method="post" action="~/Home/Login">
-                <div>
-                    <p class="text-danger">@TempData["ModuleLogin"]</p>
-                    <p class="text-danger">@TempData["InvalidLogin"]</p>
+        <div class="container justify-content-center align-items-baseline d-flex flex-column">
+            <div class="bg-green mt-5 p-5">
+                <form method="post" action="~/Home/Login">
+                    <div>
+                        <p class="text-danger">@TempData["ModuleLogin"]</p>
+                        <p class="text-danger">@TempData["InvalidLogin"]</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <button class="btn-green w300-h40">Login</button>
+                </form>
+
+                <div class="row justify-content-center mt-3">
+                    <a href="~/Home/Register">Don't have an account? Register now!</a>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" name="email">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                </div>
-                <button class="btn-green">Login</button>
-            </form>
+           </div>
+            
         </div>
     </div>
 </body>

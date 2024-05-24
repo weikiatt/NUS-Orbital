@@ -35,9 +35,7 @@ namespace NUS_Orbital.Controllers
             return View(student);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadPhoto(Student student)
+        public async void UploadPhoto(Student student)
         {
             if (student.fileToUpload != null && student.fileToUpload.Length > 0)
             {
@@ -76,13 +74,59 @@ namespace NUS_Orbital.Controllers
             student.studentId = temp.studentId; 
 
             studentContext.UpdatePhoto(student);
-            return View(student);
+
+            TempData["Message"] = student.fileToUpload;
         }
 
         [HttpGet]
         public ActionResult Account()
         {
             Student student = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
+            return View(student);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Account(Student student)
+        {
+            Student oldStudent = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
+            student.studentId = oldStudent.studentId;
+            studentContext.UpdateStudent(oldStudent, student);
+            if (student.fileToUpload != null && student.fileToUpload.Length > 0)
+            {
+                try
+                {
+                    // Find the filename extension of the file to be uploaded.
+                    string fileExt = Path.GetExtension(
+                    student.fileToUpload.FileName);
+                    // Rename the uploaded file with the student’s name.
+                    string uploadedFile = student.name + fileExt;
+                    // Get the complete path to the images folder in server
+                    string savePath = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot\\images\\StudentPhotos", uploadedFile);
+                    // Upload the file to server
+                    using (var fileSteam = new FileStream(
+                     savePath, FileMode.Create))
+                    {
+                        await student.fileToUpload.CopyToAsync(fileSteam);
+                    }
+                    student.photo = uploadedFile;
+                    TempData["Message"] = "File uploaded successfully.";
+                    studentContext.UpdatePhoto(student);
+                }
+                catch (IOException)
+                {
+                    //File IO error, could be due to access rights denied
+                    TempData["Message"] = "File uploading fail!";
+                }
+                catch (Exception ex) //Other type of error
+                {
+                    TempData["Message"] = ex.Message;
+                }
+            } else
+            {
+                student.photo = oldStudent.photo;
+            }
             return View(student);
         }
     }

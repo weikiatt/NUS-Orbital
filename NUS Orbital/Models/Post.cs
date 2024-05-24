@@ -9,7 +9,8 @@
         public int upvotes;
         public int downvotes;
         public Student student;
-        public Post(Module module, int postId, DateTime postTime, string description, int upvotes, int downvotes, Student student)
+        public List<Comment> comments;
+        public Post(Module module, int postId, DateTime postTime, string description, int upvotes, int downvotes, Student student, List<Comment> comments)
         {
             this.module = module;
             this.postId = postId;
@@ -18,6 +19,7 @@
             this.upvotes = upvotes;
             this.downvotes = downvotes;
             this.student = student;
+            this.comments = comments;
         }
     }
 }

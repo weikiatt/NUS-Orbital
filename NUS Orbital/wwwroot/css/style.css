@@ -15,10 +15,40 @@
     color: #a6bfa5ff;
 }
 
-.btn-green {
+.btn-pill {
+    border-radius: 24px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.btn-green-pill {
     background: #a6bfa5ff;
+    font-weight: bold;
+    border-radius: 24px;
+}
+
+.btn-cancel {
+    background: white;
+    color: dimgrey;
+    border: none;
+    border-radius: 24px;
+}
+
+    .btn-cancel:hover {
+        background: #F5F5F5;
+        transition-duration: 0.1s;
+       
+    }
+
+.w300-h40 {
     width: 300px;
     height: 40px;
+}
+
+.btn-green {
+    background: #a6bfa5ff;
     font-weight: bold;
 }
 

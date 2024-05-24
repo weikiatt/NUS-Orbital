@@ -84,7 +84,7 @@ namespace NUS_Orbital.DAL
             StudentDAL studentContext = new StudentDAL();
 
             MySqlCommand cmd = new MySqlCommand(
-            "SELECT * FROM POST WHERE ModuleCode=@selectedModule ORDER BY PostTime", conn);
+            "SELECT * FROM POSTS WHERE ModuleCode=@selectedModule ORDER BY PostTime DESC", conn);
             cmd.Parameters.AddWithValue("@selectedModule", module.moduleCode);
             MySqlDataAdapter da = new MySqlDataAdapter(cmd);
             DataSet result = new DataSet();
@@ -102,7 +102,8 @@ namespace NUS_Orbital.DAL
                     row["Description"].ToString(),
                     Convert.ToInt32(row["upvotes"]),
                     Convert.ToInt32(row["downvotes"]),
-                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"]))
+                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
+                    GetAllComments(Convert.ToInt32(row["PostID"]))
                 ));
             }
             return postList;
@@ -112,7 +113,7 @@ namespace NUS_Orbital.DAL
         {
             StudentDAL studentContext = new StudentDAL();
             MySqlCommand cmd = new MySqlCommand
-                ("INSERT INTO POST(ModuleCode, PostTime, `Description`, StudentID)" +
+                ("INSERT INTO POSTS(ModuleCode, PostTime, `Description`, StudentID)" +
                 "VALUES (@moduleCode, @postTime, @description, @studentID)", conn);
 
             cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
@@ -124,6 +125,37 @@ namespace NUS_Orbital.DAL
             cmd.ExecuteScalar();
             conn.Close();
         }
+
+        public List<Comment> GetAllComments(int postId)
+        {
+            StudentDAL studentContext = new StudentDAL();
+
+            MySqlCommand cmd = new MySqlCommand(
+            "SELECT * FROM COMMENTS WHERE PostID=@postId ORDER BY CommentTime", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Comments");
+            conn.Close();
+            List<Comment> comments = new List<Comment>();
+            foreach (DataRow row in result.Tables["Comments"].Rows)
+            {
+                comments.Add(new Comment
+                (
+
+                    Convert.ToInt32(row["CommentID"]),
+                    Convert.ToDateTime(row["CommentTime"]),
+                    row["Description"].ToString(),
+                    Convert.ToInt32(row["Upvotes"]),
+                    Convert.ToInt32(row["Downvotes"]),
+                    Convert.ToInt32(row["PostID"]),
+                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"]))
+                ));
+            }
+            return comments;
+        }
+
     }
 }
 
