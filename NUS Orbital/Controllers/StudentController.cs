@@ -36,7 +36,7 @@ namespace NUS_Orbital.Controllers
             TempData["Login"] = "Login to view account info";
             return RedirectToAction("Login", "Home");
         }
-
+        //
         [HttpPost]
         public async Task<ActionResult> Account(Student student)
         {
