@@ -1,10 +1,19 @@
-﻿namespace NUS_Orbital.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.JSInterop;
+
+namespace NUS_Orbital.Models
 {
     public class Post
     {
         public Module module;
         public int postId;
         public DateTime postTime;
+        [Required(ErrorMessage="Field is empty")]
         public string description;
         public int upvotes;
         public int downvotes;

@@ -53,7 +53,7 @@ namespace NUS_Orbital.Controllers
                 HttpContext.Session.SetString("name", studentContext.GetName(email));
                 return View("Index");
             }
-			TempData["InvalidLogin"] = "Invalid login credentials!";
+			TempData["Login"] = "Invalid login credentials!";
 			return View("Login", "Home");   
 		}
 

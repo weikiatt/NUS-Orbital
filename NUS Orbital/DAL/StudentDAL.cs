@@ -18,27 +18,12 @@ namespace NUS_Orbital.DAL
         private IConfiguration Configuration { get; set; }
         private MySqlConnection conn;
 
-        //Constructor
         public StudentDAL()
         {
-            /*
-            //Locate the appsettings.json file
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json");
-            //Read ConnectionString from appsettings.json file
-            Configuration = builder.Build();
-            string strConn = Configuration.GetConnectionString("NUS_Orbital");
-            //Instantiate a SqlConnection object with the
-            //Connection String read.
-            conn = new SqlConnection(strConn);*/
-
-            string connstring = "server=localhost;uid=root;pwd=T0117905A;database=nus_orbital";
+            string connstring = "server=localhost;uid=root;pwd=password;database=nus_orbital";
             this.conn = new MySqlConnection();
             this.conn.ConnectionString = connstring;
         }
-
-
 
         public bool doesLoginCredentialExist(string email, string password)
         {
@@ -137,7 +122,6 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Photo"].ToString()
 
                 );
-                //return new Module(moduleCode, table.Rows[0]["ModuleName"].ToString(), table.Rows[0]["Description"].ToString());
             }
             return new Student();
         }
@@ -165,8 +149,6 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Photo"].ToString()
 
                 );
-
-                //return new Module(moduleCode, table.Rows[0]["ModuleName"].ToString(), table.Rows[0]["Description"].ToString());
             }
             return new Student();
         }
@@ -186,18 +168,17 @@ namespace NUS_Orbital.DAL
         }
 
 
-        public void UpdateStudent(Student oldStudent, Student updatedStudent)
+        public void UpdateStudent(Student updatedStudent)
         {
             MySqlCommand cmd = new MySqlCommand
                  ("UPDATE STUDENTS SET Name=@name, DOB=@dob, Course=@course, Description=@description" +
                  " WHERE StudentID = @selectedStudentID", conn);
 
-
             cmd.Parameters.AddWithValue("@name", updatedStudent.name);
             cmd.Parameters.AddWithValue("@dob", updatedStudent.dob);
             cmd.Parameters.AddWithValue("@course", updatedStudent.course);
             cmd.Parameters.AddWithValue("@description", updatedStudent.description);
-            cmd.Parameters.AddWithValue("@selectedStudentID", oldStudent.studentId);
+            cmd.Parameters.AddWithValue("@selectedStudentID", updatedStudent.studentId);
 
             conn.Open();
             int count = cmd.ExecuteNonQuery();

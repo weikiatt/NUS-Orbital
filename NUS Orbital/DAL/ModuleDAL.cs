@@ -14,15 +14,13 @@ namespace NUS_Orbital.DAL
         private IConfiguration Configuration { get; set; }
         private MySqlConnection conn;
 
-        //Constructor
         public ModuleDAL()
         {
-            string connstring = "server=localhost;uid=root;pwd=T0117905A;database=NUS_Orbital";
+            string connstring = "server=localhost;uid=root;pwd=password;database=NUS_Orbital";
             this.conn = new MySqlConnection();
             this.conn.ConnectionString = connstring;
         }
 
-        // Get all modules
         public List<Module> GetAllModules() 
         {
             MySqlCommand cmd = new MySqlCommand(
@@ -109,7 +107,7 @@ namespace NUS_Orbital.DAL
             return postList;
         }
 
-        public void addPost(String moduleCode, String description, int studentId)
+        public void AddPost(String moduleCode, String description, int studentId)
         {
             StudentDAL studentContext = new StudentDAL();
             MySqlCommand cmd = new MySqlCommand
@@ -154,6 +152,23 @@ namespace NUS_Orbital.DAL
                 ));
             }
             return comments;
+        }
+
+        public void AddCommentToPost(String description, int postId, int studentId)
+        {
+            StudentDAL studentContext = new StudentDAL();
+            MySqlCommand cmd = new MySqlCommand
+                ("INSERT INTO COMMENTS(CommentTime, `Description`, PostID, StudentID)" +
+                "VALUES (@commentTime, @description, @postId, @studentID)", conn);
+
+            cmd.Parameters.AddWithValue("@commentTime", DateTime.Now);
+            cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            cmd.Parameters.AddWithValue("@studentID", studentId);
+
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
         }
 
     }
