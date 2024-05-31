@@ -11,6 +11,7 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="~/NUS_Orbital.styles.css" asp-append-version="true" />
     <link rel="stylesheet" type="text/css" href="~/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -18,7 +19,10 @@
             integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
+
 
 
 <body>
@@ -42,40 +46,42 @@
             </div>
             <form class="col" method="post" action="~/Module/Post">
                 <input hidden value="@Model.module.moduleCode" name="moduleCode" />
-                <h6>Let others how you feel about this module!</h6>
-                <textarea class="w-100 form-control" placeholder="join the discussion..." id="postInput" oninput="showPostButton()" name="description"/></textarea>
+                <textarea class="w-100 form-control" placeholder="join the discussion..." id="postInput" onkeyup="togglePostButton()" name="description"/></textarea>
                 <div class="justify-content-end align-items-end d-flex">
                     <button type="reset" class="btn-cancel btn-pill hidden" id="cancelButton" onclick="hidePostButton()">Cancel</button>
                     <button type="submit" class="btn-green btn-pill mt-2 hidden" id="postButton">Post</button>
                 </div>
             </form>
 
-
-
-
-
         </div>
         <div class="mt-3">
             @foreach (var post in Model.posts)
             {
-                <div class="row">
+                <div class="row mt-3">
                     <div class="col-fixed width-50">
                         <img class="profile-picture wh-50" src="~/images/StudentPhotos/@post.student.photo" />
                     </div>
                     <div class="col">
                         <div class="d-flex">
                             <h5 class="text-green text-uppercase">@post.student.name </h5>
-                            <p class="text-secondary ms-5">  - @post.student.course Student</p>
+                            <p class="text-secondary ml-2">@post.student.course Student</p>
+                            <p class="text-secondary ml-2">@post.calculateDate(post.postTime)</p>
                         </div>
-                        <p class="text-secondary">@post.postTime</p>
                         <p>@post.description</p>
-                        <div class="d-flex">
-                            <p class="bg-danger">@post.upvotes upvotes, @post.downvotes downvotes</p>
-                            <button onclick="showCommentBox(@post.postId)" class="btn-comment">Reply to post</button>
+                        <div class="d-flex align-items-center">
+                            @if (post.likedByCurrStud)
+                            {
+                                <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                            } else
+                            {
+                                <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                            }
+                            <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
+                            <button class="border-0 btn-cancel btn-pill ml-1" onclick="showCommentBox(@post.postId)">Reply</button>
                         </div>
                     </div>
                 </div>
-                <div class="row mt-3 comment-box hidden" id="commentBox @post.postId">
+                <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
                     <div class="col-fixed width-50"></div>
                     <div class="col">
                         <div class="row">
@@ -85,11 +91,10 @@
                             <form class="col" method="post" action="~/Module/Comment">
                                 <input hidden value="@Model.module.moduleCode" name="moduleCode" />
                                 <input hidden value="@post.postId" name="postId" />
-                                <h6>Comment...</h6>
-                                <textarea class="w-100 form-control" placeholder="join the discussion..." name="description"></textarea>
+                                <textarea class="w-100 form-control" placeholder="Reply to post..." onkeyup="showCommentButton(@post.postId)" id="commentInput(@post.postId)" name="description"></textarea>
                                 <div class="justify-content-end align-items-end d-flex">
-                                    <button type="reset" class="btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)">Cancel</button>
-                                    <button type="submit" class="btn-green btn-pill mt-2 ">Comment</button>
+                                    <button type="reset" class="hidden btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
+                                    <button type="submit" class="hidden btn-green btn-pill mt-2 ml-2" id="commentButton(@post.postId)">Comment</button>
                                 </div>
                             </form>
                         </div>
@@ -98,25 +103,35 @@
                 @if (post.comments.Count() > 0)
                 {
                     <div class="row">
-                        <button class="btn-view-reply btn-pill text-dark-green" style="margin-left:50px;">View Replies</button>
+                        <button class="btn-view-reply btn-pill text-dark-green mt-1" style="margin-left:50px;">View Replies</button>
                         <div class="container hidden mt-3">
                             <div class="row">
                                 <div class="col-fixed width-50"></div>
                                 <div class="col">
                                     @foreach (var comment in post.comments)
                                     {
-                                        <div class="row">
+                                        <div class="row mt-1">
                                             <div class="col-fixed width-50">
                                                 <img class="profile-picture wh-50" src="~/images/StudentPhotos/@comment.student.photo" />
                                             </div>
                                             <div class="col">
                                                 <div class="d-flex">
                                                     <h5 class="text-green text-uppercase">@comment.student.name</h5>
-                                                    <p class="text-secondary"> - @comment.student.course Student</p>
+                                                    <p class="text-secondary ml-2">@comment.student.course Student</p>
+                                                    <p class="text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
                                                 </div>
-                                                <p class="text-secondary">@comment.commentTime</p>
                                                 <p>@comment.description</p>
-                                                <p>@comment.upvotes upvotes, @comment.downvotes downvotes</p>
+                                                <div class="d-flex align-items-center">
+                                                    @if (@comment.likedByCurrStud)
+                                                    {
+                                                        <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                    }
+                                                    <div class="ml-1" id="commentCountUpvote(@comment.commentId)">@comment.upvotes</div>
+                                                </div>
                                             </div>
                                         </div>
                                     }
@@ -125,11 +140,10 @@
                         </div>
                     </div>
                 }
-                
-                
             }
         </div>
     </div>
+    
     <script>
         document.querySelectorAll('.btn-view-reply').forEach(button => {
             button.addEventListener('click', function () {
@@ -143,16 +157,41 @@
             });
         });
 
-        function showPostButton() {
+        function togglePostButton() {
             var postInput = document.getElementById("postInput");
             var postButton = document.getElementById("postButton");
             var cancelButton = document.getElementById("cancelButton");
-            if (postButton.classList.contains('hidden')) {
-                postButton.classList.toggle('hidden');
-                cancelButton.classList.toggle('hidden');
+            if (postInput.value != "") {
+                if (postButton.classList.contains('hidden')) {
+                    postButton.classList.toggle('hidden');
+                    cancelButton.classList.toggle('hidden');
+                }
+            } else {
+                if (!postButton.classList.contains('hidden')) {
+                    postButton.classList.toggle('hidden');
+                    cancelButton.classList.toggle('hidden');
+                }
             }
         }
-        document.getElementById("postInput").addEventListener("input", toggleCommentButton);
+        //document.getElementById("postInput").addEventListener("input", toggleCommentButton);
+
+        function showCommentButton(postId) {
+            var commentInput = document.getElementById("commentInput(" + postId + ")");
+            var cancelCommentButton = document.getElementById("cancelCommentButton(" + postId + ")");
+            var commentButton = document.getElementById("commentButton(" + postId + ")");
+
+            if (commentInput.value != "") {
+                if (cancelCommentButton.classList.contains('hidden')) {
+                    cancelCommentButton.classList.toggle('hidden');
+                    commentButton.classList.toggle('hidden');
+                }
+            } else {
+                if (!cancelCommentButton.classList.contains('hidden')) {
+                    cancelCommentButton.classList.toggle('hidden');
+                    commentButton.classList.toggle('hidden');
+                }
+            }
+        }
 
         function hidePostButton() {
             var postButton = document.getElementById("postButton");
@@ -162,18 +201,83 @@
         }
 
         function showCommentBox(postId) {
-            var commentBox = document.getElementById("commentBox " + postId);
+            var commentBox = document.getElementById("commentBox(" + postId + ")");
             if (commentBox.classList.contains('hidden')) {
                 commentBox.classList.toggle('hidden');
             }
         }
 
         function hideCommentBox(postId) {
-            var commentBox = document.getElementById("commentBox " + postId);
+            var commentBox = document.getElementById("commentBox(" + postId + ")");
+            var cancelCommentButton = document.getElementById("cancelCommentButton(" + postId + ")");
+            var commentButton = document.getElementById("commentButton(" + postId + ")");
             if (!commentBox.classList.contains('hidden')) {
                 commentBox.classList.toggle('hidden');
+                cancelCommentButton.classList.toggle('hidden');
+                commentButton.classList.toggle('hidden');
             }
         }
+
+        function upvotePost(postId) {
+            var postUpvote = document.getElementById("postUpvote(" + postId + ")");
+            var countUpvote = document.getElementById("countUpvote(" + postId + ")");
+
+            if (!postUpvote.classList.contains('bg-green')) {
+                countUpvote.innerText = Number(countUpvote.innerText) + 1;
+                postUpvote.classList.toggle('bg-green');
+                postUpvote.classList.toggle('bg-transparent');
+
+            } else {
+                countUpvote.innerText = Number(countUpvote.innerText) - 1;
+                postUpvote.classList.toggle('bg-green');
+                postUpvote.classList.toggle('bg-transparent');
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpvotePost", "Module")',
+                dataType: 'json',
+                data: { 
+                    postId: postId 
+                },
+                success: function (response) {
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function upvoteComment(commentId) {
+            var commentUpvote = document.getElementById("commentUpvote(" + commentId + ")");
+            var commentCountUpvote = document.getElementById("commentCountUpvote(" + commentId + ")");
+
+            if (!commentUpvote.classList.contains('bg-green')) {
+                commentCountUpvote.innerText = Number(commentCountUpvote.innerText) + 1;
+                commentUpvote.classList.toggle('bg-green');
+                commentUpvote.classList.toggle('bg-transparent');
+
+            } else {
+                commentCountUpvote.innerText = Number(commentCountUpvote.innerText) - 1;
+                commentUpvote.classList.toggle('bg-green');
+                commentUpvote.classList.toggle('bg-transparent');
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpvoteComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId
+                },
+                success: function (response) {
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+        
+
     </script>
+
 </body>
 </html>

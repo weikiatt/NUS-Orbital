@@ -1,4 +1,10 @@
-﻿.bg-img {
+﻿*:focus {
+    outline: 0;
+}
+
+
+
+.bg-img {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
@@ -9,6 +15,10 @@
 
 .bg-green {
     background: #a6bfa5ff;
+}
+
+.bg-transparent {
+    background: none;
 }
 
 .text-green {
@@ -78,7 +88,7 @@
  
 
 .logo {
-    height: 5vh;
+    height: 40px;
 }
 
 .text-orange {
@@ -93,6 +103,11 @@
     overflow: hidden;
     object-fit: cover;
     border-radius: 50%;
+}
+
+.wh-30 {
+    width: 30px;
+    height: 30px;
 }
 
 .wh-50 {
@@ -121,6 +136,22 @@
 
 .hidden {
     display: none;
+}
+
+
+.like-button {
+
+}
+
+    .like-button:hover {
+        background: background: #a6bfa5ff;
+        transition: 0.3s;
+    }
+
+
+.btn:focus, .btn:active {
+    outline: none;
+    box-shadow: none;
 }
 
 

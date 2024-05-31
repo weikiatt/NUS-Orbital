@@ -2,6 +2,7 @@
 using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
 using MySql.Data.MySqlClient;
+using Microsoft.Extensions.Hosting;
 
 namespace NUS_Orbital.Controllers
 {
@@ -39,9 +40,10 @@ namespace NUS_Orbital.Controllers
         {
             if (HttpContext.Session.GetString("authenticated") == "true")
             {
-                Module module = moduleContext.getModuleDetails(ModuleCode);
-                List<Post> postList = moduleContext.GetAllPosts(module);
-                return View(new ModulePost(module, postList, studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"))));
+                Student currStud = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
+                Module module = moduleContext.GetModuleDetails(ModuleCode);
+                List<Post> postList = moduleContext.GetAllPosts(module, currStud);
+                return View(new ModulePost(module, postList, currStud));
             }
             TempData["Login"] = "Login to view more info about modules";
             return RedirectToAction("Login", "Home");
@@ -60,6 +62,19 @@ namespace NUS_Orbital.Controllers
             return RedirectToAction("View", "Module", new {ModuleCode = moduleCode});
         }
 
+        /*
+        [HttpPost]
+        public JsonResult Post(string description, string moduleCode)
+        {
+            TempData["TEST"] = "POST TEST";
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            if (description != null)
+            {
+                moduleContext.AddPost(moduleCode, description, studentId);
+            }
+            return Json(new { success = true });
+        }*/
+
         public ActionResult Comment(IFormCollection formData)
         {
             string description = formData["description"].ToString();
@@ -73,5 +88,33 @@ namespace NUS_Orbital.Controllers
             return RedirectToAction("View", "Module", new { ModuleCode = moduleCode });
         }
 
+        [HttpPost]
+        public JsonResult UpvotePost(int postId)
+        {   
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            if (moduleContext.DoesPostUpvoteExist(postId, studentId))
+            {
+                moduleContext.RemoveUpvoteFromPost(postId, studentId);
+            } else
+            {
+                moduleContext.AddUpvoteToPost(postId, studentId);
+            }
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult UpvoteComment(int commentId)
+        {
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            if (moduleContext.DoesCommentUpvoteExist(commentId, studentId))
+            {
+                moduleContext.RemoveUpvoteFromComment(commentId, studentId);
+            }
+            else
+            {
+                moduleContext.AddUpvoteToComment(commentId, studentId);
+            }
+            return Json(new { success = true });
+        }
     }
 }

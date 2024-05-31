@@ -58,7 +58,7 @@ namespace NUS_Orbital.DAL
             return false; // Module code does not exist
         }
 
-        public Module getModuleDetails(string moduleCode)
+        public Module GetModuleDetails(string moduleCode)
         {
             MySqlCommand cmd = new MySqlCommand
             ("SELECT * FROM MODULES WHERE ModuleCode=@selectedModule", conn);
@@ -77,7 +77,7 @@ namespace NUS_Orbital.DAL
 
         }
 
-        public List<Post> GetAllPosts(Module module)
+        public List<Post> GetAllPosts(Module module, Student student)
         {
             StudentDAL studentContext = new StudentDAL();
 
@@ -98,14 +98,28 @@ namespace NUS_Orbital.DAL
                     Convert.ToInt32(row["PostID"]),
                     Convert.ToDateTime(row["PostTime"]),
                     row["Description"].ToString(),
-                    Convert.ToInt32(row["upvotes"]),
-                    Convert.ToInt32(row["downvotes"]),
+                    GetNumberOfPostUpvotes(Convert.ToInt32(row["PostID"])),
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
-                    GetAllComments(Convert.ToInt32(row["PostID"]))
+                    GetAllComments(Convert.ToInt32(row["PostID"]), student),
+                    DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.studentId)
                 ));
             }
             return postList;
         }
+
+        public int GetNumberOfPostUpvotes(int postId)
+        {
+            MySqlCommand cmd = new MySqlCommand(
+            "SELECT * FROM POST_UPVOTES WHERE PostID=@postId", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Posts");
+            conn.Close();
+            return result.Tables["Posts"].Rows.Count;
+        }
+
 
         public void AddPost(String moduleCode, String description, int studentId)
         {
@@ -124,7 +138,20 @@ namespace NUS_Orbital.DAL
             conn.Close();
         }
 
-        public List<Comment> GetAllComments(int postId)
+        public int GetNumberOfCommentUpvotes(int commentId)
+        {
+            MySqlCommand cmd = new MySqlCommand(
+            "SELECT * FROM COMMENT_UPVOTES WHERE CommentID=@commentId", conn);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Comments");
+            conn.Close();
+            return result.Tables["Comments"].Rows.Count;
+        }
+
+        public List<Comment> GetAllComments(int postId, Student student)
         {
             StudentDAL studentContext = new StudentDAL();
 
@@ -145,10 +172,10 @@ namespace NUS_Orbital.DAL
                     Convert.ToInt32(row["CommentID"]),
                     Convert.ToDateTime(row["CommentTime"]),
                     row["Description"].ToString(),
-                    Convert.ToInt32(row["Upvotes"]),
-                    Convert.ToInt32(row["Downvotes"]),
+                    GetNumberOfCommentUpvotes(Convert.ToInt32(row["CommentID"])),
                     Convert.ToInt32(row["PostID"]),
-                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"]))
+                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
+                    DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.studentId)
                 ));
             }
             return comments;
@@ -171,15 +198,86 @@ namespace NUS_Orbital.DAL
             conn.Close();
         }
 
+        public void AddUpvoteToPost(int postId, int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("INSERT INTO POST_UPVOTES (PostID, StudentID)" +
+                "VALUES (@postId, @studentId)", conn);
+
+            cmd.Parameters.AddWithValue("@postId", postId);
+            cmd.Parameters.AddWithValue("@studentId", studentId);
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public void RemoveUpvoteFromPost(int postId, int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("DELETE FROM POST_UPVOTES WHERE PostID=@postId AND StudentID=@studentId", conn);
+
+            cmd.Parameters.AddWithValue("@postId", postId);
+            cmd.Parameters.AddWithValue("@studentId", studentId);
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public Boolean DoesPostUpvoteExist(int postId, int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("SELECT * FROM POST_UPVOTES WHERE PostID=@postId AND StudentID=@studentId", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            cmd.Parameters.AddWithValue("@studentId", studentId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "UpvoteDetails");
+            conn.Close();
+            if (result.Tables["UpvoteDetails"].Rows.Count > 0)
+                return true;
+            return false;
+        }
+
+        public void AddUpvoteToComment(int commentId, int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("INSERT INTO COMMENT_UPVOTES (CommentID, StudentID)" +
+                "VALUES (@commentId, @studentId)", conn);
+
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            cmd.Parameters.AddWithValue("@studentId", studentId);
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public void RemoveUpvoteFromComment(int commentId, int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("DELETE FROM COMMENT_UPVOTES WHERE CommentID=@commentId AND StudentID=@studentId", conn);
+
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            cmd.Parameters.AddWithValue("@studentId", studentId);
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public Boolean DoesCommentUpvoteExist(int commentId, int studentId)
+        {
+            MySqlCommand cmd = new MySqlCommand
+                ("SELECT * FROM COMMENT_UPVOTES WHERE CommentID=@commentId AND StudentID=@studentId", conn);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            cmd.Parameters.AddWithValue("@studentId", studentId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "UpvoteDetails");
+            conn.Close();
+            if (result.Tables["UpvoteDetails"].Rows.Count > 0)
+                return true;
+            return false;
+        }
     }
 }
-
-/*
- * this.module = module;
-            this.postId = postId;
-            this.postTime = postTime;
-            this.description = description;
-            this.upvotes = upvotes;
-            this.downvotes = downvotes;
-        }
-*/

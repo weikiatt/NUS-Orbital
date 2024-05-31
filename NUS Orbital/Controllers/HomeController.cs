@@ -21,7 +21,7 @@ namespace NUS_Orbital.Controllers
         {
             /*
             HttpContext.Session.SetString("authenticated", "true");
-            HttpContext.Session.SetString("name", "temp name"); test*/
+            HttpContext.Session.SetString("name", "temp name");*/
             return View();
         }
 
