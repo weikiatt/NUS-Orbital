@@ -20,7 +20,8 @@ namespace NUS_Orbital.Models
         public Student student;
         public List<Comment> comments;
         public bool likedByCurrStud;
-        public Post(Module module, int postId, DateTime postTime, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud)
+        public List<Tag> tags;
+        public Post(Module module, int postId, DateTime postTime, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags)
         {
             this.module = module;
             this.postId = postId;
@@ -30,6 +31,7 @@ namespace NUS_Orbital.Models
             this.student = student;
             this.comments = comments;
             this.likedByCurrStud = likedByCurrStud;
+            this.tags = tags;
         }
         
 

@@ -101,7 +101,8 @@ namespace NUS_Orbital.DAL
                     GetNumberOfPostUpvotes(Convert.ToInt32(row["PostID"])),
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
                     GetAllComments(Convert.ToInt32(row["PostID"]), student),
-                    DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.studentId)
+                    DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.studentId),
+                    GetAllTagsForPost(Convert.ToInt32(row["PostID"]))
                 ));
             }
             return postList;
@@ -278,6 +279,28 @@ namespace NUS_Orbital.DAL
             if (result.Tables["UpvoteDetails"].Rows.Count > 0)
                 return true;
             return false;
+        }
+
+        public List<Tag> GetAllTagsForPost(int postId)
+        {
+            MySqlCommand cmd = new MySqlCommand(
+            "SELECT PT.TagID, Tag FROM POST_TAGS PT INNER JOIN TAGS T ON PT.TagID = T.TagID WHERE PostID = @postId ", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Tags");
+            conn.Close();
+            List<Tag> tagList = new List<Tag>();
+            foreach (DataRow row in result.Tables["Tags"].Rows)
+            {
+                tagList.Add(new Tag
+                (
+                    Convert.ToInt32(row["TagID"]),
+                    row["Tag"].ToString()
+                ));
+            }
+            return tagList;
         }
     }
 }
