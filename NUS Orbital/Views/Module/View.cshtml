@@ -26,7 +26,7 @@
 
 
 <body>
-    <div class="container mt-4">
+    <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-lg-3 col-md-4 text-center">
                 <h1 class="text-green text-uppercase">@Model.module.moduleCode</h1>
@@ -109,12 +109,7 @@
                     </div>
                 </div>
 
-                @foreach(var tag in post.tags)
-                {
-                    <div class="bg-danger">
-                        @tag.tag
-                    </div>
-                }
+                
 
                 @if (post.comments.Count() > 0)
                 {

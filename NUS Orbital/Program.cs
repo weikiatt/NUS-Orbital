@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using NUS_Orbital.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
