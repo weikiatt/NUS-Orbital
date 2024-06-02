@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/nus-orbital-tft/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsNUS_Orbital_676B37A65F",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/nus-orbital-tft/databases/NUS_Orbital",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:NUS_Orbital"
+    }
+  }
+}
