@@ -47,6 +47,7 @@
             <form class="col" method="post" action="~/Module/Post">
                 <input hidden value="@Model.module.moduleCode" name="moduleCode" />
                 <textarea class="w-100 form-control" placeholder="join the discussion..." id="postInput" onkeyup="togglePostButton()" name="description"/></textarea>
+
                 <div class="justify-content-end align-items-end d-flex">
                     <button type="reset" class="btn-cancel btn-pill hidden" id="cancelButton" onclick="hidePostButton()">Cancel</button>
                     <button type="submit" class="btn-green btn-pill mt-2 hidden" id="postButton">Post</button>
@@ -54,6 +55,7 @@
             </form>
 
         </div>
+
         <div class="mt-3">
             @foreach (var post in Model.posts)
             {
@@ -62,23 +64,29 @@
                         <img class="profile-picture wh-50" src="~/images/StudentPhotos/@post.student.photo" />
                     </div>
                     <div class="col">
-                        <div class="d-flex">
-                            <h5 class="text-green text-uppercase">@post.student.name </h5>
-                            <p class="text-secondary ml-2">@post.student.course Student</p>
-                            <p class="text-secondary ml-2">@post.calculateDate(post.postTime)</p>
+                        
+                        <div class="row">
+                            <p class="col-auto text-green text-uppercase"><strong>@post.student.name</strong></p>
+                            <p class="col-auto text-secondary">posted @post.calculateDate(post.postTime)</p>
                         </div>
-                        <p>@post.description</p>
+                        <div class="row">
+                            <p class="col-auto">@post.description</p>
+                        </div>
+                        
                         <div class="d-flex align-items-center">
                             @if (post.likedByCurrStud)
                             {
                                 <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
-                            } else
+                            }
+                            else
                             {
                                 <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
                             }
                             <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
-                            <button class="border-0 btn-cancel btn-pill ml-1" onclick="showCommentBox(@post.postId)">Reply</button>
+                            <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
                         </div>
+
+                        
                     </div>
                 </div>
                 <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
@@ -111,7 +119,7 @@
                 @if (post.comments.Count() > 0)
                 {
                     <div class="row">
-                        <button class="btn-view-reply btn-pill text-dark-green mt-1" style="margin-left:50px;">View Replies</button>
+                        <button class="btn-view-reply btn-pill text-dark-green mt-1 small" style="margin-left:50px;">View Replies</button>
                         <div class="container hidden mt-3">
                             <div class="row">
                                 <div class="col-fixed width-50"></div>
@@ -123,12 +131,13 @@
                                                 <img class="profile-picture wh-50" src="~/images/StudentPhotos/@comment.student.photo" />
                                             </div>
                                             <div class="col">
-                                                <div class="d-flex">
-                                                    <h5 class="text-green text-uppercase">@comment.student.name</h5>
-                                                    <p class="text-secondary ml-2">@comment.student.course Student</p>
-                                                    <p class="text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
+                                                <div class="row">
+                                                    <p class="col-auto text-green text-uppercase"><strong>@comment.student.name</strong></p>
+                                                    <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
                                                 </div>
-                                                <p>@comment.description</p>
+                                                <div class="row">
+                                                    <p class="col-auto">@comment.description</p>
+                                                </div>
                                                 <div class="d-flex align-items-center">
                                                     @if (@comment.likedByCurrStud)
                                                     {

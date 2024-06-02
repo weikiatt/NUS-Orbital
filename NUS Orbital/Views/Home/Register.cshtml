@@ -19,12 +19,15 @@
 </head>
 <body>
     <div class="bg-img">
-        <div class="container justify-content-center align-items-baseline d-flex flex-column">
-            <div class="mt-5 bg-green p-5">
-                <form method="post" asp-action="Register">
+        </br>
+        <div class="container">
+            <form class="row" method="post" action="Register">
+                <div class="col-auto bg-green p-5">
+
                     <div class="mb-3">
                         <label asp-for="email" class="form-label"></label>
                         <input asp-for="email" type="email" class="form-control" id="email">
+                        <p class="text-danger">@TempData["EmailValidation"]</p>
                         <span asp-validation-for="email" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
@@ -42,12 +45,15 @@
                         <input asp-for="dob" type="date" class="form-control" id="dob">
                         <span asp-validation-for="dob" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn-green w300-h40">Register</button>
-                </form>
-                <div class="row justify-content-center mt-3">
-                    <a href="~/Home/Login">Already have an account? Login here!</a>
+                    <div class="mb-3">
+                        <button type="submit" class="btn-green w-100">Register</button>
+                    </div>
+                    <div class="justify-content-center mt-3">
+                        <a href="~/Home/Login">Already have an account? Login here!</a>
+                    </div>
+                    
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </body>
