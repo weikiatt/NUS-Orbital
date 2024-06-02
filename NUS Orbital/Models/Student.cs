@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 
@@ -10,7 +11,7 @@ namespace NUS_Orbital.Models
 {
     public class Student
     {
-        //[Required]
+        [Key]
         public int studentId { get; set; }
 
         [Required(ErrorMessage = "Please enter your name")]
@@ -39,6 +40,7 @@ namespace NUS_Orbital.Models
         [Display(Name = "Description")]
         public String description { get; set; }
 
+        [NotMapped]
         public IFormFile? fileToUpload { get; set; }
 
         [Display(Name = "Photo")]

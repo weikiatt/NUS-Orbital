@@ -14,7 +14,7 @@ namespace NUS_Orbital.Models
         public override bool IsValid(object value)
         {
             string email = Convert.ToString(value);
-            if (studentContext.doesEmailExist(email))
+            if (studentContext.DoesEmailExist(email))
                 return false; // validation failed
             return true; // validation passed
         }
