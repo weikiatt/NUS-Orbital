@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using NUS_Orbital.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,6 +11,11 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromSeconds(600);
 }
     );
+
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
