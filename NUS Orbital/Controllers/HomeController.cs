@@ -45,7 +45,7 @@ namespace NUS_Orbital.Controllers
         {
             string email = formData["email"].ToString().ToLower();
             string password = formData["password"].ToString();
-            if (studentContext.doesLoginCredentialExist(email, password))
+            if (studentContext.DoesLoginCredentialExist(email, password))
             {
                 HttpContext.Session.SetString("authenticated", "true");
                 HttpContext.Session.SetString("Email", email);
@@ -60,7 +60,7 @@ namespace NUS_Orbital.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Student student)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !studentContext.DoesEmailExist(student.email))
             {
                 HttpContext.Session.SetString("authenticated", "true");
                 HttpContext.Session.SetString("Email", student.email);
@@ -68,6 +68,7 @@ namespace NUS_Orbital.Controllers
                 studentContext.Add(student);
                 return View("Index");
             }
+            TempData["EmailValidation"] = "Email already exists!";
             return View(student);
 
         }
