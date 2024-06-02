@@ -11,27 +11,45 @@ using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Relational;
 using System.Xml.Linq;
 
+
 namespace NUS_Orbital.DAL
 {
     public class StudentDAL
     {
         private IConfiguration Configuration { get; set; }
-        private MySqlConnection conn;
+        private SqlConnection conn;
 
         public StudentDAL()
         {
-            string connstring = "server=localhost;uid=root;pwd=password;database=nus_orbital";
-            this.conn = new MySqlConnection();
+
+            //string connstring = "Server=tcp:nus-orbital-tft.database.windows.net,1433;Initial Catalog=NUS_Orbital;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            //string connstring = "server=localhost;uid=root;pwd=password;database=nus_orbital";
+            string connstring = "Server=tcp:nus-orbital-tft.database.windows.net,1433;Initial Catalog=NUS_Orbital;Persist Security Info=False;User ID=nus-orbital-tft-admin;Password=P@ssword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            this.conn = new SqlConnection();
             this.conn.ConnectionString = connstring;
+
+            /*
+            //Locate the appsettings.json file
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json");
+            //Read ConnectionString from appsettings.json file
+            Configuration = builder.Build();
+            string strConn = Configuration.GetConnectionString(
+            "DefaultConnection");
+            //Instantiate a SqlConnection object with the
+            //Connection String read.
+            conn = new MySqlConnection(strConn);*/
         }
 
-        public bool doesLoginCredentialExist(string email, string password)
+        
+        public bool DoesLoginCredentialExist(string email, string password)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
             ("SELECT * FROM STUDENTS WHERE Email = @email AND Password = @password", conn);
             cmd.Parameters.AddWithValue("@email", email);
             cmd.Parameters.AddWithValue("@password", password);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "LoginInfo");
@@ -42,12 +60,12 @@ namespace NUS_Orbital.DAL
                 return false;
         }
 
-        public bool doesEmailExist(string email)
+        public bool DoesEmailExist(string email)
         {
-            MySqlCommand cmd = new MySqlCommand
-            ("SELECT * FROM STUDENTS WHERE Email=@selectedEmail", conn);
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM STUDENTS WHERE Email = @selectedEmail", conn);
             cmd.Parameters.AddWithValue("@selectedEmail", email);
-            MySqlDataAdapter daEmail = new MySqlDataAdapter(cmd);
+            SqlDataAdapter daEmail = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             daEmail.Fill(result, "EmailDetails");
@@ -60,7 +78,7 @@ namespace NUS_Orbital.DAL
 
         public void Add(Student student)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("INSERT INTO STUDENTS (Email, Name, Password) VALUES(@email, @name, @password)", conn);
 
             cmd.Parameters.AddWithValue("@email", student.email);
@@ -73,7 +91,7 @@ namespace NUS_Orbital.DAL
         }
         public void Add(String email, String name, String password)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("INSERT INTO STUDENTS (Email, Name, Password) VALUES(@email, @name, @password)", conn);
 
             cmd.Parameters.AddWithValue("@email", email);
@@ -87,11 +105,11 @@ namespace NUS_Orbital.DAL
 
         public string GetName(String email)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("SELECT * FROM STUDENTS WHERE Email=@email", conn);
 
             cmd.Parameters.AddWithValue("@email", email);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "StudentInfo");
@@ -101,10 +119,10 @@ namespace NUS_Orbital.DAL
 
         public Student GetStudentDetailsWithID(int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
             ("SELECT * FROM STUDENTS WHERE StudentID=@selectedStudent", conn);
             cmd.Parameters.AddWithValue("@selectedStudent", studentId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Student");
@@ -128,10 +146,10 @@ namespace NUS_Orbital.DAL
 
         public Student GetStudentDetailsWithEmail(string email)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
             ("SELECT * FROM STUDENTS WHERE Email=@selectedEmail", conn);
             cmd.Parameters.AddWithValue("@selectedEmail", email);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Student");
@@ -155,7 +173,7 @@ namespace NUS_Orbital.DAL
 
         public int UpdatePhoto(Student student)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                  ("UPDATE STUDENTS SET Photo=@photo WHERE StudentID = @selectedStudentID", conn);
 
             cmd.Parameters.AddWithValue("@photo", student.photo);
@@ -170,7 +188,7 @@ namespace NUS_Orbital.DAL
 
         public void UpdateStudent(Student updatedStudent)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                  ("UPDATE STUDENTS SET Name=@name, DOB=@dob, Course=@course, Description=@description" +
                  " WHERE StudentID = @selectedStudentID", conn);
 
@@ -181,7 +199,7 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@selectedStudentID", updatedStudent.studentId);
 
             conn.Open();
-            int count = cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
             conn.Close();
         }
     }

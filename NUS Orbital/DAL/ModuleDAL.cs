@@ -12,20 +12,33 @@ namespace NUS_Orbital.DAL
     public class ModuleDAL
     {
         private IConfiguration Configuration { get; set; }
-        private MySqlConnection conn;
+        private SqlConnection conn;
 
         public ModuleDAL()
         {
-            string connstring = "server=localhost;uid=root;pwd=password;database=NUS_Orbital";
-            this.conn = new MySqlConnection();
+            string connstring = "Server=tcp:nus-orbital-tft.database.windows.net,1433;Initial Catalog=NUS_Orbital;Persist Security Info=False;User ID=nus-orbital-tft-admin;Password=P@ssword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            this.conn = new SqlConnection();
             this.conn.ConnectionString = connstring;
+
+            /*
+            //Locate the appsettings.json file
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json");
+            //Read ConnectionString from appsettings.json file
+            Configuration = builder.Build();
+            string strConn = Configuration.GetConnectionString(
+            "DefaultConnection");
+            //Instantiate a SqlConnection object with the
+            //Connection String read.
+            conn = new MySqlConnection(strConn);*/
         }
 
         public List<Module> GetAllModules() 
         {
-            MySqlCommand cmd = new MySqlCommand(
+            SqlCommand cmd = new SqlCommand(
             "SELECT * FROM MODULES ORDER BY ModuleCode", conn);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "ModuleDetails");
@@ -45,10 +58,10 @@ namespace NUS_Orbital.DAL
 
         public bool DoesModuleExist(string moduleCode)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
             ("SELECT ModuleCode FROM MODULES WHERE ModuleCode=@selectedModule", conn);
             cmd.Parameters.AddWithValue("@selectedModule", moduleCode);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "ModuleCode");
@@ -60,10 +73,10 @@ namespace NUS_Orbital.DAL
 
         public Module GetModuleDetails(string moduleCode)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
             ("SELECT * FROM MODULES WHERE ModuleCode=@selectedModule", conn);
             cmd.Parameters.AddWithValue("@selectedModule", moduleCode);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "ModuleCode");
@@ -81,10 +94,10 @@ namespace NUS_Orbital.DAL
         {
             StudentDAL studentContext = new StudentDAL();
 
-            MySqlCommand cmd = new MySqlCommand(
+            SqlCommand cmd = new SqlCommand(
             "SELECT * FROM POSTS WHERE ModuleCode=@selectedModule ORDER BY PostTime DESC", conn);
             cmd.Parameters.AddWithValue("@selectedModule", module.moduleCode);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Posts");
@@ -110,10 +123,10 @@ namespace NUS_Orbital.DAL
 
         public int GetNumberOfPostUpvotes(int postId)
         {
-            MySqlCommand cmd = new MySqlCommand(
+            SqlCommand cmd = new SqlCommand(
             "SELECT * FROM POST_UPVOTES WHERE PostID=@postId", conn);
             cmd.Parameters.AddWithValue("@postId", postId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Posts");
@@ -125,8 +138,8 @@ namespace NUS_Orbital.DAL
         public void AddPost(String moduleCode, String description, int studentId)
         {
             StudentDAL studentContext = new StudentDAL();
-            MySqlCommand cmd = new MySqlCommand
-                ("INSERT INTO POSTS(ModuleCode, PostTime, `Description`, StudentID)" +
+            SqlCommand cmd = new SqlCommand
+                ("INSERT INTO POSTS(ModuleCode, PostTime, Description, StudentID)" +
                 "VALUES (@moduleCode, @postTime, @description, @studentID)", conn);
 
             cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
@@ -141,10 +154,10 @@ namespace NUS_Orbital.DAL
 
         public int GetNumberOfCommentUpvotes(int commentId)
         {
-            MySqlCommand cmd = new MySqlCommand(
+            SqlCommand cmd = new SqlCommand(
             "SELECT * FROM COMMENT_UPVOTES WHERE CommentID=@commentId", conn);
             cmd.Parameters.AddWithValue("@commentId", commentId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Comments");
@@ -156,10 +169,10 @@ namespace NUS_Orbital.DAL
         {
             StudentDAL studentContext = new StudentDAL();
 
-            MySqlCommand cmd = new MySqlCommand(
+            SqlCommand cmd = new SqlCommand(
             "SELECT * FROM COMMENTS WHERE PostID=@postId ORDER BY CommentTime", conn);
             cmd.Parameters.AddWithValue("@postId", postId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Comments");
@@ -185,8 +198,8 @@ namespace NUS_Orbital.DAL
         public void AddCommentToPost(String description, int postId, int studentId)
         {
             StudentDAL studentContext = new StudentDAL();
-            MySqlCommand cmd = new MySqlCommand
-                ("INSERT INTO COMMENTS(CommentTime, `Description`, PostID, StudentID)" +
+            SqlCommand cmd = new SqlCommand
+                ("INSERT INTO COMMENTS(CommentTime, Description, PostID, StudentID)" +
                 "VALUES (@commentTime, @description, @postId, @studentID)", conn);
 
             cmd.Parameters.AddWithValue("@commentTime", DateTime.Now);
@@ -201,7 +214,7 @@ namespace NUS_Orbital.DAL
 
         public void AddUpvoteToPost(int postId, int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("INSERT INTO POST_UPVOTES (PostID, StudentID)" +
                 "VALUES (@postId, @studentId)", conn);
 
@@ -214,7 +227,7 @@ namespace NUS_Orbital.DAL
 
         public void RemoveUpvoteFromPost(int postId, int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("DELETE FROM POST_UPVOTES WHERE PostID=@postId AND StudentID=@studentId", conn);
 
             cmd.Parameters.AddWithValue("@postId", postId);
@@ -226,11 +239,11 @@ namespace NUS_Orbital.DAL
 
         public Boolean DoesPostUpvoteExist(int postId, int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("SELECT * FROM POST_UPVOTES WHERE PostID=@postId AND StudentID=@studentId", conn);
             cmd.Parameters.AddWithValue("@postId", postId);
             cmd.Parameters.AddWithValue("@studentId", studentId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "UpvoteDetails");
@@ -242,7 +255,7 @@ namespace NUS_Orbital.DAL
 
         public void AddUpvoteToComment(int commentId, int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("INSERT INTO COMMENT_UPVOTES (CommentID, StudentID)" +
                 "VALUES (@commentId, @studentId)", conn);
 
@@ -255,7 +268,7 @@ namespace NUS_Orbital.DAL
 
         public void RemoveUpvoteFromComment(int commentId, int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("DELETE FROM COMMENT_UPVOTES WHERE CommentID=@commentId AND StudentID=@studentId", conn);
 
             cmd.Parameters.AddWithValue("@commentId", commentId);
@@ -267,11 +280,11 @@ namespace NUS_Orbital.DAL
 
         public Boolean DoesCommentUpvoteExist(int commentId, int studentId)
         {
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
                 ("SELECT * FROM COMMENT_UPVOTES WHERE CommentID=@commentId AND StudentID=@studentId", conn);
             cmd.Parameters.AddWithValue("@commentId", commentId);
             cmd.Parameters.AddWithValue("@studentId", studentId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "UpvoteDetails");
@@ -283,10 +296,10 @@ namespace NUS_Orbital.DAL
 
         public List<Tag> GetAllTagsForPost(int postId)
         {
-            MySqlCommand cmd = new MySqlCommand(
+            SqlCommand cmd = new SqlCommand(
             "SELECT PT.TagID, Tag FROM POST_TAGS PT INNER JOIN TAGS T ON PT.TagID = T.TagID WHERE PostID = @postId ", conn);
             cmd.Parameters.AddWithValue("@postId", postId);
-            MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
             da.Fill(result, "Tags");
