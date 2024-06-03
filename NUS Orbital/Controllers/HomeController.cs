@@ -60,7 +60,7 @@ namespace NUS_Orbital.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Student student)
         {
-            if (ModelState.IsValid && !studentContext.DoesEmailExist(student.email))
+            if (!studentContext.DoesEmailExist(student.email))
             {
                 HttpContext.Session.SetString("authenticated", "true");
                 HttpContext.Session.SetString("Email", student.email);
