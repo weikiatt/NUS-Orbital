@@ -152,7 +152,7 @@ function showCreatePost() {
     var createPostDiv = document.getElementById("createPost");
     if (createPostDiv.classList.contains('hidden')) {
         createPostDiv.classList.toggle('hidden');
-        showCreatePostButton.innerHTML = "Cancel";
+        showCreatePostButton.innerHTML = "- Hide Draft";
 
     } else {
         createPostDiv.classList.toggle('hidden');

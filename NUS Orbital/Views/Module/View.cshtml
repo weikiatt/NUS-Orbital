@@ -28,7 +28,6 @@
 
 
 <body>
-    @TempData["postid"]
     <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-lg-3 col-md-4 text-center">
@@ -41,52 +40,49 @@
         </div>
     </div>
 
-    <div class="container pt-3">
+    <div class="container mt-3 mb-3">
         <h5>Reviews and Discussions</h5>
-        <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
-        <div class="row mt-3 hidden" id="createPost">
-            <div class="col-fixed width-50"> 
-                <img class="profile-picture wh-50" src="~/images/StudentPhotos/@Model.student.photo" />
+            <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
+            <div class="row mt-3 hidden" id="createPost">
+                <div class="col-fixed width-50"> 
+                    <img class="profile-picture wh-50" src="~/images/StudentPhotos/@Model.student.photo" />
+                </div>
+                <form class="col" method="post" action="~/Module/Post">
+                
+                    <input hidden value="@Model.module.moduleCode" name="moduleCode" />
+                    <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required onkeyup="togglePostButton()" name="title" /></textarea>
+                    <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required onkeyup="togglePostButton()" name="description"/></textarea>
+                    <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
+                    <div id="tags" class="hidden">
+                        <div class="p-1 w-auto">
+                            <input type="checkbox" id="tag1" name="tag1" value="Need Notes">
+                            <label for="tag1">Need Notes</label>
+                        </div>
+                        <div class="p-1 w-auto">
+                            <input type="checkbox" id="tag2" name="tag2" value="Looking for Group">
+                            <label for="tag2">Looking for Group</label>
+                        </div>
+                        <div class="p-1 w-auto">
+                            <input type="checkbox" id="tag3" name="tag3" value="Question About Module">
+                            <label for="tag3">Question About Module</label>
+                        </div>
+                        <div class="p-1 w-auto">
+                            <input type="checkbox" id="tag4" name="tag4" value="Review">
+                            <label for="tag4">Review</label>
+                        </div>
+                        <div class="p-1 w-auto">
+                            <input type="checkbox" id="tag5" name="tag5" value="Free Notes">
+                            <label for="tag5">Free Notes</label>
+                        </div>
+                    </div>
+
+                    <div class="justify-content-end align-items-end d-flex">
+                        <button type="reset" class="btn-cancel btn-pill hidden" id="cancelButton" onclick="hidePostButton()">Cancel</button>
+                        <button type="submit" class="btn-green btn-pill mt-2 hidden" id="postButton">Post</button>
+                    </div>
+                </form>
+
             </div>
-            <form class="col" method="post" action="~/Module/Post">
-                
-                <input hidden value="@Model.module.moduleCode" name="moduleCode" />
-                <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" onkeyup="togglePostButton()" name="title" /></textarea>
-                <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" onkeyup="togglePostButton()" name="description"/></textarea>
-
-                
-
-                <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
-                <div id="tags" class="hidden">
-                    <div class="p-1 w-auto">
-                        <input type="checkbox" id="tag1" name="tag1" value="Need Notes">
-                        <label for="tag1">Need Notes</label>
-                    </div>
-                    <div class="p-1 w-auto">
-                        <input type="checkbox" id="tag2" name="tag2" value="Looking for Group">
-                        <label for="tag2">Looking for Group</label>
-                    </div>
-                    <div class="p-1 w-auto">
-                        <input type="checkbox" id="tag3" name="tag3" value="Question About Module">
-                        <label for="tag3">Question About Module</label>
-                    </div>
-                    <div class="p-1 w-auto">
-                        <input type="checkbox" id="tag4" name="tag4" value="Review">
-                        <label for="tag4">Review</label>
-                    </div>
-                    <div class="p-1 w-auto">
-                        <input type="checkbox" id="tag5" name="tag5" value="Free Notes">
-                        <label for="tag5">Free Notes</label>
-                    </div>
-                </div>
-
-                <div class="justify-content-end align-items-end d-flex">
-                    <button type="reset" class="btn-cancel btn-pill hidden" id="cancelButton" onclick="hidePostButton()">Cancel</button>
-                    <button type="submit" class="btn-green btn-pill mt-2 hidden" id="postButton">Post</button>
-                </div>
-            </form>
-
-        </div>
 
         <div class="mt-3">
             @if (Model.posts.Count > 0) {
@@ -209,26 +205,6 @@
         </div>
     </div>
     
-    <script>
-
-
-
-    </script>
-    <style>
-        input[type=checkbox] + label {
-            color: #ccc;
-            font-style: italic;
-            font-size: 12px;
-        }
-
-        input[type=checkbox]:checked + label {
-            color: #a6bfa5ff;
-            font-style: normal;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-    </style>
 
 </body>
 </html>
