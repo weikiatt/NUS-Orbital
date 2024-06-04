@@ -14,6 +14,8 @@ namespace NUS_Orbital.Models
         public Module module;
         public int postId;
         public DateTime postTime;
+        [Required(ErrorMessage = "Field is empty")]
+        public string title;
         [Required(ErrorMessage="Field is empty")]
         public string description;
         public int upvotes;
@@ -21,11 +23,12 @@ namespace NUS_Orbital.Models
         public List<Comment> comments;
         public bool likedByCurrStud;
         public List<Tag> tags;
-        public Post(Module module, int postId, DateTime postTime, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags)
+        public Post(Module module, int postId, DateTime postTime, string title, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags)
         {
             this.module = module;
             this.postId = postId;
             this.postTime = postTime;
+            this.title = title;
             this.description = description;
             this.upvotes = upvotes;
             this.student = student;

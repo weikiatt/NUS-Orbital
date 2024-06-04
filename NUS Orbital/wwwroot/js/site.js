@@ -16,14 +16,16 @@ document.querySelectorAll('.btn-view-reply').forEach(button => {
 
 function togglePostButton() {
     var postInput = document.getElementById("postInput");
+    var postTitleInput = document.getElementById("postTitleInput");
     var postButton = document.getElementById("postButton");
     var cancelButton = document.getElementById("cancelButton");
-    if (postInput.value != "") {
+
+    if (postInput.value != "" && postTitleInput != "") {
         if (postButton.classList.contains('hidden')) {
             postButton.classList.toggle('hidden');
             cancelButton.classList.toggle('hidden');
         }
-    } else {
+    } else if (postInput.value == "" || postTitleInput == ""){
         if (!postButton.classList.contains('hidden')) {
             postButton.classList.toggle('hidden');
             cancelButton.classList.toggle('hidden');
@@ -144,3 +146,17 @@ function showTags() {
         tagButton.innerHTML = "Add Tags";
     }
 }
+
+function showCreatePost() {
+    var showCreatePostButton = document.getElementById("showCreatePostButton");
+    var createPostDiv = document.getElementById("createPost");
+    if (createPostDiv.classList.contains('hidden')) {
+        createPostDiv.classList.toggle('hidden');
+        showCreatePostButton.innerHTML = "Cancel";
+
+    } else {
+        createPostDiv.classList.toggle('hidden');
+        showCreatePostButton.innerHTML = "+ Create a Post";
+    }
+}
+

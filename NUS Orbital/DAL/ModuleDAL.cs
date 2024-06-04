@@ -110,6 +110,7 @@ namespace NUS_Orbital.DAL
                     module,
                     Convert.ToInt32(row["PostID"]),
                     Convert.ToDateTime(row["PostTime"]),
+                    row["Title"].ToString(),
                     row["Description"].ToString(),
                     GetNumberOfPostUpvotes(Convert.ToInt32(row["PostID"])),
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
@@ -135,16 +136,17 @@ namespace NUS_Orbital.DAL
         }
 
 
-        public int AddPost(String moduleCode, String description, int studentId)
+        public int AddPost(String moduleCode, String title, String description, int studentId)
         {
             StudentDAL studentContext = new StudentDAL();
             SqlCommand cmd = new SqlCommand
-                ("INSERT INTO POSTS(ModuleCode, PostTime, Description, StudentID) " +
+                ("INSERT INTO POSTS(ModuleCode, PostTime, [Title], [Description], StudentID) " +
                 "OUTPUT INSERTED.PostID " +
-                "VALUES (@moduleCode, @postTime, @description, @studentID)", conn);
+                "VALUES (@moduleCode, @postTime, @title, @description, @studentID)", conn);
 
             cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
             cmd.Parameters.AddWithValue("@postTime", DateTime.Now);
+            cmd.Parameters.AddWithValue("@title", title);
             cmd.Parameters.AddWithValue("@description", description);
             cmd.Parameters.AddWithValue("@studentID", studentId);
             

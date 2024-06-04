@@ -52,12 +52,13 @@ namespace NUS_Orbital.Controllers
         
         public ActionResult Post(IFormCollection formData)
         {
+            string title = formData["title"].ToString();
             string description = formData["description"].ToString();
             string moduleCode = formData["moduleCode"].ToString();
             int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
             if (description != null)
             {
-                int postId = moduleContext.AddPost(moduleCode, description, studentId);
+                int postId = moduleContext.AddPost(moduleCode, title, description, studentId);
                 TempData["postid"] = postId;
                 
                 if (formData["tag1"].Count > 0)
