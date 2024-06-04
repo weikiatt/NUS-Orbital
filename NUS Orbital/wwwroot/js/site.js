@@ -20,12 +20,12 @@ function togglePostButton() {
     var postButton = document.getElementById("postButton");
     var cancelButton = document.getElementById("cancelButton");
 
-    if (postInput.value != "" && postTitleInput != "") {
+    if (postInput.value != "" && postTitleInput.value != "") {
         if (postButton.classList.contains('hidden')) {
             postButton.classList.toggle('hidden');
             cancelButton.classList.toggle('hidden');
         }
-    } else if (postInput.value == "" || postTitleInput == ""){
+    } else if (postInput.value == "" || postTitleInput.value == ""){
         if (!postButton.classList.contains('hidden')) {
             postButton.classList.toggle('hidden');
             cancelButton.classList.toggle('hidden');
