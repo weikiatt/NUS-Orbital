@@ -3,6 +3,7 @@ using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Hosting;
+using Org.BouncyCastle.Asn1;
 
 namespace NUS_Orbital.Controllers
 {
@@ -36,18 +37,46 @@ namespace NUS_Orbital.Controllers
             return RedirectToAction("Login", "Home");
         }
 
-        public ActionResult View(string ModuleCode)
+        public ActionResult View(string ModuleCode, List<int> filterTag)
         {
             if (HttpContext.Session.GetString("authenticated") == "true")
             {
                 Student currStud = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
                 Module module = moduleContext.GetModuleDetails(ModuleCode);
                 List<Post> postList = moduleContext.GetAllPosts(module, currStud);
+                //List<string> selectedTags = filterTag.Select(tagId => moduleContext.GetTagNameById(Convert.ToInt32(tagId))).ToList();
+                if (filterTag != null && filterTag.Count() > 0)
+                {
+                    List<Tag> tags = moduleContext.GetAllTags();
+                    foreach(Tag tag in tags) 
+                    {
+                        if (filterTag.Contains(tag.tagId))
+                        {
+                            tag.filtered = true;
+                        }
+                    }
+
+                    /*
+                    foreach(int tagId in filterTag)
+                    {
+                        tags.Add(moduleContext.GetTagById(tagId));
+                    }*/
+                    List<Post> finalPostList = new List<Post>();
+                    foreach (var post in postList) {
+                        if (post.TagExistInPost(filterTag))
+                        {
+                            finalPostList.Add(post);
+                        }
+                    }
+                    return View(new ModulePost(module, finalPostList, currStud, tags));
+                }
+
                 return View(new ModulePost(module, postList, currStud));
             }
             TempData["Login"] = "Login to view more info about modules";
             return RedirectToAction("Login", "Home");
         }
+
 
         
         public ActionResult Post(IFormCollection formData)

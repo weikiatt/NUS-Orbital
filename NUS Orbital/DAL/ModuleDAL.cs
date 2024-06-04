@@ -314,7 +314,8 @@ namespace NUS_Orbital.DAL
                 tagList.Add(new Tag
                 (
                     Convert.ToInt32(row["TagID"]),
-                    row["Tag"].ToString()
+                    row["Tag"].ToString(),
+                    false
                 ));
             }
             return tagList;
@@ -331,6 +332,52 @@ namespace NUS_Orbital.DAL
             conn.Open();
             cmd.ExecuteScalar();
             conn.Close();
+        }
+
+        public List<Tag> GetAllTags()
+        {
+            SqlCommand cmd = new SqlCommand(
+            "SELECT * FROM TAGS", conn);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Tags");
+            conn.Close();
+            List<Tag> tagList = new List<Tag>();
+            foreach (DataRow row in result.Tables["Tags"].Rows)
+            {
+                tagList.Add(new Tag
+                (
+                    Convert.ToInt32(row["TagID"]),
+                    row["Tag"].ToString(),
+                    false
+                ));
+            }
+            return tagList;
+        }
+
+        public Tag GetTagById(int tagId)
+        {
+
+            SqlCommand cmd = new SqlCommand(
+            "SELECT * FROM TAGS WHERE TagID = @tagId", conn);
+            cmd.Parameters.AddWithValue("@tagId", tagId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Tags");
+            conn.Close();
+            List<Tag> tagList = new List<Tag>();
+            foreach (DataRow row in result.Tables["Tags"].Rows)
+            {
+                tagList.Add(new Tag
+                (
+                    Convert.ToInt32(row["TagID"]),
+                    row["Tag"].ToString(),
+                    true
+                ));
+            }
+            return tagList[0];
         }
     }
 }

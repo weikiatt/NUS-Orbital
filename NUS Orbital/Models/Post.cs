@@ -37,6 +37,20 @@ namespace NUS_Orbital.Models
             this.tags = tags;
         }
         
+        public bool TagExistInPost(List<int> filterTagIds)
+        {
+            foreach (Tag t in tags)
+            {
+                foreach(int tagId in filterTagIds)
+                {
+                    if (t.tagId == tagId)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public string calculateDate(DateTime postDate)
         {

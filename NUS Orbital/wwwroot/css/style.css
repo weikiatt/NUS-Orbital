@@ -176,12 +176,11 @@
 input[type=checkbox] + label {
     color: #ccc;
     font-style: italic;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 input[type=checkbox]:checked + label {
-    color: #a6bfa5ff;
+    color: black;
     font-style: normal;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 14px;
 }
