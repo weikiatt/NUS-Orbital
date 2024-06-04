@@ -135,11 +135,12 @@ namespace NUS_Orbital.DAL
         }
 
 
-        public void AddPost(String moduleCode, String description, int studentId)
+        public int AddPost(String moduleCode, String description, int studentId)
         {
             StudentDAL studentContext = new StudentDAL();
             SqlCommand cmd = new SqlCommand
-                ("INSERT INTO POSTS(ModuleCode, PostTime, Description, StudentID)" +
+                ("INSERT INTO POSTS(ModuleCode, PostTime, Description, StudentID) " +
+                "OUTPUT INSERTED.PostID " +
                 "VALUES (@moduleCode, @postTime, @description, @studentID)", conn);
 
             cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
@@ -148,8 +149,9 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@studentID", studentId);
             
             conn.Open();
-            cmd.ExecuteScalar();
+            int postId = (int)cmd.ExecuteScalar();
             conn.Close();
+            return postId;
         }
 
         public int GetNumberOfCommentUpvotes(int commentId)
@@ -314,6 +316,19 @@ namespace NUS_Orbital.DAL
                 ));
             }
             return tagList;
+        }
+
+        public void AddPostTag(int postId, int tagId)
+        {
+            SqlCommand cmd = new SqlCommand
+                ("INSERT INTO POST_TAGS (PostID, TagID)" +
+                "VALUES (@postId, @tagId)", conn);
+
+            cmd.Parameters.AddWithValue("@postId", postId);
+            cmd.Parameters.AddWithValue("@tagId", tagId);
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
         }
     }
 }

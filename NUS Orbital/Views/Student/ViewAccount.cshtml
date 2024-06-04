@@ -1,0 +1,63 @@
+﻿@model NUS_Orbital.Models.Student
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/NUS_Orbital.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/style.css">
+
+    <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="mt-3 bg-green p-5">
+            <div class="row mb-3">
+                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                    <img class="profile-picture wh-150" id="profile-pic" src="~/images/StudentPhotos/@Model.photo" alt="Profile Picture">
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        <label asp-for="name" class="form-label"></label>
+                        <input asp-for="name" class="form-control" id="name" disabled>
+                    </div>
+                    <div>
+                        <label asp-for="email" class="form-label"></label>
+                        <input asp-for="email" type="email" class="form-control" id="email" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label asp-for="dob" class="form-label"></label>
+                    <input asp-for="dob" type="date" class="form-control" id="dob" disabled>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label asp-for="course" class="form-label"></label>
+                    <input asp-for="course" class="form-control" id="course" disabled>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label asp-for="description" class="form-label"></label>
+                    <textarea asp-for="description" class="form-control" id="description" disabled></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
+

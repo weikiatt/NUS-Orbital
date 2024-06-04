@@ -132,3 +132,15 @@ function upvoteComment(commentId) {
         }
     });
 }
+
+function showTags() {
+    var tagButton = document.getElementById("tagButton");
+    if (tags.classList.contains('hidden')) {
+        tags.classList.toggle('hidden');
+        tagButton.innerHTML = "Hide Tags";
+
+    } else {
+        tags.classList.toggle('hidden');
+        tagButton.innerHTML = "Add Tags";
+    }
+}

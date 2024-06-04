@@ -28,6 +28,7 @@
 
 
 <body>
+    @TempData["postid"]
     <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-lg-3 col-md-4 text-center">
@@ -54,6 +55,31 @@
                     <button type="reset" class="btn-cancel btn-pill hidden" id="cancelButton" onclick="hidePostButton()">Cancel</button>
                     <button type="submit" class="btn-green btn-pill mt-2 hidden" id="postButton">Post</button>
                 </div>
+
+                <button id="tagButton" type="button" onclick="showTags()">Add Tags</button>
+                <div id="tags" class="hidden">
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" hidden id="tag1" name="tag1" value="Need Notes">
+                        <label for="tag1">Need Notes</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" hidden id="tag2" name="tag2" value="Looking for Group">
+                        <label for="tag2">Looking for Group</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" hidden id="tag3" name="tag3" value="Question About Module">
+                        <label for="tag3">Question About Module</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" hidden id="tag4" name="tag4" value="Review">
+                        <label for="tag4">Review</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" hidden id="tag5" name="tag5" value="Free Notes">
+                        <label for="tag5">Free Notes</label>
+                    </div>
+                </div>
+                
             </form>
 
         </div>
@@ -66,15 +92,27 @@
                         <img class="profile-picture wh-50" src="~/images/StudentPhotos/@post.student.photo" />
                     </div>
                     <div class="col">
-                        
                         <div class="row">
-                            <p class="col-auto text-green text-uppercase"><strong>@post.student.name</strong></p>
+                            <a href="~/Student/ViewAccount?email=@post.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.name</strong></a>
+
+                            
                             <p class="col-auto text-secondary">posted @post.calculateDate(post.postTime)</p>
                         </div>
                         <div class="row">
                             <p class="col-auto">@post.description</p>
                         </div>
+
+                        <div class="d-flex ">
+                            @foreach (var tag in post.tags)
+                            {
+                                <div class="tagDisplay">
+                                    @tag.tag
+                                </div>
+                            }
+                        </div>
+
                         
+
                         <div class="d-flex align-items-center">
                             @if (post.likedByCurrStud)
                             {
@@ -159,10 +197,21 @@
     </div>
     
     <script>
-        
-        
+
+
 
     </script>
+    <style>
+        input[type=checkbox] + label {
+            color: #ccc;
+            font-style: italic;
+        }
+
+        input[type=checkbox]:checked + label {
+            color: #f00;
+            font-style: normal;
+        }
+    </style>
 
 </body>
 </html>

@@ -57,7 +57,30 @@ namespace NUS_Orbital.Controllers
             int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
             if (description != null)
             {
-                moduleContext.AddPost(moduleCode, description, studentId);
+                int postId = moduleContext.AddPost(moduleCode, description, studentId);
+                TempData["postid"] = postId;
+                
+                if (formData["tag1"].Count > 0)
+                {
+                    moduleContext.AddPostTag(postId, 1);
+                }
+                if (formData["tag2"].Count > 0)
+                {
+                    moduleContext.AddPostTag(postId, 2);
+                }
+                if (formData["tag3"].Count > 0)
+                {
+                    moduleContext.AddPostTag(postId, 3);
+                }
+                if (formData["tag4"].Count > 0)
+                {
+                    moduleContext.AddPostTag(postId, 4);
+                }
+                if (formData["tag5"].Count > 0)
+                {
+                    moduleContext.AddPostTag(postId, 5);
+                }
+
             }
             return RedirectToAction("View", "Module", new {ModuleCode = moduleCode});
         }

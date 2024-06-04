@@ -76,5 +76,31 @@ namespace NUS_Orbital.Controllers
             }
             return View(student);
         }
+
+        /*
+        [HttpPost]
+        public ActionResult View(IFormCollection formData)
+        {
+            if (HttpContext.Session.GetString("authenticated") == "true")
+            {
+                Student student = studentContext.GetStudentDetailsWithEmail(formData["email"].ToString().ToLower());
+                TempData["email"] = formData["email"].ToString().ToLower();
+                return View(student);
+            }
+            TempData["Login"] = "Login to view other users account info";
+            return RedirectToAction("Login", "Home");
+        }*/
+
+        [HttpGet]
+        public ActionResult ViewAccount(string email)
+        {
+            if (HttpContext.Session.GetString("authenticated") == "true")
+            {
+                Student student = studentContext.GetStudentDetailsWithEmail(email);
+                return View(student);
+            }
+            TempData["Login"] = "Login to view other users account info";
+            return RedirectToAction("Login", "Home");
+        }
     }
 }
