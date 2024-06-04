@@ -105,19 +105,23 @@
                                     <p class="col-auto text-secondary">posted @post.calculateDate(post.postTime)</p>
                                 </div>
                                 <div class="row">
-                                    <h5 class="col-auto">@post.title</h5>
+                                    <h5 class="col">@post.title</h5>
                                 </div>
                                 <div class="row">
-                                    <p class="col-auto">@post.description</p>
+                                    <div class="col text-justify">
+                                        <p>@post.description</p>
+                                    </div>
+                                    
                                 </div>
 
-                                <div class="d-flex ">
-                                    @foreach (var tag in post.tags)
-                                    {
-                                        <div class="tagDisplay">
-                                            @tag.tag
-                                        </div>
-                                    }
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        @foreach (var tag in post.tags)
+                                            <div class="col-auto">
+                                                <p class="tagDisplay h-auto w-auto">@tag.tag</p>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
 
                                 <div class="d-flex align-items-center">
@@ -178,7 +182,9 @@
                                                             <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
                                                         </div>
                                                         <div class="row">
-                                                            <p class="col-auto">@comment.description</p>
+                                                            <div class="col text-justify">
+                                                                <p>@comment.description</p>
+                                                            </div>
                                                         </div>
                                                         <div class="d-flex align-items-center">
                                                             @if (@comment.likedByCurrStud)
