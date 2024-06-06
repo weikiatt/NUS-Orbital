@@ -4,6 +4,7 @@ using NUS_Orbital.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Hosting;
 using Org.BouncyCastle.Asn1;
+using Mysqlx.Crud;
 
 namespace NUS_Orbital.Controllers
 {
@@ -167,6 +168,14 @@ namespace NUS_Orbital.Controllers
             {
                 moduleContext.AddUpvoteToComment(commentId, studentId);
             }
+            return Json(new { success = true });
+        }
+
+
+        [HttpPost]
+        public JsonResult EditPost(int postId, string postTitle, string postDescription)
+        {
+            moduleContext.UpdatePost(postId, postTitle, postDescription);
             return Json(new { success = true });
         }
     }

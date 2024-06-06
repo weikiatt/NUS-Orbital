@@ -379,5 +379,18 @@ namespace NUS_Orbital.DAL
             }
             return tagList[0];
         }
+
+
+        public void UpdatePost(int postId, string postTitle, string postDescription)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("UPDATE POSTS SET [Title]=@postTitle, [Description]=@postDescription WHERE PostID=@postId", conn);
+            cmd.Parameters.AddWithValue("@postTitle", postTitle);
+            cmd.Parameters.AddWithValue("@postDescription", postDescription);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
     }
 }

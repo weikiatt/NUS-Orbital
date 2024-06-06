@@ -51,8 +51,8 @@
             <form class="col" method="post" action="~/Module/Post">
                 
                 <input hidden value="@Model.module.moduleCode" name="moduleCode" />
-                <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required onkeyup="togglePostButton()" name="title" /></textarea>
-                <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required onkeyup="togglePostButton()" name="description"/></textarea>
+                <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required onkeyup="togglePostButton()" name="title"></textarea>
+                <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required onkeyup="togglePostButton()" name="description"></textarea>
                 <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
                 <div id="tags" class="hidden">
                     <div class="p-1 w-auto">
@@ -100,19 +100,25 @@
                             <div class="col">
                                 <div class="row">
                                     <a href="~/Student/ViewAccount?email=@post.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.name</strong></a>
-
-
                                     <p class="col-auto text-secondary">posted @post.calculateDate(post.postTime)</p>
+                                    @if (Model.student.email == post.student.email)
+                                    {
+                                        <div class="col-auto" id="edit(@post.postId)"><button onclick="editPost(@post.postId)">Edit</button></div>
+                                        <div class="col-auto hidden" id="cancel(@post.postId)"><button onclick="cancelEdit(@post.postId, '@post.title', '@post.description')">Cancel</button></div>
+                                        <div class="col-auto hidden" id="saveChanges(@post.postId)"><button onclick="updatePost(@post.postId)">Save Changes</button></div>
+                                    }
                                 </div>
-                                <div class="row">
-                                    <h5 class="col">@post.title</h5>
-                                </div>
-                                <div class="row">
-                                    <div class="col text-justify">
-                                        <p>@post.description</p>
+                                <form>
+                                    <div class="row">
+                                        <h5 class="col" id="postTitle(@post.postId)">@post.title</h5>
                                     </div>
-                                    
-                                </div>
+                                    <div class="row">
+                                        <p class="col text-justify" id="postDescription(@post.postId)">@post.description</p>
+                                    </div>
+                                </form>
+                                
+                                
+                                
 
                                 <div class="container-fluid">
                                     <div class="row">
@@ -213,7 +219,7 @@
                 }
                 </div>
                 <form action="~/Module/View" class="col-auto">
-                    <div class="row">
+                    <div class="row mb-2">
                         <button class="btn-green btn-pill">Filter by Tag</button>
                     </div>
                     <input hidden value="@Model.module.moduleCode" name="moduleCode" />
@@ -229,6 +235,111 @@
         </div>
     </div>
     
+    <script>
+        function togglePostEditButton(postId) {
+
+            var editButton = document.getElementById('edit(' + postId + ")");
+            editButton.classList.toggle("hidden");
+
+            var cancelButton = document.getElementById('cancel(' + postId + ")");
+            cancelButton.classList.toggle("hidden");
+
+            var saveButton = document.getElementById('saveChanges(' + postId + ")");
+            saveButton.classList.toggle("hidden");
+        }
+
+
+        function editPost(postId) {
+            var title = document.getElementById('postTitle(' + postId + ")");
+            var titleInput = document.createElement('textarea');
+            
+            titleInput.type = 'text';
+            titleInput.value = title.innerText;
+            title.parentNode.replaceChild(titleInput, title);
+            titleInput.classList.toggle("w-100");
+            titleInput.classList.toggle("form-control");
+            titleInput.classList.toggle("col");
+            titleInput.id = "postTitle(" + postId + ")";
+
+            var description = document.getElementById('postDescription(' + postId + ")");
+            var descriptionInput = document.createElement('textarea');
+            descriptionInput.type = 'text';
+            descriptionInput.value = description.innerText;
+            description.parentNode.replaceChild(descriptionInput, description);
+            descriptionInput.classList.toggle("w-100");
+            descriptionInput.classList.toggle("form-control");
+            descriptionInput.classList.toggle("col");
+            descriptionInput.id = "postDescription(" + postId + ")";
+
+            togglePostEditButton(postId);
+
+        }
+
+        function cancelEdit(postId, postTitle, postDescription) {
+            var titleInput = document.getElementById('postTitle(' + postId + ")");
+            var title = document.createElement('h5');
+
+            title.type = 'text';
+            title.innerText = postTitle; //titleInput.value;
+            titleInput.parentNode.replaceChild(title, titleInput);
+            title.classList.toggle("col");
+            title.id = "postTitle(" + postId + ")";
+
+
+            var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+            var description = document.createElement('p');
+
+            description.type = 'text';
+            description.innerText = postDescription; //titleInput.value;
+            descriptionInput.parentNode.replaceChild(description, descriptionInput);
+            description.classList.toggle("col");
+            description.id = "postDescription(" + postId + ")";
+
+
+            togglePostEditButton(postId);
+            
+        }
+
+        function updatePost(postId) {
+            var titleInput = document.getElementById('postTitle(' + postId + ")");
+            var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+
+         
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("EditPost", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId,
+                    postTitle: titleInput.value,
+                    postDescription: descriptionInput.value
+                },
+                success: function (response) {
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+
+            togglePostEditButton(postId);
+
+            var title = document.createElement('h5');
+
+            title.type = 'text';
+            title.innerText = titleInput.value;
+            titleInput.parentNode.replaceChild(title, titleInput);
+            title.classList.toggle("col");
+            title.id = "postTitle(" + postId + ")";
+
+            var description = document.createElement('p');
+
+            description.type = 'text';
+            description.innerText = descriptionInput.value;
+            descriptionInput.parentNode.replaceChild(description, descriptionInput);
+            description.classList.toggle("col");
+            description.id = "postDescription(" + postId + ")";
+        }
+    </script>
+
 
 </body>
 </html>
