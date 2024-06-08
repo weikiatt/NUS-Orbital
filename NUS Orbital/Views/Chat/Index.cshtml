@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model NUS_Orbital.Models.ChatList
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,32 +17,58 @@
             integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script defer src="~/js/signalr.js"></script>
+    <script defer src="~/js/chat.js"></script>
+
 </head>
 
 <body>
+    <button onclick="test()">test</button>
+    @TempData["TEST"]
     <div class="container">
-        <div class="row p-1">
-            <div class="col-1">User</div>
-            <div class="col-5"><input type="text" id="userInput"/></div>
-        </div>
-        <div class="row p-1">
-            <div class="col-1">Message</div>
-            <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6 text-end">
-                <input type="button" id="sendButton" value="Send Message"/>
+        <div class="row">
+            <div class="col-auto">
+                <p>People you have chat with</p>
+                @foreach(var stud in Model.students)
+                {
+                    <button onclick="showChat(@Model.currStudent.studentId,@stud.otherStudent.studentId)">@stud.otherStudent.name</button>
+                }
             </div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6"><hr /></div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6">
-                <ul id="messagesList"></ul>
+            <div class="col">
+                @foreach (var stud in Model.students)
+                {
+                    <div id="chat(@Model.currStudent.studentId,@stud.otherStudent.studentId)" class="bg-danger p-3 mt-3 hidden">
+                        <div id="chatContent(@Model.currStudent.studentId,@stud.otherStudent.studentId)">
+                            @foreach (var txt in stud.chatLog)
+                            {
+                                @if (Model.currStudent.studentId == txt.sender.studentId)
+                                {
+                                    <div class="justify-content-end d-flex w-auto">
+                                        <div class="mt-1 bg-green border-2 p-2">
+                                            <p>@txt.description</p>
+                                            <p><small>@txt.timeSent</small></p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="justify-content-start d-flex w-auto">
+                                        <div class="mt-1 bg-light border-2 p-2">
+                                            <p>@txt.description</p>
+                                            <p><small>@txt.timeSent</small></p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="d-flex">
+                            <input id="inputMsg(@stud.otherStudent.studentId)" class="mt-2 w-100 form-control" placeholder="message..." />
+                            <button id="sendButton(@stud.otherStudent.studentId)" onclick="sendMessage(@Model.currStudent.studentId, @stud.otherStudent.studentId)">Send</button>
+                        </div>
+                    </div>
+
+                }
             </div>
         </div>
     </div>
 </body>
-<script src="~/js/signalr.js"></script>
-<script src="~/js/chat.js"></script>

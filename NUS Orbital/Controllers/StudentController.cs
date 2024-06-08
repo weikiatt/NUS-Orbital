@@ -96,8 +96,9 @@ namespace NUS_Orbital.Controllers
         {
             if (HttpContext.Session.GetString("authenticated") == "true")
             {
-                Student student = studentContext.GetStudentDetailsWithEmail(email);
-                return View(student);
+                Student currStud = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
+                Student studToView = studentContext.GetStudentDetailsWithEmail(email);
+                return View(new StudentView(currStud, studToView));
             }
             TempData["Login"] = "Login to view other users account info";
             return RedirectToAction("Login", "Home");

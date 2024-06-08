@@ -20,19 +20,6 @@ namespace NUS_Orbital.DAL
             string connstring = "Server=tcp:nus-orbital-tft.database.windows.net,1433;Initial Catalog=NUS_Orbital;Persist Security Info=False;User ID=nus-orbital-tft-admin;Password=P@ssword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             this.conn = new SqlConnection();
             this.conn.ConnectionString = connstring;
-
-            /*
-            //Locate the appsettings.json file
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json");
-            //Read ConnectionString from appsettings.json file
-            Configuration = builder.Build();
-            string strConn = Configuration.GetConnectionString(
-            "DefaultConnection");
-            //Instantiate a SqlConnection object with the
-            //Connection String read.
-            conn = new MySqlConnection(strConn);*/
         }
 
         public List<Module> GetAllModules() 

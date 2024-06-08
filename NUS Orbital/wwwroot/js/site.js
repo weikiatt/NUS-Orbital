@@ -91,7 +91,6 @@ function upvotePost(postId) {
         postUpvote.classList.toggle('bg-green');
         postUpvote.classList.toggle('bg-transparent');
     }
-
     $.ajax({
         type: 'POST',
         url: '@Url.Action("UpvotePost", "Module")',
@@ -100,8 +99,10 @@ function upvotePost(postId) {
             postId: postId
         },
         success: function (response) {
+            alert('succ');
         },
         error: function (xhr, status, error) {
+            alert('saaaaaa');
         }
     });
 }
@@ -158,5 +159,295 @@ function showCreatePost() {
         createPostDiv.classList.toggle('hidden');
         showCreatePostButton.innerHTML = "+ Create a Post";
     }
+}
+
+
+function toggleCommentEditButton(commentId) {
+    var editButton = document.getElementById('editComment(' + commentId + ")");
+    editButton.classList.toggle("hidden");
+}
+
+function toggleCancelEditCommentButton(commentId) {
+    var cancelButton = document.getElementById('cancelEditComment(' + commentId + ")");
+    cancelButton.classList.toggle("hidden");
+}
+
+function toggleDeleteCommentButton(commentId) {
+    var deleteButton = document.getElementById('deleteComment(' + commentId + ")");
+    deleteButton.classList.toggle("hidden");
+}
+
+function toggleSaveCommentChangesButton(commentId) {
+    var saveButton = document.getElementById('saveChangesComment(' + commentId + ")");
+    saveButton.classList.toggle("hidden");
+}
+
+function editComment(commentId) {
+    var desc = document.getElementById('commentDescription(' + commentId + ")");
+    var descInput = document.createElement('textarea');
+
+    descInput.type = 'text';
+    descInput.value = desc.innerText;
+    desc.parentNode.replaceChild(descInput, desc);
+    descInput.classList.toggle("w-100");
+    descInput.classList.toggle("form-control");
+    descInput.classList.toggle("col");
+    descInput.id = "commentDescription(" + commentId + ")";
+
+    toggleCommentEditButton(commentId);
+    toggleCancelEditCommentButton(commentId);
+    toggleDeleteCommentButton(commentId);
+    toggleSaveCommentChangesButton(commentId);
+}
+
+function deleteComment(commentId) {
+    toggleCancelEditCommentButton(commentId);
+    toggleDeleteCommentButton(commentId);
+    toggleSaveCommentChangesButton(commentId);
+
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("DeleteComment", "Module")',
+        dataType: 'json',
+        data: {
+            commentId: commentId
+        },
+        success: function (response) {
+            var content = document.getElementById("deleteCommentContent(" + commentId + ")");
+            content.innerHTML = `
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-danger italic">Comment has been deleted...</p>
+                            </div>
+                        </div>
+                    `;
+        },
+        error: function (xhr, status, error) {
+        }
+    });
+}
+
+
+function cancelEditComment(commentId) {
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetCommentDetails", "Module")',
+        dataType: 'json',
+        data: {
+            commentId: commentId,
+        },
+        success: function (response) {
+            var descriptionInput = document.getElementById('commentDescription(' + commentId + ")");
+            var description = document.createElement('p');
+
+            description.type = 'text';
+            description.innerText = response.originalDescription;
+            descriptionInput.parentNode.replaceChild(description, descriptionInput);
+            description.id = "commentDescription(" + commentId + ")";
+
+            toggleCommentEditButton(commentId);
+            toggleCancelEditCommentButton(commentId);
+            toggleDeleteCommentButton(commentId);
+            toggleSaveCommentChangesButton(commentId);
+        },
+        error: function (xhr, status, error) {
+        }
+    });
+}
+
+function updateComment(commentId) {
+    var descriptionInput = document.getElementById('commentDescription(' + commentId + ")");
+
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("EditComment", "Module")',
+        dataType: 'json',
+        data: {
+            commentId: commentId,
+            commentDescription: descriptionInput.value
+        },
+        success: function (response) {
+            toggleCommentEditButton(commentId);
+            toggleCancelEditCommentButton(commentId);
+            toggleDeleteCommentButton(commentId);
+            toggleSaveCommentChangesButton(commentId);
+
+            var description = document.createElement('p');
+
+            description.type = 'text';
+            description.innerText = descriptionInput.value;
+            descriptionInput.parentNode.replaceChild(description, descriptionInput);
+            description.id = "commentDescription(" + commentId + ")";
+
+            var commentEdited = document.getElementById('commentEdited(' + commentId + ")");
+            if (commentEdited.classList.contains('hidden')) {
+                commentEdited.classList.toggle('hidden');
+            }
+        },
+        error: function (xhr, status, error) {
+            alert('Do not leave inputs blank');
+        }
+    });
+}
+
+
+
+
+
+
+function togglePostEditButton(postId) {
+    var editButton = document.getElementById('editPost(' + postId + ")");
+    editButton.classList.toggle("hidden");
+}
+
+function togglePostCancelEditButton(postId) {
+    var cancelButton = document.getElementById('cancelEditPost(' + postId + ")");
+    cancelButton.classList.toggle("hidden");
+}
+
+function toggleDeletePostButton(postId) {
+    var deleteButton = document.getElementById('deletePost(' + postId + ")");
+    deleteButton.classList.toggle("hidden");
+}
+
+function toggleSavePostChangesButton(postId) {
+    var saveButton = document.getElementById('saveChangesPost(' + postId + ")");
+    saveButton.classList.toggle("hidden");
+}
+
+function editPost(postId) {
+    var title = document.getElementById('postTitle(' + postId + ")");
+    var titleInput = document.createElement('textarea');
+
+    titleInput.type = 'text';
+    titleInput.value = title.innerText;
+    title.parentNode.replaceChild(titleInput, title);
+    titleInput.classList.toggle("w-100");
+    titleInput.classList.toggle("form-control");
+    titleInput.id = "postTitle(" + postId + ")";
+
+    var description = document.getElementById('postDescription(' + postId + ")");
+    var descriptionInput = document.createElement('textarea');
+    descriptionInput.type = 'text';
+    descriptionInput.value = description.innerText;
+    description.parentNode.replaceChild(descriptionInput, description);
+    descriptionInput.classList.toggle("w-100");
+    descriptionInput.classList.toggle("form-control");
+    descriptionInput.id = "postDescription(" + postId + ")";
+
+    togglePostEditButton(postId);
+    togglePostCancelEditButton(postId);
+    toggleSavePostChangesButton(postId);
+    toggleDeletePostButton(postId);
+
+}
+
+function cancelEdit(postId) {
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetPostDetails", "Module")',
+        dataType: 'json',
+        data: {
+            postId: postId,
+        },
+        success: function (response) {
+            var titleInput = document.getElementById('postTitle(' + postId + ")");
+            var title = document.createElement('h5');
+
+            title.type = 'text';
+            title.innerText = response.originalTitle;
+            titleInput.parentNode.replaceChild(title, titleInput);
+            title.id = "postTitle(" + postId + ")";
+
+            var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+            var description = document.createElement('p');
+
+            description.type = 'text';
+            description.innerText = response.originalDescription;
+            descriptionInput.parentNode.replaceChild(description, descriptionInput);
+            description.id = "postDescription(" + postId + ")";
+
+            togglePostEditButton(postId);
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
+            toggleDeletePostButton(postId);
+        },
+        error: function (xhr, status, error) {
+        }
+    });
+}
+
+function deletePost(postId) {
+    togglePostCancelEditButton(postId);
+    toggleSavePostChangesButton(postId);
+    toggleDeletePostButton(postId);
+
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("DeletePost", "Module")',
+        dataType: 'json',
+        data: {
+            postId: postId
+        },
+        success: function (response) {
+            var content = document.getElementById("deletePostContent(" + postId + ")");
+            content.innerHTML = `
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-danger italic">Post has been deleted...</p>
+                            </div>
+                        </div>
+                    `;
+        },
+        error: function (xhr, status, error) {
+        }
+    });
+}
+
+function updatePost(postId, postTitle, postDescription) {
+    var titleInput = document.getElementById('postTitle(' + postId + ")");
+    var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("EditPost", "Module")',
+        dataType: 'json',
+        data: {
+            postId: postId,
+            postTitle: titleInput.value,
+            postDescription: descriptionInput.value
+        },
+        success: function (response) {
+            togglePostEditButton(postId);
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
+            toggleDeletePostButton(postId);
+
+            var title = document.createElement('h5');
+
+            title.type = 'text';
+            title.innerText = titleInput.value;
+            titleInput.parentNode.replaceChild(title, titleInput);
+            title.id = "postTitle(" + postId + ")";
+
+            var description = document.createElement('p');
+
+            description.type = 'text';
+            description.innerText = descriptionInput.value;
+            descriptionInput.parentNode.replaceChild(description, descriptionInput);
+            description.id = "postDescription(" + postId + ")";
+
+            var postEdited = document.getElementById('postEdited(' + postId + ")");
+            if (postEdited.classList.contains('hidden')) {
+                postEdited.classList.toggle('hidden');
+            }
+        },
+        error: function (xhr, status, error) {
+            alert('Do not leave inputs blank');
+        }
+    });
+
+
+
 }
 

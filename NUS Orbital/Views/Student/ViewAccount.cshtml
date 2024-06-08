@@ -1,4 +1,4 @@
-﻿@model NUS_Orbital.Models.Student
+﻿@model NUS_Orbital.Models.StudentView
 
 
 <!DOCTYPE html>
@@ -21,38 +21,44 @@
 </head>
 <body>
     <div class="container">
+        @if (@Model.currStud.email != @Model.studToView.email) 
+        {
+            <a href="~/Chat/Index">
+                <button>Chat with @Model.studToView.name</button>
+            </a>
+        }
         <div class="mt-3 bg-green p-5">
             <div class="row mb-3">
                 <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                    <img class="profile-picture wh-150" id="profile-pic" src="~/images/StudentPhotos/@Model.photo" alt="Profile Picture">
+                    <img class="profile-picture wh-150" id="profile-pic" src="~/images/StudentPhotos/@Model.studToView.photo" alt="Profile Picture">
                 </div>
                 <div class="col">
                     <div class="mb-3">
-                        <label asp-for="name" class="form-label"></label>
-                        <input asp-for="name" class="form-control" id="name" disabled>
+                        <label asp-for="studToView.name" class="form-label"></label>
+                        <input asp-for="studToView.name" class="form-control" id="name" disabled>
                     </div>
                     <div>
-                        <label asp-for="email" class="form-label"></label>
-                        <input asp-for="email" type="email" class="form-control" id="email" disabled>
+                        <label asp-for="studToView.email" class="form-label"></label>
+                        <input asp-for="studToView.email" type="email" class="form-control" id="email" disabled>
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
-                    <label asp-for="dob" class="form-label"></label>
-                    <input asp-for="dob" type="date" class="form-control" id="dob" disabled>
+                    <label asp-for="studToView.dob" class="form-label"></label>
+                    <input asp-for="studToView.dob" type="date" class="form-control" id="dob" disabled>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
-                    <label asp-for="course" class="form-label"></label>
-                    <input asp-for="course" class="form-control" id="course" disabled>
+                    <label asp-for="studToView.course" class="form-label"></label>
+                    <input asp-for="studToView.course" class="form-control" id="course" disabled>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
-                    <label asp-for="description" class="form-label"></label>
-                    <textarea asp-for="description" class="form-control" id="description" disabled></textarea>
+                    <label asp-for="studToView.description" class="form-label"></label>
+                    <textarea asp-for="studToView.description" class="form-control" id="description" disabled></textarea>
                 </div>
             </div>
         </div>
