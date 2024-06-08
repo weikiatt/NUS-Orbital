@@ -25,8 +25,12 @@ namespace NUS_Orbital.Models
         public Student student {  get; set; }
         [Required]
         public Boolean likedByCurrStud;
+        [Required]
+        public bool edited { get; set; }
+        [Required]
+        public bool deleted { get; set; }
 
-        public Comment(int commentId, DateTime commentTime, string description, int upvotes, int postId, Student student, Boolean likedByCurrStud)
+        public Comment(int commentId, DateTime commentTime, string description, int upvotes, int postId, Student student, bool likedByCurrStud, bool edited, bool deleted)
         {
             this.commentId = commentId;
             this.commentTime = commentTime;
@@ -35,6 +39,8 @@ namespace NUS_Orbital.Models
             this.postId = postId;
             this.student = student;
             this.likedByCurrStud = likedByCurrStud;
+            this.edited = edited;
+            this.deleted = deleted;
         }
 
 

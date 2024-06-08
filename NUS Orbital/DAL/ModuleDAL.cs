@@ -6,6 +6,7 @@ using NUS_Orbital.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace NUS_Orbital.DAL
 {
@@ -116,7 +117,9 @@ namespace NUS_Orbital.DAL
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
                     GetAllComments(Convert.ToInt32(row["PostID"]), student),
                     DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.studentId),
-                    GetAllTagsForPost(Convert.ToInt32(row["PostID"]))
+                    GetAllTagsForPost(Convert.ToInt32(row["PostID"])),
+                    Convert.ToInt32(row["Edited"]) == 0 ? false: true,
+                    Convert.ToInt32(row["Deleted"]) == 0 ? false : true
                 ));
             }
             return postList;
@@ -193,7 +196,10 @@ namespace NUS_Orbital.DAL
                     GetNumberOfCommentUpvotes(Convert.ToInt32(row["CommentID"])),
                     Convert.ToInt32(row["PostID"]),
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
-                    DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.studentId)
+                    DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.studentId),
+                    Convert.ToInt32(row["Edited"]) == 0 ? false : true,
+                    Convert.ToInt32(row["Deleted"]) == 0 ? false : true
+
                 ));
             }
             return comments;
@@ -384,10 +390,89 @@ namespace NUS_Orbital.DAL
         public void UpdatePost(int postId, string postTitle, string postDescription)
         {
             SqlCommand cmd = new SqlCommand
-            ("UPDATE POSTS SET [Title]=@postTitle, [Description]=@postDescription WHERE PostID=@postId", conn);
+            ("UPDATE POSTS SET [Title]=@postTitle, [Description]=@postDescription, Edited=1 WHERE PostID=@postId", conn);
             cmd.Parameters.AddWithValue("@postTitle", postTitle);
             cmd.Parameters.AddWithValue("@postDescription", postDescription);
             cmd.Parameters.AddWithValue("@postId", postId);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
+        public void UpdateComment(int commentId, string commentDescription)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("UPDATE COMMENTS SET [Description]=@commentDescription, Edited=1 WHERE CommentID=@commentId", conn);
+            cmd.Parameters.AddWithValue("@commentDescription", commentDescription);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
+        public List<String> GetPostDetails(int postId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM POSTS WHERE PostID=@postId", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Post");
+            conn.Close();
+            List<String> postDetails = new List<String>();
+            if (result.Tables["Post"].Rows.Count > 0)
+            {
+                DataTable table = result.Tables["Post"];
+                if (table.Rows[0]["Title"].ToString() != null)
+                {
+                    postDetails.Add(table.Rows[0]["Title"].ToString());
+                }
+                if (table.Rows[0]["Description"].ToString() != null)
+                {
+                    postDetails.Add(table.Rows[0]["Description"].ToString());
+                }
+                return postDetails;
+            }
+            return postDetails;
+        }
+
+        public String GetCommentDescription(int commentId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM COMMENTS WHERE CommentID=@commentId", conn);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Comment");
+            conn.Close();
+            if (result.Tables["Comment"].Rows.Count > 0)
+            {
+                DataTable table = result.Tables["Comment"];
+                if (table.Rows[0]["Description"].ToString() != null)
+                {
+                    return table.Rows[0]["Description"].ToString();
+                }
+            }
+            return "";
+        }
+
+        public void DeletePost(int postId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("UPDATE POSTS SET Deleted=1 WHERE PostID=@postId", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
+        public void DeleteComment(int commentId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("UPDATE COMMENTS SET Deleted=1 WHERE CommentID=@commentId", conn);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();

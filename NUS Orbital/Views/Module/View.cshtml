@@ -28,7 +28,6 @@
 
 
 <body>
-    @TempData["TEST"]
     <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-lg-3 col-md-4 text-center">
@@ -98,39 +97,62 @@
                                 <img class="profile-picture wh-50" src="~/images/StudentPhotos/@post.student.photo" />
                             </div>
                             <div class="col">
-                                <div class="row">
-                                    <a href="~/Student/ViewAccount?email=@post.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.name</strong></a>
-                                    <p class="col-auto text-secondary">posted @post.calculateDate(post.postTime)</p>
-                                    @if (Model.student.email == post.student.email)
-                                    {
-                                        <div class="col-auto" id="edit(@post.postId)"><button onclick="editPost(@post.postId)">Edit</button></div>
-                                        <div class="col-auto hidden" id="cancel(@post.postId)"><button onclick="cancelEdit(@post.postId, '@post.title', '@post.description')">Cancel</button></div>
-                                        <div class="col-auto hidden" id="saveChanges(@post.postId)"><button onclick="updatePost(@post.postId)">Save Changes</button></div>
-                                    }
+                                <div class="d-flex justify-content-between">
+                                    <div class="row">
+                                        <a href="~/Student/ViewAccount?email=@post.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.name</strong></a>
+                                        <p class="col-auto text-secondary">@post.calculateDate(post.postTime)</p>
+                                        @if (post.edited)
+                                        {
+                                            <p class="col-auto text-secondary">(edited)</p>
+                                        }
+                                        else
+                                        {
+                                            <p id="postEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
+                                        }
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        @if (Model.student.email == post.student.email && !post.deleted)
+                                        {
+                                            <div class="col-auto" id="editPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="editPost(@post.postId)"><small>Edit</small></button></div>
+                                            <div class="col-auto hidden" id="cancelEditPost(@post.postId)"><button class="btn-cancel btn-pill-small" onclick="cancelEdit(@post.postId, '@post.title', '@post.description')"><small>Cancel</small></button></div>
+                                            <div class="col-auto hidden" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePost(@post.postId)"><small>Delete</small></button></div>
+                                            <div class="col-auto hidden" id="saveChangesPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="updatePost(@post.postId, '@post.title', '@post.description')"><small>Save Changes</small></button></div>
+                                        }
+                                    </div>
                                 </div>
-                                <form>
-                                    <div class="row">
-                                        <h5 class="col" id="postTitle(@post.postId)">@post.title</h5>
+                                @if (post.deleted)
+                                {
+                                    <div id="deletePostContent(@post.postId)">
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="text-danger italic">Post has been deleted...</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="row">
-                                        <p class="col text-justify" id="postDescription(@post.postId)">@post.description</p>
+                                } else
+                                {
+                                    <div id="deletePostContent(@post.postId)">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h5 id="postTitle(@post.postId)">@post.title</h5>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col text-justify">
+                                                <p id="postDescription(@post.postId)">@post.description</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </form>
-                                
-                                
-                                
+                                }
 
                                 <div class="container-fluid">
                                     <div class="row">
                                         @foreach (var tag in post.tags)
                                         {
-                                            <div class="col-auto">
-                                                <p class="tagDisplay h-auto w-auto">@tag.tag</p>
-                                            </div>
+                                            <p class="tagDisplay h-auto w-auto">@tag.tag</p>
                                         }
                                     </div>
                                 </div>
-
                                 <div class="d-flex align-items-center">
                                     @if (post.likedByCurrStud)
                                     {
@@ -143,8 +165,6 @@
                                     <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
                                     <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
                                 </div>
-
-
                             </div>
                         </div>
                         <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
@@ -167,8 +187,6 @@
                             </div>
                         </div>
 
-
-
                         @if (post.comments.Count() > 0)
                         {
                             <div class="row">
@@ -184,15 +202,50 @@
                                                         <img class="profile-picture wh-50" src="~/images/StudentPhotos/@comment.student.photo" />
                                                     </div>
                                                     <div class="col">
-                                                        <div class="row">
-                                                            <p class="col-auto text-green text-uppercase"><strong>@comment.student.name</strong></p>
-                                                            <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col text-justify">
-                                                                <p>@comment.description</p>
+                                                        <div class="d-flex justify-content-between">
+                                                            <div class="row">
+                                                                <a href="~/Student/ViewAccount?email=@post.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@comment.student.name</strong></a>
+                                                                <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
+                                                                @if (comment.edited)
+                                                                {
+                                                                    <p class="col-auto text-secondary">(edited)</p>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p id="commentEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
+                                                                }
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                @if (Model.student.email == comment.student.email && !comment.deleted)
+                                                                {
+                                                                    <div class="col-auto" id="editComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="editComment(@comment.commentId)"><small>Edit</small></button></div>
+                                                                    <div class="col-auto hidden" id="cancelEditComment(@comment.commentId)"><button class="btn-cancel btn-pill-small" onclick="cancelEditComment(@comment.commentId, '@comment.description')"><small>Cancel</small></button></div>
+                                                                    <div class="col-auto hidden" id="deleteComment(@comment.commentId)"><button class="btn-green bg-danger btn-pill-small" onclick="deleteComment(@comment.commentId)"><small>Delete</small></button></div>
+                                                                    <div class="col-auto hidden" id="saveChangesComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="updateComment(@comment.commentId)"><small>Save Changes</small></button></div>
+                                                                }
                                                             </div>
                                                         </div>
+                                                        @if (comment.deleted)
+                                                        {
+                                                            <div id="deleteCommentContent(@comment.commentId)">
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <p class="text-danger italic">Comment has been deleted...</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        } 
+                                                        else
+                                                        {
+                                                            <div id="deleteCommentContent(@comment.commentId)">
+                                                                <div class="row">
+                                                                    <div class="col text-justify">
+                                                                        <p id="commentDescription(@comment.commentId)">@comment.description</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                            
                                                         <div class="d-flex align-items-center">
                                                             @if (@comment.likedByCurrStud)
                                                             {
@@ -236,18 +289,160 @@
     </div>
     
     <script>
-        function togglePostEditButton(postId) {
-
-            var editButton = document.getElementById('edit(' + postId + ")");
+        
+        
+        function toggleCommentEditButton(commentId) {
+            var editButton = document.getElementById('editComment(' + commentId + ")");
             editButton.classList.toggle("hidden");
+        } 
 
-            var cancelButton = document.getElementById('cancel(' + postId + ")");
+        function toggleCancelEditCommentButton(commentId) {
+            var cancelButton = document.getElementById('cancelEditComment(' + commentId + ")");
             cancelButton.classList.toggle("hidden");
+        }
 
-            var saveButton = document.getElementById('saveChanges(' + postId + ")");
+        function toggleDeleteCommentButton(commentId) {
+            var deleteButton = document.getElementById('deleteComment(' + commentId + ")");
+            deleteButton.classList.toggle("hidden");
+        }
+
+        function toggleSaveCommentChangesButton(commentId) {
+            var saveButton = document.getElementById('saveChangesComment(' + commentId + ")");
             saveButton.classList.toggle("hidden");
         }
 
+        function editComment(commentId) {
+            var desc = document.getElementById('commentDescription(' + commentId + ")");
+            var descInput = document.createElement('textarea');
+
+            descInput.type = 'text';
+            descInput.value = desc.innerText;
+            desc.parentNode.replaceChild(descInput, desc);
+            descInput.classList.toggle("w-100");
+            descInput.classList.toggle("form-control");
+            descInput.classList.toggle("col");
+            descInput.id = "commentDescription(" + commentId + ")";
+
+            toggleCommentEditButton(commentId);
+            toggleCancelEditCommentButton(commentId);
+            toggleDeleteCommentButton(commentId);
+            toggleSaveCommentChangesButton(commentId);
+        }
+
+        function deleteComment(commentId) {
+            toggleCancelEditCommentButton(commentId);
+            toggleDeleteCommentButton(commentId);
+            toggleSaveCommentChangesButton(commentId);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId
+                },
+                success: function (response) {
+                    var content = document.getElementById("deleteCommentContent(" + commentId + ")");
+                    content.innerHTML = `
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-danger italic">Comment has been deleted...</p>
+                            </div>
+                        </div>
+                    `;
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+
+        function cancelEditComment(commentId) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetCommentDetails", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId,
+                },
+                success: function (response) {
+                    var descriptionInput = document.getElementById('commentDescription(' + commentId + ")");
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = response.originalDescription;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "commentDescription(" + commentId + ")";
+
+                    toggleCommentEditButton(commentId);
+                    toggleCancelEditCommentButton(commentId);
+                    toggleDeleteCommentButton(commentId);
+                    toggleSaveCommentChangesButton(commentId);
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function updateComment(commentId) {
+            var descriptionInput = document.getElementById('commentDescription(' + commentId + ")");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("EditComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId,
+                    commentDescription: descriptionInput.value
+                },
+                success: function (response) {
+                    toggleCommentEditButton(commentId);
+                    toggleCancelEditCommentButton(commentId);
+                    toggleDeleteCommentButton(commentId);
+                    toggleSaveCommentChangesButton(commentId);
+
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = descriptionInput.value;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "commentDescription(" + commentId + ")";
+
+                    var commentEdited = document.getElementById('commentEdited(' + commentId + ")");
+                    if (commentEdited.classList.contains('hidden')) {
+                        commentEdited.classList.toggle('hidden');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Do not leave inputs blank');
+                }
+            });
+        }
+
+
+
+
+
+       
+       function togglePostEditButton(postId) {
+            var editButton = document.getElementById('editPost(' + postId + ")");
+            editButton.classList.toggle("hidden");
+        }
+    
+        function togglePostCancelEditButton(postId) {
+            var cancelButton = document.getElementById('cancelEditPost(' + postId + ")");
+            cancelButton.classList.toggle("hidden");
+        }
+
+        function toggleDeletePostButton(postId) {
+            var deleteButton = document.getElementById('deletePost(' + postId + ")");
+            deleteButton.classList.toggle("hidden");
+        }
+
+        function toggleSavePostChangesButton(postId) {
+            var saveButton = document.getElementById('saveChangesPost(' + postId + ")");
+            saveButton.classList.toggle("hidden");
+        }
 
         function editPost(postId) {
             var title = document.getElementById('postTitle(' + postId + ")");
@@ -258,7 +453,6 @@
             title.parentNode.replaceChild(titleInput, title);
             titleInput.classList.toggle("w-100");
             titleInput.classList.toggle("form-control");
-            titleInput.classList.toggle("col");
             titleInput.id = "postTitle(" + postId + ")";
 
             var description = document.getElementById('postDescription(' + postId + ")");
@@ -268,43 +462,81 @@
             description.parentNode.replaceChild(descriptionInput, description);
             descriptionInput.classList.toggle("w-100");
             descriptionInput.classList.toggle("form-control");
-            descriptionInput.classList.toggle("col");
             descriptionInput.id = "postDescription(" + postId + ")";
 
             togglePostEditButton(postId);
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
+            toggleDeletePostButton(postId);
 
         }
 
-        function cancelEdit(postId, postTitle, postDescription) {
-            var titleInput = document.getElementById('postTitle(' + postId + ")");
-            var title = document.createElement('h5');
+        function cancelEdit(postId) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetPostDetails", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId,
+                },
+                success: function (response) {
+                    var titleInput = document.getElementById('postTitle(' + postId + ")");
+                    var title = document.createElement('h5');
 
-            title.type = 'text';
-            title.innerText = postTitle; //titleInput.value;
-            titleInput.parentNode.replaceChild(title, titleInput);
-            title.classList.toggle("col");
-            title.id = "postTitle(" + postId + ")";
+                    title.type = 'text';
+                    title.innerText = response.originalTitle;
+                    titleInput.parentNode.replaceChild(title, titleInput);
+                    title.id = "postTitle(" + postId + ")";
 
+                    var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+                    var description = document.createElement('p');
 
-            var descriptionInput = document.getElementById('postDescription(' + postId + ")");
-            var description = document.createElement('p');
+                    description.type = 'text';
+                    description.innerText = response.originalDescription;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "postDescription(" + postId + ")";
 
-            description.type = 'text';
-            description.innerText = postDescription; //titleInput.value;
-            descriptionInput.parentNode.replaceChild(description, descriptionInput);
-            description.classList.toggle("col");
-            description.id = "postDescription(" + postId + ")";
-
-
-            togglePostEditButton(postId);
-            
+                    togglePostEditButton(postId);
+                    togglePostCancelEditButton(postId);
+                    toggleSavePostChangesButton(postId);
+                    toggleDeletePostButton(postId);
+                },
+                error: function (xhr, status, error) {
+                }
+            });
         }
 
-        function updatePost(postId) {
+        function deletePost(postId) {
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
+            toggleDeletePostButton(postId);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeletePost", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId
+                },
+                success: function (response) {
+                    var content = document.getElementById("deletePostContent(" + postId + ")");
+                    content.innerHTML = `
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-danger italic">Post has been deleted...</p>
+                            </div>
+                        </div>
+                    `;
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function updatePost(postId, postTitle, postDescription) {
             var titleInput = document.getElementById('postTitle(' + postId + ")");
             var descriptionInput = document.getElementById('postDescription(' + postId + ")");
 
-         
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("EditPost", "Module")',
@@ -315,28 +547,37 @@
                     postDescription: descriptionInput.value
                 },
                 success: function (response) {
+                    togglePostEditButton(postId);
+                    togglePostCancelEditButton(postId);
+                    toggleSavePostChangesButton(postId);
+                    toggleDeletePostButton(postId);
+
+                    var title = document.createElement('h5');
+
+                    title.type = 'text';
+                    title.innerText = titleInput.value;
+                    titleInput.parentNode.replaceChild(title, titleInput);
+                    title.id = "postTitle(" + postId + ")";
+
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = descriptionInput.value;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "postDescription(" + postId + ")";
+
+                    var postEdited = document.getElementById('postEdited(' + postId + ")");
+                    if (postEdited.classList.contains('hidden')) {
+                        postEdited.classList.toggle('hidden');
+                    }
                 },
                 error: function (xhr, status, error) {
+                    alert('Do not leave inputs blank');
                 }
             });
 
-            togglePostEditButton(postId);
-
-            var title = document.createElement('h5');
-
-            title.type = 'text';
-            title.innerText = titleInput.value;
-            titleInput.parentNode.replaceChild(title, titleInput);
-            title.classList.toggle("col");
-            title.id = "postTitle(" + postId + ")";
-
-            var description = document.createElement('p');
-
-            description.type = 'text';
-            description.innerText = descriptionInput.value;
-            descriptionInput.parentNode.replaceChild(description, descriptionInput);
-            description.classList.toggle("col");
-            description.id = "postDescription(" + postId + ")";
+           
+            
         }
     </script>
 

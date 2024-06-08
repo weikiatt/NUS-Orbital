@@ -29,6 +29,14 @@
     color: #00892B;
 }
 
+.btn-pill-small {
+    border-radius: 24px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .btn-pill {
     border-radius: 24px;
     padding-top: 8px;
@@ -83,7 +91,6 @@
         background-color: black;
         color: #a6bfa5ff;
         transition-duration: 0.3s;
-        transform: scale(1.05);
     }
  
 
@@ -183,4 +190,8 @@ input[type=checkbox]:checked + label {
     color: black;
     font-style: normal;
     font-size: 14px;
+}
+
+.italic {
+    font-style: italic;
 }

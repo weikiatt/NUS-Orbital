@@ -175,7 +175,50 @@ namespace NUS_Orbital.Controllers
         [HttpPost]
         public JsonResult EditPost(int postId, string postTitle, string postDescription)
         {
+            if (postTitle == "" || postDescription == "")
+            {
+                return Json(new { success = false });
+            }
             moduleContext.UpdatePost(postId, postTitle, postDescription);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult EditComment(int commentId, string commentDescription)
+        {
+            if (commentDescription == "")
+            {
+                return Json(new { success = false });
+            }
+            moduleContext.UpdateComment(commentId, commentDescription);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult GetPostDetails(int postId)
+        {
+            List<String> titleAndDesc = moduleContext.GetPostDetails(postId);
+            return Json(new { success = true, originalTitle = titleAndDesc[0], originalDescription = titleAndDesc[1] });
+        }
+
+        [HttpPost]
+        public JsonResult GetCommentDetails(int commentId)
+        {
+            String description = moduleContext.GetCommentDescription(commentId);
+            return Json(new { success = true, originalDescription = description });
+        }
+
+        [HttpPost]
+        public JsonResult DeletePost(int postId)
+        {
+            moduleContext.DeletePost(postId);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult DeleteComment(int commentId)
+        {
+            moduleContext.DeleteComment(commentId);
             return Json(new { success = true });
         }
     }

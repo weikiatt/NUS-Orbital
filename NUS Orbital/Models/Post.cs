@@ -23,7 +23,9 @@ namespace NUS_Orbital.Models
         public List<Comment> comments;
         public bool likedByCurrStud;
         public List<Tag> tags;
-        public Post(Module module, int postId, DateTime postTime, string title, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags)
+        public bool edited;
+        public bool deleted;
+        public Post(Module module, int postId, DateTime postTime, string title, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags, bool edited, bool deleted)
         {
             this.module = module;
             this.postId = postId;
@@ -35,8 +37,11 @@ namespace NUS_Orbital.Models
             this.comments = comments;
             this.likedByCurrStud = likedByCurrStud;
             this.tags = tags;
+            this.edited = edited;
+            this.deleted = deleted;
         }
         
+
         public bool TagExistInPost(List<int> filterTagIds)
         {
             foreach (Tag t in tags)
