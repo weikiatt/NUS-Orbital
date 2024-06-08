@@ -34,6 +34,7 @@
         </div>
     } else
     {
+        
         <div class="row" style="height:30vh;">
             <div class="col align-items-center justify-content-center d-flex text-center">
                 <h1>Welcome back @Context.Session.GetString("name")!</h1>
@@ -45,24 +46,5 @@
     </div>
 
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC2nXJweoxUULaxavn1kvr1H6sbnTVwOwY",
-            authDomain: "nus-orbital-tft.firebaseapp.com",
-            projectId: "nus-orbital-tft",
-            storageBucket: "nus-orbital-tft.appspot.com",
-            messagingSenderId: "122668073505",
-            appId: "1:122668073505:web:5a1f2d04e006614bfbd960"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-    </script>
 </body>
 </html>
