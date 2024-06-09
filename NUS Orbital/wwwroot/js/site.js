@@ -102,7 +102,7 @@ function upvotePost(postId) {
             alert('succ');
         },
         error: function (xhr, status, error) {
-            alert('saaaaaa');
+            alert(xhr.responseText);
         }
     });
 }
