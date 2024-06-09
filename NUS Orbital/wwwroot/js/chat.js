@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
 function flipString(str) {
     return str.split('').reverse().join('');
 }
@@ -83,7 +84,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
         return console.error(err.toString());
     });
     event.preventDefault();
-});*/
+}); //here
 
 function showChat(currStudId, otherStudId) {
     const allChats = document.querySelectorAll('div[id^="chat("]');
@@ -143,3 +144,4 @@ function test() {
         }
     });
 }
+*/

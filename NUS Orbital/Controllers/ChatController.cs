@@ -4,6 +4,12 @@ using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
 using System.Globalization;
 
+
+using MySql.Data.MySqlClient;
+using Microsoft.Extensions.Hosting;
+using Org.BouncyCastle.Asn1;
+using Mysqlx.Crud;
+
 namespace NUS_Orbital.Controllers
 {
     public class ChatController : Controller
@@ -23,25 +29,34 @@ namespace NUS_Orbital.Controllers
         }
 
         [HttpPost]
-        public JsonResult SendMessage(int currStudId, string otherStudId, string message, string currentTime)
+        public JsonResult SendMessage(int currStudId, int otherStudId, string msg)
         {
-            return Json(new { success = true });
             /*
-            TempData["TEST"] = "TEST";
-            string dateFormat = "dd/MM/yyyy hh:mm:ss tt";
-            if (message == "")
+            if (msg == "")
             {
                 return Json(new { success = false });
-            }
-            try
+            }*/
+            DateTime currTime = DateTime.Now;
+            chatContext.SendMessage(currStudId, otherStudId, msg, currTime);
+            if (!chatContext.DoesChatExist(otherStudId, currStudId))
             {
-                chatContext.SendMessage(Convert.ToInt32(currStudId),Convert.ToInt32(otherStudId), message, DateTime.ParseExact(currentTime, dateFormat, CultureInfo.InvariantCulture));
-            } catch
-            {
-                return Json(new { success = false });
+                chatContext.AddChat(otherStudId, currStudId);
             }
-            return Json(new { success = true });*/
+            return Json(new { success = true });
         }
+
+        public ActionResult AddChatFromView(IFormCollection formData)
+        {
+            int currStudId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            int otherStudId = Convert.ToInt32(formData["otherStudId"]);
+            if (!chatContext.DoesChatExist(currStudId, otherStudId))
+            {
+                chatContext.AddChat(currStudId, otherStudId);
+            }
+            return RedirectToAction("Index", "Chat");
+        }
+
+
 
 
     }

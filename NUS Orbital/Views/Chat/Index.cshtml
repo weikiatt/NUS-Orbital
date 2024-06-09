@@ -17,14 +17,12 @@
             integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script defer src="~/js/signalr.js"></script>
+    <script src="~/js/signalr.js"></script>
     <script defer src="~/js/chat.js"></script>
-
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <button onclick="test()">test</button>
-    @TempData["TEST"]
     <div class="container">
         <div class="row">
             <div class="col-auto">
@@ -37,8 +35,8 @@
             <div class="col">
                 @foreach (var stud in Model.students)
                 {
-                    <div id="chat(@Model.currStudent.studentId,@stud.otherStudent.studentId)" class="bg-danger p-3 mt-3 hidden">
-                        <div id="chatContent(@Model.currStudent.studentId,@stud.otherStudent.studentId)">
+                    <div id="chat(@Model.currStudent.studentId,@stud.otherStudent.studentId)" class="p-3 mt-3 hidden">
+                        <div id="chatContent(@Model.currStudent.studentId,@stud.otherStudent.studentId)" style="overflow-y:scroll;height:500px">
                             @foreach (var txt in stud.chatLog)
                             {
                                 @if (Model.currStudent.studentId == txt.sender.studentId)
@@ -62,7 +60,7 @@
                             }
                         </div>
                         <div class="d-flex">
-                            <input id="inputMsg(@stud.otherStudent.studentId)" class="mt-2 w-100 form-control" placeholder="message..." />
+                            <textarea id="inputMsg(@stud.otherStudent.studentId)" class="mt-2 w-100 form-control" placeholder="message..."></textarea>
                             <button id="sendButton(@stud.otherStudent.studentId)" onclick="sendMessage(@Model.currStudent.studentId, @stud.otherStudent.studentId)">Send</button>
                         </div>
                     </div>
@@ -71,4 +69,138 @@
             </div>
         </div>
     </div>
+    <script>
+
+        function flipString(str) {
+            return str.split('').reverse().join('');
+        }
+
+
+        function getFormattedDateTime() {
+            var now = new Date();
+
+            var day = now.getDate();
+            var month = now.getMonth() + 1; // Months are zero-based
+            var year = now.getFullYear();
+
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // The hour '0' should be '12'
+            //minutes = minutes < 10 ? '0' + minutes : minutes;
+            //seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            //day = day < 10 ? '0' + day : day;
+            //month = month < 10 ? '0' + month : month;
+
+            var formattedDate = day + '/' + month + '/' + year;
+            var formattedTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+
+            return formattedDate + ' ' + formattedTime;
+        }
+
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+        connection.start();
+
+        connection.on("ReceiveMessage", function (user, message) {
+            var now = new Date();
+            var currentTime = now.toLocaleTimeString()
+
+            var currUser = document.getElementById("chatContent(" + user + ")")
+            if (currUser) {
+                var currUserContent = document.createElement("div");
+                currUserContent.innerHTML = `
+                                <div class="justify-content-end d-flex w-auto">
+                                    <div class="mt-1 bg-green border-2 p-2">
+                                        <p>${message}</p>
+                                            <p><small>${getFormattedDateTime()}</small></p>
+                                    </div>
+                                </div>
+                            `
+                currUser.appendChild(currUserContent);
+            }
+            var otherUser = document.getElementById("chatContent(" + flipString(user) + ")");
+            if (otherUser) {
+                var otherUserContent = document.createElement("div");
+                otherUserContent.innerHTML = `
+                                <div class="justify-content-start d-flex w-auto">
+                                    <div class="mt-1 bg-light border-2 p-2">
+                                        <p>${message}</p>
+                                        <p><small>${getFormattedDateTime()}</small></p>
+                                    </div>
+                                </div>
+                            `
+                otherUser.appendChild(otherUserContent);
+            }
+            currUser.scrollTop = currUser.scrollHeight;
+        });
+
+        /*
+        document.getElementById("sendButton").disabled = true;
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });*/
+
+        /*
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var user = document.getElementById("userInput").value;
+            var message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });*/
+
+        function showChat(currStudId, otherStudId) {
+            const allChats = document.querySelectorAll('div[id^="chat("]');
+            allChats.forEach(function (div) {
+                div.classList.add("hidden"); // Hide all chat divs initially
+                div.classList.remove("bg-green");
+            });
+            var chatToShow = document.getElementById("chat(" + currStudId + "," + otherStudId + ")");
+            
+            if (chatToShow) {
+                chatToShow.classList.remove("hidden"); // Show the chat div corresponding to the selected student ID
+                chatToShow.classList.add("bg-green");
+                var chatContent = document.getElementById("chatContent(" + currStudId + "," + otherStudId + ")");
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }
+        }
+
+        function sendMessage(currStudId, otherStudId) {
+            //event.preventDefault();
+            var user = currStudId + "," + otherStudId;
+            var message = document.getElementById("inputMsg(" + otherStudId + ")");
+            //var currentTime = getFormattedDateTime();
+
+            
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SendMessage", "Chat")',
+                dataType: 'json',
+                data: {
+                    currStudId: currStudId,
+                    otherStudId: otherStudId,
+                    msg: message.value
+                },
+                success: function (response) {
+                    connection.invoke("SendMessage", user, message.value).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                    message.value = "";
+                    
+                },
+                error: function (xhr, status, error) {
+                    alert('err');
+                }
+            });
+        }
+    </script>
 </body>

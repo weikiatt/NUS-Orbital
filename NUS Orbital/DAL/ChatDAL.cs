@@ -75,7 +75,7 @@ namespace NUS_Orbital.DAL
         {
             SqlCommand cmd = new SqlCommand
                 ("INSERT INTO CHAT_LOG(SenderID, ReceiverID, [Description], TimeSent) " +
-                "VALUES (@currStudId, @otherStudId, @title, @description, @studentID)", conn);
+                "VALUES (@currStudId, @otherStudId, @message, @currentTime)", conn);
 
             cmd.Parameters.AddWithValue("@currStudId", currStudId);
             cmd.Parameters.AddWithValue("@otherStudId", otherStudId);
@@ -84,6 +84,35 @@ namespace NUS_Orbital.DAL
             conn.Open();
             cmd.ExecuteScalar();
             conn.Close();
+        }
+
+        public void AddChat(int currStudId, int otherStudId)
+        {
+            SqlCommand cmd = new SqlCommand
+                ("INSERT INTO CHATS (CurrStudentID, OtherStudentID)" +
+                "VALUES (@currStudId, @otherStudId)", conn);
+
+            cmd.Parameters.AddWithValue("@currStudId", currStudId);
+            cmd.Parameters.AddWithValue("@otherStudId", otherStudId);
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public bool DoesChatExist(int currStudId, int otherStudId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM CHATS WHERE CurrStudentID=@currStudId AND OtherStudentID=@otherStudId", conn);
+            cmd.Parameters.AddWithValue("@currStudId", currStudId);
+            cmd.Parameters.AddWithValue("@otherStudId", otherStudId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "Chat");
+            conn.Close();
+            if (result.Tables["Chat"].Rows.Count > 0)
+                return true; // Module code exists
+            return false; // Module code does not exist
         }
     }
 }
