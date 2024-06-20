@@ -51,7 +51,7 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@password", password);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
-            conn.Open();
+            conn.Open();//error
             da.Fill(result, "LoginInfo");
             conn.Close();
             if (result.Tables["LoginInfo"].Rows.Count > 0)
