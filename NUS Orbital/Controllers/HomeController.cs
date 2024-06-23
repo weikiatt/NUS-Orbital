@@ -18,7 +18,7 @@ namespace NUS_Orbital.Controllers
 
         public IActionResult Index()
         {
-            /* test
+            /* test2
             HttpContext.Session.SetString("authenticated", "true");
             HttpContext.Session.SetString("name", "temp name");*/
             return View();
