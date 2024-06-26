@@ -60,17 +60,37 @@ namespace NUS_Orbital.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Student student)
         {
-            if (!studentContext.DoesEmailExist(student.email))
+            bool register = true;
+            if(studentContext.DoesEmailExist(student.email))
             {
-                HttpContext.Session.SetString("authenticated", "true");
-                HttpContext.Session.SetString("Email", student.email);
-                HttpContext.Session.SetString("name", student.name);
-                studentContext.Add(student);
-                return View("Index");
+                TempData["EmailValidation"] = "Email already exists!";
+                register = false;
             }
-            TempData["EmailValidation"] = "Email already exists!";
-            return View(student);
+            if (student.password.Length < 8)
+            {
+                TempData["PasswordLength"] = "Minimum password length is 8";
+                register = false;
+            }
+            if (!student.password.Any(char.IsUpper))
+            {
+                TempData["PasswordUpperCase"] = "Password should contain one uppercase";
+                register = false;
+            }
+            if (!student.password.Any(char.IsLower))
+            {
+                TempData["PasswordLowerCase"] = "Password should contain one lowercase";
+                register = false;
+            }
+            if (!register)
+            {
+                return View(student);
+            }
 
+            HttpContext.Session.SetString("authenticated", "true");
+            HttpContext.Session.SetString("Email", student.email);
+            HttpContext.Session.SetString("name", student.name);
+            studentContext.Add(student);
+            return View("Index");
         }
 
         public ActionResult Logout()

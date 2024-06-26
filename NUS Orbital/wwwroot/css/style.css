@@ -17,6 +17,10 @@
     background: #a6bfa5ff;
 }
 
+.bg-white {
+    background: white;
+}
+
 .bg-transparent {
     background: none;
 }
@@ -194,4 +198,8 @@ input[type=checkbox]:checked + label {
 
 .italic {
     font-style: italic;
+}
+
+.scroll {
+    overflow-y: scroll;
 }
