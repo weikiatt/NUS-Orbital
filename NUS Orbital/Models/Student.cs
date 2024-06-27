@@ -33,9 +33,6 @@ namespace NUS_Orbital.Models
         [Display(Name = "Course")]
         public String course { get; set; }
 
-        [Required(ErrorMessage = "Please enter your date of birth")]
-        [Display(Name = "Date of Birth")]
-        public DateTime dob { get; set; }
 
         [Display(Name = "Description")]
         public String description { get; set; }
@@ -57,13 +54,12 @@ namespace NUS_Orbital.Models
             this.photo = "user.png";
         }
 
-        public Student(int studentId, String name, String email, String course, DateTime dob, String description, String photo)
+        public Student(int studentId, String name, String email, String course, String description, String photo)
         {
             this.studentId = studentId;
             this.name = name;
             this.email = email;
             this.course = course;
-            this.dob = dob;
             this.description = description;
             this.photo = photo;
         }
@@ -74,7 +70,6 @@ namespace NUS_Orbital.Models
             this.name = "DNE";
             this.email = "DNE@gmail.com";
             this.course = "DNE";
-            this.dob = DateTime.Now;
             this.description = "DNE";
             this.photo = "user.png";
         }

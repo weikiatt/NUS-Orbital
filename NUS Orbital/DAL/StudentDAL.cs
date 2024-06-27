@@ -135,7 +135,6 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Name"].ToString(),
                     table.Rows[0]["Email"].ToString(),
                     table.Rows[0]["Course"].ToString(),
-                    Convert.ToDateTime(table.Rows[0]["DOB"]),
                     table.Rows[0]["Description"].ToString(),
                     table.Rows[0]["Photo"].ToString()
 
@@ -162,7 +161,6 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Name"].ToString(),
                     email,
                     table.Rows[0]["Course"].ToString(),
-                    Convert.ToDateTime(table.Rows[0]["DOB"]),
                     table.Rows[0]["Description"].ToString(),
                     table.Rows[0]["Photo"].ToString()
 
@@ -189,11 +187,10 @@ namespace NUS_Orbital.DAL
         public void UpdateStudent(Student updatedStudent)
         {
             SqlCommand cmd = new SqlCommand
-                 ("UPDATE STUDENTS SET Name=@name, DOB=@dob, Course=@course, Description=@description" +
+                 ("UPDATE STUDENTS SET Name=@name, Course=@course, Description=@description" +
                  " WHERE StudentID = @selectedStudentID", conn);
 
             cmd.Parameters.AddWithValue("@name", updatedStudent.name);
-            cmd.Parameters.AddWithValue("@dob", updatedStudent.dob);
             cmd.Parameters.AddWithValue("@course", updatedStudent.course);
             cmd.Parameters.AddWithValue("@description", updatedStudent.description);
             cmd.Parameters.AddWithValue("@selectedStudentID", updatedStudent.studentId);

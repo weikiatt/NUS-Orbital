@@ -37,30 +37,21 @@
                     </div>
                     <div>
                         <label asp-for="email" class="form-label"></label>
-                        <input asp-for="email" type="email" class="form-control" id="email" disabled>
+                        <input asp-for="email" type="email" class="form-control" id="email" readonly>
                         <span asp-validation-for="email" class="text-danger"></span>
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
-                    <label asp-for="dob" class="form-label"></label>
-                    <input asp-for="dob" type="date" class="form-control" id="dob">
-                    <span asp-validation-for="dob" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
                     <label asp-for="course" class="form-label"></label>
                     <input asp-for="course" class="form-control" id="course">
-                    <span asp-validation-for="course" class="text-danger"></span>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <label asp-for="description" class="form-label"></label>
                     <textarea asp-for="description" class="form-control" id="description"></textarea>
-                    <span asp-validation-for="description" class="text-danger"></span>
                 </div>
             </div>
             <div class="row justify-content-center">

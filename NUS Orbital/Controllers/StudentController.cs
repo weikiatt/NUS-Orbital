@@ -42,6 +42,14 @@ namespace NUS_Orbital.Controllers
         {
             Student oldStudent = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
             student.studentId = oldStudent.studentId;
+            if (student.course == null)
+            {
+                student.course = "";
+            }
+            if (student.description == null)
+            {
+                student.description = "";
+            }
             studentContext.UpdateStudent(student);
             if (student.fileToUpload != null && student.fileToUpload.Length > 0)
             {
