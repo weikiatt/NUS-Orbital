@@ -24,7 +24,7 @@
         @if (@Model.currStud.email != @Model.studToView.email) 
         {
             <form method="post" action="~/Chat/AddChatFromView">
-                <button>Chat with @Model.studToView.name</button>
+                <button class="btn-pilll btn-green">Chat with @Model.studToView.name</button>
                 <input name="otherStudId" id="otherStudId" value="@Model.studToView.studentId" hidden />
             </form>
         }
