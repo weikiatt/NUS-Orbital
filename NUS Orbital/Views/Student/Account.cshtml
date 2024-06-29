@@ -24,7 +24,7 @@
         <form class="mt-3 bg-green p-5" method="post" asp-action="Account" enctype="multipart/form-data">
             <div class="row mb-3">
                 <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                    <img class="profile-picture wh-150" id="profile-pic" src="~/images/StudentPhotos/@Model.photo" alt="Profile Picture">
+                    <img class="profile-picture wh-150" id="profile-pic" src="@Model.photo" alt="Profile Picture">
                     <input asp-for="fileToUpload" type="file" id="fileToUpload" accept="image/jpeg" onchange="previewProfilePicture()">
                     <div>@TempData["Message"]</div>
 

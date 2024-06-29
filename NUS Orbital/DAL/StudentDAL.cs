@@ -79,11 +79,12 @@ namespace NUS_Orbital.DAL
         public void Add(Student student)
         {
             SqlCommand cmd = new SqlCommand
-                ("INSERT INTO STUDENTS (Email, Name, Password) VALUES(@email, @name, @password)", conn);
+                ("INSERT INTO STUDENTS (Email, Name, Password, ProfilePicture) VALUES(@email, @name, @password, @profilePicture)", conn);
 
             cmd.Parameters.AddWithValue("@email", student.email);
             cmd.Parameters.AddWithValue("@name", student.name);
             cmd.Parameters.AddWithValue("@password", student.password);
+            cmd.Parameters.AddWithValue("@profilePicture", student.profilePicture);
 
             conn.Open();
             cmd.ExecuteScalar();
@@ -136,8 +137,8 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Email"].ToString(),
                     table.Rows[0]["Course"].ToString(),
                     table.Rows[0]["Description"].ToString(),
-                    table.Rows[0]["Photo"].ToString()
-
+                    $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}",
+                    table.Rows[0]["ProfilePicture"] as byte[]
                 );
             }
             return new Student();
@@ -162,11 +163,25 @@ namespace NUS_Orbital.DAL
                     email,
                     table.Rows[0]["Course"].ToString(),
                     table.Rows[0]["Description"].ToString(),
-                    table.Rows[0]["Photo"].ToString()
-
+                    $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}",
+                    table.Rows[0]["ProfilePicture"] as byte[]
                 );
             }
             return new Student();
+        }
+
+        public int UpdatePhoto2(Student student, byte[] profilePicture)
+        {
+            SqlCommand cmd = new SqlCommand
+                 ("UPDATE STUDENTS SET ProfilePicture=@profilePicture WHERE StudentID = @selectedStudentID", conn);
+
+            cmd.Parameters.AddWithValue("@profilePicture", profilePicture);
+            cmd.Parameters.AddWithValue("@selectedStudentID", student.studentId);
+
+            conn.Open();
+            int count = cmd.ExecuteNonQuery();
+            conn.Close();
+            return count;
         }
 
         public int UpdatePhoto(Student student)

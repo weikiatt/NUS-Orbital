@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
+using NUS_Orbital.Views.Home;
 using System.Diagnostics;
 
 namespace NUS_Orbital.Controllers
@@ -89,14 +90,32 @@ namespace NUS_Orbital.Controllers
             HttpContext.Session.SetString("authenticated", "true");
             HttpContext.Session.SetString("Email", student.email);
             HttpContext.Session.SetString("name", student.name);
+
+            student.profilePicture = GetImageAsByteArray(Url.Content("wwwroot/images/StudentPhotos/user.png"));
             studentContext.Add(student);
             return View("Index");
         }
 
+        public byte[] GetImageAsByteArray(string filePath)
+        {
+            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    fileStream.CopyTo(memoryStream);
+                    return memoryStream.ToArray();
+                }
+            }
+        }
         public ActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult FileUpload()
+        {
+            return View();
         }
     }
 }

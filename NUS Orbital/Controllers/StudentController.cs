@@ -31,6 +31,9 @@ namespace NUS_Orbital.Controllers
             if (HttpContext.Session.GetString("authenticated") == "true")
             {
                 Student student = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
+
+                
+
                 return View(student);
             }
             TempData["Login"] = "Login to view account info";
@@ -38,7 +41,7 @@ namespace NUS_Orbital.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Account(Student student)
+        public async Task<ActionResult> Account(Student student, IFormFile fileToUpload)
         {
             Student oldStudent = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
             student.studentId = oldStudent.studentId;
@@ -51,10 +54,12 @@ namespace NUS_Orbital.Controllers
                 student.description = "";
             }
             studentContext.UpdateStudent(student);
+
             if (student.fileToUpload != null && student.fileToUpload.Length > 0)
             {
                 try
                 {
+                    /*
                     string fileExt = Path.GetExtension(
                     student.fileToUpload.FileName);
                     string uploadedFile = student.name + fileExt;
@@ -68,7 +73,16 @@ namespace NUS_Orbital.Controllers
                     }
                     student.photo = uploadedFile;
                     TempData["Message"] = "File uploaded successfully.";
-                    studentContext.UpdatePhoto(student);
+                    studentContext.UpdatePhoto(student);*/
+
+
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await fileToUpload.CopyToAsync(memoryStream);
+                        byte[] fileData = memoryStream.ToArray();
+                        studentContext.UpdatePhoto2(student, fileData);
+                    }
                 }
                 catch (IOException)
                 {

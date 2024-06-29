@@ -45,7 +45,7 @@
         <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
         <div class="row mt-3 hidden" id="createPost">
             <div class="col-fixed width-50"> 
-                <img class="profile-picture wh-50" src="~/images/StudentPhotos/@Model.student.photo" />
+                <img class="profile-picture wh-50" src="@Model.student.photo" />
             </div>
             <form class="col" method="post" action="~/Module/Post">
                 
@@ -94,7 +94,7 @@
                     {
                         <div class="row mt-3">
                             <div class="col-fixed width-50">
-                                <img class="profile-picture wh-50" src="~/images/StudentPhotos/@post.student.photo" />
+                                <img class="profile-picture wh-50" src="@post.student.photo" />
                             </div>
                             <div class="col">
                                 <div class="d-flex justify-content-between">
@@ -172,7 +172,7 @@
                             <div class="col">
                                 <div class="row">
                                     <div class="col-fixed width-50">
-                                        <img class="profile-picture wh-50" src="~/images/StudentPhotos/@Model.student.photo" />
+                                        <img class="profile-picture wh-50" src="@Model.student.photo" />
                                     </div>
                                     <form class="col" method="post" action="~/Module/Comment">
                                         <input hidden value="@Model.module.moduleCode" name="moduleCode" />
@@ -199,7 +199,7 @@
                                             {
                                                 <div class="row mt-1">
                                                     <div class="col-fixed width-50">
-                                                        <img class="profile-picture wh-50" src="~/images/StudentPhotos/@comment.student.photo" />
+                                                        <img class="profile-picture wh-50" src="@comment.student.photo" />
                                                     </div>
                                                     <div class="col">
                                                         <div class="d-flex justify-content-between">

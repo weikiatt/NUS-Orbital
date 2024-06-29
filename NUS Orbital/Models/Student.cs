@@ -40,6 +40,10 @@ namespace NUS_Orbital.Models
         [NotMapped]
         public IFormFile? fileToUpload { get; set; }
 
+
+        public byte[] profilePicture { get; set; }
+
+        
         [Display(Name = "Photo")]
         public string photo { get; set; }
 
@@ -54,7 +58,7 @@ namespace NUS_Orbital.Models
             this.photo = "user.png";
         }
 
-        public Student(int studentId, String name, String email, String course, String description, String photo)
+        public Student(int studentId, String name, String email, String course, String description, String photo, byte[] profilePicture)
         {
             this.studentId = studentId;
             this.name = name;
@@ -62,6 +66,7 @@ namespace NUS_Orbital.Models
             this.course = course;
             this.description = description;
             this.photo = photo;
+            this.profilePicture = profilePicture;
         }
 
         public Student()
