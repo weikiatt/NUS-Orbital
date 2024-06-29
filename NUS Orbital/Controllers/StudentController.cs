@@ -41,7 +41,7 @@ namespace NUS_Orbital.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Account(Student student, IFormFile fileToUpload)
+        public async Task<ActionResult> Account(Student student)
         {
             Student oldStudent = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
             student.studentId = oldStudent.studentId;
@@ -75,14 +75,14 @@ namespace NUS_Orbital.Controllers
                     TempData["Message"] = "File uploaded successfully.";
                     studentContext.UpdatePhoto(student);*/
 
-
-
                     using (var memoryStream = new MemoryStream())
                     {
-                        await fileToUpload.CopyToAsync(memoryStream);
+                        await student.fileToUpload.CopyToAsync(memoryStream);
                         byte[] fileData = memoryStream.ToArray();
                         studentContext.UpdatePhoto2(student, fileData);
+                        student = studentContext.GetStudentDetailsWithID(student.studentId);
                     }
+                    TempData["Message"] = "File uploaded successfully.";
                 }
                 catch (IOException)
                 {
@@ -95,6 +95,7 @@ namespace NUS_Orbital.Controllers
             } else
             {
                 student.photo = oldStudent.photo;
+
             }
             return View(student);
         }
