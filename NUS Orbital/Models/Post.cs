@@ -57,12 +57,12 @@ namespace NUS_Orbital.Models
             return false;
         }
 
-        public string calculateDate(DateTime postDate)
+        public string calculateDate(DateTime commentDate)
         {
 
             DateTime now = DateTime.Now;
 
-            TimeSpan diff = now - postDate;
+            TimeSpan diff = now - commentDate;
 
             int seconds = (int)Math.Floor(diff.TotalSeconds);
             int minutes = (int)Math.Floor(diff.TotalMinutes);
@@ -85,8 +85,6 @@ namespace NUS_Orbital.Models
             {
                 return seconds <= 10 ? "Just now" : seconds + " seconds ago";
             }
-
-
         }
     }
 }
