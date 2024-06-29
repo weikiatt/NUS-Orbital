@@ -37,7 +37,7 @@
             <div class="col text-justify">
                 <p>@Model.module.description</p>
             </div>
-        </div>
+        </div> 
     </div>
 
     <div class="container mt-3 mb-3">
@@ -45,7 +45,7 @@
         <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
         <div class="row mt-3 hidden" id="createPost">
             <div class="col-fixed width-50"> 
-                <img class="profile-picture wh-50" src="@Model.student.photo" />
+                <img class="profile-picture wh-50" src="@Model.student.Photo" />
             </div>
             <form class="col" method="post" action="~/Module/Post">
                 
@@ -94,12 +94,12 @@
                     {
                         <div class="row mt-3">
                             <div class="col-fixed width-50">
-                                <img class="profile-picture wh-50" src="@post.student.photo" />
+                                <img class="profile-picture wh-50" src="@post.student.Photo" />
                             </div>
                             <div class="col">
                                 <div class="d-flex justify-content-between">
                                     <div class="row">
-                                        <a href="~/Student/ViewAccount?email=@post.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.name</strong></a>
+                                        <a href="~/Student/ViewAccount?email=@post.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.Name</strong></a>
                                         <p class="col-auto text-secondary">@post.calculateDate(post.postTime)</p>
                                         @if (post.edited)
                                         {
@@ -111,7 +111,7 @@
                                         }
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        @if (Model.student.email == post.student.email && !post.deleted)
+                                        @if (Model.student.Email == post.student.Email && !post.deleted)
                                         {
                                             <div class="col-auto" id="editPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="editPost(@post.postId)"><small>Edit</small></button></div>
                                             <div class="col-auto hidden" id="cancelEditPost(@post.postId)"><button class="btn-cancel btn-pill-small" onclick="cancelEdit(@post.postId, '@post.title', '@post.description')"><small>Cancel</small></button></div>
@@ -172,7 +172,7 @@
                             <div class="col">
                                 <div class="row">
                                     <div class="col-fixed width-50">
-                                        <img class="profile-picture wh-50" src="@Model.student.photo" />
+                                        <img class="profile-picture wh-50" src="@Model.student.Photo" />
                                     </div>
                                     <form class="col" method="post" action="~/Module/Comment">
                                         <input hidden value="@Model.module.moduleCode" name="moduleCode" />
@@ -199,12 +199,12 @@
                                             {
                                                 <div class="row mt-1">
                                                     <div class="col-fixed width-50">
-                                                        <img class="profile-picture wh-50" src="@comment.student.photo" />
+                                                        <img class="profile-picture wh-50" src="@comment.student.Photo" />
                                                     </div>
                                                     <div class="col">
                                                         <div class="d-flex justify-content-between">
                                                             <div class="row">
-                                                                <a href="~/Student/ViewAccount?email=@comment.student.email" method="get" class="col-auto"><strong class="text-green text-uppercase">@comment.student.name</strong></a>
+                                                                <a href="~/Student/ViewAccount?email=@comment.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@comment.student.Name</strong></a>
                                                                 <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
                                                                 @if (comment.edited)
                                                                 {
@@ -216,7 +216,7 @@
                                                                 }
                                                             </div>
                                                             <div class="d-flex justify-content-between">
-                                                                @if (Model.student.email == comment.student.email && !comment.deleted)
+                                                                @if (Model.student.Email == comment.student.Email && !comment.deleted)
                                                                 {
                                                                     <div class="col-auto" id="editComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="editComment(@comment.commentId)"><small>Edit</small></button></div>
                                                                     <div class="col-auto hidden" id="cancelEditComment(@comment.commentId)"><button class="btn-cancel btn-pill-small" onclick="cancelEditComment(@comment.commentId, '@comment.description')"><small>Cancel</small></button></div>

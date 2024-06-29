@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
-using NUS_Orbital.Views.Home;
 using System.Diagnostics;
 
 namespace NUS_Orbital.Controllers
@@ -62,22 +61,22 @@ namespace NUS_Orbital.Controllers
         public ActionResult Register(Student student)
         {
             bool register = true;
-            if(studentContext.DoesEmailExist(student.email))
+            if(studentContext.DoesEmailExist(student.Email))
             {
                 TempData["EmailValidation"] = "Email already exists!";
                 register = false;
             }
-            if (student.password.Length < 8)
+            if (student.Password.Length < 8)
             {
                 TempData["PasswordLength"] = "Minimum password length is 8";
                 register = false;
             }
-            if (!student.password.Any(char.IsUpper))
+            if (!student.Password.Any(char.IsUpper))
             {
                 TempData["PasswordUpperCase"] = "Password should contain one uppercase";
                 register = false;
             }
-            if (!student.password.Any(char.IsLower))
+            if (!student.Password.Any(char.IsLower))
             {
                 TempData["PasswordLowerCase"] = "Password should contain one lowercase";
                 register = false;
@@ -88,10 +87,10 @@ namespace NUS_Orbital.Controllers
             }
 
             HttpContext.Session.SetString("authenticated", "true");
-            HttpContext.Session.SetString("Email", student.email);
-            HttpContext.Session.SetString("name", student.name);
+            HttpContext.Session.SetString("Email", student.Email);
+            HttpContext.Session.SetString("name", student.Name);
 
-            student.profilePicture = GetImageAsByteArray(Url.Content("wwwroot/images/StudentPhotos/user.png"));
+            student.ProfilePicture = GetImageAsByteArray(Url.Content("wwwroot/images/StudentPhotos/user.png"));
             studentContext.Add(student);
             return View("Index");
         }

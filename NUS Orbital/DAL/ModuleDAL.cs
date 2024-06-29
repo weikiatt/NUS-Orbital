@@ -103,7 +103,7 @@ namespace NUS_Orbital.DAL
                     GetNumberOfPostUpvotes(Convert.ToInt32(row["PostID"])),
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
                     GetAllComments(Convert.ToInt32(row["PostID"]), student),
-                    DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.studentId),
+                    DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.StudentId),
                     GetAllTagsForPost(Convert.ToInt32(row["PostID"])),
                     Convert.ToInt32(row["Edited"]) == 0 ? false: true,
                     Convert.ToInt32(row["Deleted"]) == 0 ? false : true
@@ -183,7 +183,7 @@ namespace NUS_Orbital.DAL
                     GetNumberOfCommentUpvotes(Convert.ToInt32(row["CommentID"])),
                     Convert.ToInt32(row["PostID"]),
                     studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
-                    DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.studentId),
+                    DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.StudentId),
                     Convert.ToInt32(row["Edited"]) == 0 ? false : true,
                     Convert.ToInt32(row["Deleted"]) == 0 ? false : true
 

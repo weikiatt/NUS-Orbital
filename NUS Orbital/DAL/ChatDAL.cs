@@ -27,7 +27,7 @@ namespace NUS_Orbital.DAL
             StudentDAL studentContext = new StudentDAL();
             SqlCommand cmd = new SqlCommand(
             "SELECT * FROM CHATS WHERE CurrStudentID = @studentId", conn);
-            cmd.Parameters.AddWithValue("@studentId", student.studentId);
+            cmd.Parameters.AddWithValue("@studentId", student.StudentId);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();
@@ -51,8 +51,8 @@ namespace NUS_Orbital.DAL
             SqlCommand cmd = new SqlCommand(
             "SELECT * FROM CHAT_LOG WHERE (SenderID = @currStudentId AND ReceiverID = @otherStudentID) OR " +
             "(SenderID = @otherStudentID AND ReceiverID = @currStudentId)", conn);
-            cmd.Parameters.AddWithValue("@currStudentId", currStudent.studentId);
-            cmd.Parameters.AddWithValue("@otherStudentID", otherStudent.studentId);
+            cmd.Parameters.AddWithValue("@currStudentId", currStudent.StudentId);
+            cmd.Parameters.AddWithValue("@otherStudentID", otherStudent.StudentId);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
             conn.Open();

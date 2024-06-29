@@ -25,23 +25,23 @@
                 <div class="col-auto bg-green p-5">
 
                     <div class="mb-3">
-                        <label asp-for="email" class="form-label"></label>
-                        <input asp-for="email" type="email" class="form-control" id="email" required>
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" id="email" required>
                         <p class="text-danger">@TempData["EmailValidation"]</p>
-                        <span asp-validation-for="email" class="text-danger"></span>
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="name" class="form-label"></label>
-                        <input asp-for="name" class="form-control" id="name" required>
-                        <span asp-validation-for="name" class="text-danger"></span>
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" id="name" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="password" class="form-label"></label>
-                        <input asp-for="password" type="password" class="form-control" id="password" required>
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" id="password" required>
                         <p class="text-danger">@TempData["PasswordLength"]</p>
                         <p class="text-danger">@TempData["PasswordUpperCase"]</p>
                         <p class="text-danger">@TempData["PasswordLowerCase"]</p>
-                        <span asp-validation-for="password" class="text-danger"></span>
+                        <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <button type="submit" class="btn-green w-100">Register</button>

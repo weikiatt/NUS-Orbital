@@ -21,30 +21,6 @@
     <script defer src="~/js/chat.js"></script>
     <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-
-<style>
-    .chatTab {
-        background: light-grey;
-        border: none;
-        border-bottom: 1px solid;
-        padding-bottom: 10px;
-        padding-top: 10px;
-    }
-
-    .chatBubble {
-        border-radius: 10px;
-        height: auto;
-        min-height:20px;
-        padding-left: 10px;
-        padding-righht: 10px;
-        word-break: break-all;
-    }
-
-    .chatInput {
-        border-radius: 25px;
-    }
-
-</style>
 <body>
     <div class="container">
         <div class="row">
@@ -52,19 +28,19 @@
                 <p>People you have chat with</p>
                 @foreach(var stud in Model.students)
                 {
-                    <button class="chatTab w-100 mt-2" onclick="showChat(@Model.currStudent.studentId,@stud.otherStudent.studentId)">@stud.otherStudent.name</button>
+                    <button class="chatTab w-100 mt-2" onclick="showChat(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)">@stud.otherStudent.Name</button>
 
                 }
             </div>
             <div class="col bg-white">
                 @foreach (var stud in Model.students)
                 {
-                    <div id="chat(@Model.currStudent.studentId,@stud.otherStudent.studentId)" class="mt-3 hidden">
-                        <strong>@stud.otherStudent.name</strong>
-                        <div id="chatContent(@Model.currStudent.studentId,@stud.otherStudent.studentId)" class="scroll" style="min-height:200px;max-height:400px">
+                    <div id="chat(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)" class="mt-3 hidden">
+                        <strong>@stud.otherStudent.Name</strong>
+                        <div id="chatContent(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)" class="scroll" style="min-height:200px;max-height:400px">
                             @foreach (var txt in stud.chatLog)
                             {
-                                @if (Model.currStudent.studentId == txt.sender.studentId)
+                                @if (Model.currStudent.StudentId == txt.sender.StudentId)
                                 {
                                     <div class="justify-content-end d-flex w-auto ml-5 mr-3">
                                         <div class="mt-1 bg-green border-2 p-2 chatBubble">
@@ -83,8 +59,8 @@
                             }
                         </div>
                         <div class="d-flex bg-green p-1 mt-2">
-                            <textarea id="inputMsg(@stud.otherStudent.studentId)" class="mt-2 w-100 form-control mr-4 chatInput" placeholder="message..."></textarea>
-                            <button id="sendButton(@stud.otherStudent.studentId)" class="btn-cancel" onclick="sendMessage(@Model.currStudent.studentId, @stud.otherStudent.studentId)">Send</button>
+                            <textarea id="inputMsg(@stud.otherStudent.StudentId)" class="mt-2 w-100 form-control mr-4 chatInput" placeholder="message..."></textarea>
+                            <button id="sendButton(@stud.otherStudent.StudentId)" class="btn-cancel" onclick="sendMessage(@Model.currStudent.StudentId, @stud.otherStudent.StudentId)">Send</button>
                         </div>
                     </div>
 

@@ -12,71 +12,71 @@ namespace NUS_Orbital.Models
     public class Student
     {
         [Key]
-        public int studentId { get; set; }
+        public int StudentId { get; set; }
 
         [Required(ErrorMessage = "Please enter your name")]
         [StringLength(50, ErrorMessage = "Invalid student name")]
         [Display(Name = "Student Name")]
-        public String name { get; set; }
+        public String Name { get; set; }
 
         [Required(ErrorMessage = "Please enter your email")]
         [Display(Name = "Email Address")]
         [EmailAddress]
         //[ValidateEmailExists(ErrorMessage = "Email address already exists!")]
-        public String email { get; set; }
+        public String Email { get; set; }
 
         [Required(ErrorMessage = "Please enter your password")]
         [Display(Name = "Password")]
         [DataType(DataType.Password)]
-        public String password { get; set; }
+        public String Password { get; set; }
 
         [Display(Name = "Course")]
-        public String course { get; set; }
+        public String Course { get; set; }
 
 
         [Display(Name = "Description")]
-        public String description { get; set; }
+        public String Description { get; set; }
 
         [NotMapped]
-        public IFormFile? fileToUpload { get; set; }
+        public IFormFile? FileToUpload { get; set; }
 
 
-        public byte[] profilePicture { get; set; }
+        public byte[] ProfilePicture { get; set; }
 
         
         [Display(Name = "Photo")]
-        public string photo { get; set; }
+        public string Photo { get; set; }
 
         public Student(String email, String name, String password)
         {
-            this.email = email;
-            this.name = name;
-            this.password = password;
-            this.course = "";
-            this.description = "";
-            this.studentId = 0;
-            this.photo = "user.png";
+            this.Email = email;
+            this.Name = name;
+            this.Password = password;
+            this.Course = "";
+            this.Description = "";
+            this.StudentId = 0;
+            this.Photo = "user.png";
         }
 
         public Student(int studentId, String name, String email, String course, String description, String photo, byte[] profilePicture)
         {
-            this.studentId = studentId;
-            this.name = name;
-            this.email = email;
-            this.course = course;
-            this.description = description;
-            this.photo = photo;
-            this.profilePicture = profilePicture;
+            this.StudentId = studentId;
+            this.Name = name;
+            this.Email = email;
+            this.Course = course;
+            this.Description = description;
+            this.Photo = photo;
+            this.ProfilePicture = profilePicture;
         }
 
         public Student()
         {
-            this.studentId = 0;
-            this.name = "DNE";
-            this.email = "DNE@gmail.com";
-            this.course = "DNE";
-            this.description = "DNE";
-            this.photo = "user.png";
+            this.StudentId = 0;
+            this.Name = "DNE";
+            this.Email = "DNE@gmail.com";
+            this.Course = "DNE";
+            this.Description = "DNE";
+            this.Photo = "user.png";
         }
 
     }

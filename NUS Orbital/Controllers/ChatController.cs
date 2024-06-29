@@ -47,7 +47,7 @@ namespace NUS_Orbital.Controllers
 
         public ActionResult AddChatFromView(IFormCollection formData)
         {
-            int currStudId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            int currStudId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).StudentId;
             int otherStudId = Convert.ToInt32(formData["otherStudId"]);
             if (!chatContext.DoesChatExist(currStudId, otherStudId))
             {

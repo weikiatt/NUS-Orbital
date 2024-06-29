@@ -85,7 +85,7 @@ namespace NUS_Orbital.Controllers
             string title = formData["title"].ToString();
             string description = formData["description"].ToString();
             string moduleCode = formData["moduleCode"].ToString();
-            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).StudentId;
             if (description != null)
             {
                 int postId = moduleContext.AddPost(moduleCode, title, description, studentId);
@@ -134,7 +134,7 @@ namespace NUS_Orbital.Controllers
             string description = formData["description"].ToString();
             string moduleCode = formData["moduleCode"].ToString();
             int postId = Convert.ToInt32(formData["postId"]);
-            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).StudentId;
             if (description != null)
             {
                 moduleContext.AddCommentToPost(description, postId, studentId);
@@ -145,7 +145,7 @@ namespace NUS_Orbital.Controllers
         [HttpPost]
         public JsonResult UpvotePost(int postId)
         {   
-            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).StudentId;
             if (moduleContext.DoesPostUpvoteExist(postId, studentId))
             {
                 moduleContext.RemoveUpvoteFromPost(postId, studentId);
@@ -159,7 +159,7 @@ namespace NUS_Orbital.Controllers
         [HttpPost]
         public JsonResult UpvoteComment(int commentId)
         {
-            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
+            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).StudentId;
             if (moduleContext.DoesCommentUpvoteExist(commentId, studentId))
             {
                 moduleContext.RemoveUpvoteFromComment(commentId, studentId);

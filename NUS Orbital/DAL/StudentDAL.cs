@@ -81,10 +81,10 @@ namespace NUS_Orbital.DAL
             SqlCommand cmd = new SqlCommand
                 ("INSERT INTO STUDENTS (Email, Name, Password, ProfilePicture) VALUES(@email, @name, @password, @profilePicture)", conn);
 
-            cmd.Parameters.AddWithValue("@email", student.email);
-            cmd.Parameters.AddWithValue("@name", student.name);
-            cmd.Parameters.AddWithValue("@password", student.password);
-            cmd.Parameters.AddWithValue("@profilePicture", student.profilePicture);
+            cmd.Parameters.AddWithValue("@email", student.Email);
+            cmd.Parameters.AddWithValue("@name", student.Name);
+            cmd.Parameters.AddWithValue("@password", student.Password);
+            cmd.Parameters.AddWithValue("@profilePicture", student.ProfilePicture);
 
             conn.Open();
             cmd.ExecuteScalar();
@@ -176,7 +176,7 @@ namespace NUS_Orbital.DAL
                  ("UPDATE STUDENTS SET ProfilePicture=@profilePicture WHERE StudentID = @selectedStudentID", conn);
 
             cmd.Parameters.AddWithValue("@profilePicture", profilePicture);
-            cmd.Parameters.AddWithValue("@selectedStudentID", student.studentId);
+            cmd.Parameters.AddWithValue("@selectedStudentID", student.StudentId);
 
             conn.Open();
             int count = cmd.ExecuteNonQuery();
@@ -189,8 +189,8 @@ namespace NUS_Orbital.DAL
             SqlCommand cmd = new SqlCommand
                  ("UPDATE STUDENTS SET Photo=@photo WHERE StudentID = @selectedStudentID", conn);
 
-            cmd.Parameters.AddWithValue("@photo", student.photo);
-            cmd.Parameters.AddWithValue("@selectedStudentID", student.studentId);
+            cmd.Parameters.AddWithValue("@photo", student.Photo);
+            cmd.Parameters.AddWithValue("@selectedStudentID", student.StudentId);
 
             conn.Open();
             int count = cmd.ExecuteNonQuery();
@@ -205,10 +205,10 @@ namespace NUS_Orbital.DAL
                  ("UPDATE STUDENTS SET Name=@name, Course=@course, Description=@description" +
                  " WHERE StudentID = @selectedStudentID", conn);
 
-            cmd.Parameters.AddWithValue("@name", updatedStudent.name);
-            cmd.Parameters.AddWithValue("@course", updatedStudent.course);
-            cmd.Parameters.AddWithValue("@description", updatedStudent.description);
-            cmd.Parameters.AddWithValue("@selectedStudentID", updatedStudent.studentId);
+            cmd.Parameters.AddWithValue("@name", updatedStudent.Name);
+            cmd.Parameters.AddWithValue("@course", updatedStudent.Course);
+            cmd.Parameters.AddWithValue("@description", updatedStudent.Description);
+            cmd.Parameters.AddWithValue("@selectedStudentID", updatedStudent.StudentId);
 
             conn.Open();
             cmd.ExecuteNonQuery();

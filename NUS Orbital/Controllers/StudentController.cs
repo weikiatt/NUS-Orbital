@@ -44,18 +44,18 @@ namespace NUS_Orbital.Controllers
         public async Task<ActionResult> Account(Student student)
         {
             Student oldStudent = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
-            student.studentId = oldStudent.studentId;
-            if (student.course == null)
+            student.StudentId = oldStudent.StudentId;
+            if (student.Course == null)
             {
-                student.course = "";
+                student.Course = "";
             }
-            if (student.description == null)
+            if (student.Description == null)
             {
-                student.description = "";
+                student.Description = "";
             }
             studentContext.UpdateStudent(student);
 
-            if (student.fileToUpload != null && student.fileToUpload.Length > 0)
+            if (student.FileToUpload != null && student.FileToUpload.Length > 0)
             {
                 try
                 {
@@ -77,10 +77,10 @@ namespace NUS_Orbital.Controllers
 
                     using (var memoryStream = new MemoryStream())
                     {
-                        await student.fileToUpload.CopyToAsync(memoryStream);
+                        await student.FileToUpload.CopyToAsync(memoryStream);
                         byte[] fileData = memoryStream.ToArray();
                         studentContext.UpdatePhoto2(student, fileData);
-                        student = studentContext.GetStudentDetailsWithID(student.studentId);
+                        student = studentContext.GetStudentDetailsWithID(student.StudentId);
                     }
                     TempData["Message"] = "File uploaded successfully.";
                 }
@@ -94,7 +94,7 @@ namespace NUS_Orbital.Controllers
                 }
             } else
             {
-                student.photo = oldStudent.photo;
+                student.Photo = oldStudent.Photo;
 
             }
             return View(student);
