@@ -225,3 +225,7 @@ input[type=checkbox]:checked + label {
 .chatInput {
     border-radius: 25px;
 }
+
+.highlight {
+    background-color: yellow;
+}

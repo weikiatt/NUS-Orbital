@@ -5,7 +5,6 @@ using MySqlX.XDevAPI.Relational;
 using NUS_Orbital.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUS_Orbital.DAL;
-using NUS_Orbital.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace NUS_Orbital.DAL

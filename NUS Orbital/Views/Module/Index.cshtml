@@ -21,25 +21,50 @@
 </head>
 <body>
     <div class="container">
-        <form class="mt-3 mb-3" method="get" asp-controller="Module" asp-action="Index" >
-            <input placeholder="Module code, module name" class="form-control" id="query" name="query">
-        </form>
-        @if (Model.ToList().Count > 0)
-        {
-            <div class="list-group mt-3 mb-3">
-                @foreach (var module in Model)
-                {
-                    <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action">
-                        <h5 class="mb-1 text-green">@module.moduleCode @module.moduleName</h5>
-                        <p class="mb-1">@module.description</p>
-                    </a>
-                }
-             </div>
-        }
-        else
-        {
-            <p> none </p>
-        }
+        <input placeholder="Module code, module name" class="form-control mt-3" id="query" name="query" onkeyup="updateList()">
+        <div class="list-group mt-3 mb-3" id="results">
+            @foreach (var module in Model)
+            {
+                <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action" id="module(@module.moduleCode">
+                    <h5 class="mb-1 text-green">@module.moduleCode @module.moduleName</h5>
+                    <p class="mb-1">@module.description</p>
+                </a>
+            }
+        </div>
     </div>
+    <script>
+        function updateList() {
+            var query = document.getElementById("query").value.toLowerCase();
+            const allMods = document.querySelectorAll('a[id ^= "module("]'); 
+            allMods.forEach(function (mod) {
+                var text = mod.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    mod.classList.remove('hidden');
+                    highlightText(mod, query);
+                } else {
+                    mod.classList.add('hidden');
+                    resetHighlight(mod);
+                }
+            });
+        }
+
+        function highlightText(element, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            const paragraphs = element.querySelectorAll('h5, p');
+
+            paragraphs.forEach(function (paragraph) {
+                paragraph.innerHTML = paragraph.textContent.replace(regex, '<span class="highlight">$1</span>');
+            });
+        }
+
+        function resetHighlight(element) {
+            const paragraphs = element.querySelectorAll('h5, p');
+
+            paragraphs.forEach(function (paragraph) {
+                paragraph.innerHTML = paragraph.textContent; // Reset to original text
+            });
+        }
+    </script>
+
 </body>
 </html>
