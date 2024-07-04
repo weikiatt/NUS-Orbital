@@ -29,6 +29,7 @@ namespace NUS_Orbital.Models
         public bool edited { get; set; }
         [Required]
         public bool deleted { get; set; }
+        public FileDataModel file;
 
         public Comment(int commentId, DateTime commentTime, string description, int upvotes, int postId, Student student, bool likedByCurrStud, bool edited, bool deleted)
         {

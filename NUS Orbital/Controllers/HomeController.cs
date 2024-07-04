@@ -9,7 +9,7 @@ namespace NUS_Orbital.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private StudentDAL studentContext = new StudentDAL();
-
+        private ModuleDAL moduleContext = new ModuleDAL();
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -112,9 +112,22 @@ namespace NUS_Orbital.Controllers
             return RedirectToAction("Index");
         }
 
+        /*
         public IActionResult FileUpload()
         {
-            return View();
-        }
+            if (HttpContext.Session.GetString("authenticated") == "true")
+            {
+                Student currStud = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
+                Module module = moduleContext.GetModuleDetails("CS1010");
+                List<Post> postList = moduleContext.GetAllPosts(module, currStud);
+               
+
+                return View(new ModulePost(module, postList, currStud));
+            }
+            TempData["Login"] = "Login to view more info about modules";
+            return RedirectToAction("Login", "Home");
+        }*/
+
+        
     }
 }

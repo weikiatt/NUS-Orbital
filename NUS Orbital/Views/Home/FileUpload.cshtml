@@ -1,5 +1,760 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model NUS_Orbital.Models.ModulePost
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/NUS_Orbital.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</head>
+
+
+
+
+<body>
+    <div class="container mt-4 mb-4">
+        <div class="row">
+            <div class="col-lg-3 col-md-4 text-center">
+                <h1 class="text-green text-uppercase">@Model.module.moduleCode</h1>
+                <p class="text-secondary">@Model.module.moduleName</p>
+            </div>
+            <div class="col text-justify">
+                <p>@Model.module.description</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3 mb-3">
+        <h5>Reviews and Discussions</h5>
+        <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
+        <div class="row mt-3 hidden" id="createPost">
+            <div class="col-fixed width-50">
+                <img class="profile-picture wh-50" src="@Model.student.Photo" />
+            </div>
+            <form class="col" method="post" action="~/Module/Post" enctype="multipart/form-data">
+                <input hidden value="@Model.module.moduleCode" name="moduleCode" />
+                <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required onkeyup="togglePostButton()" name="title"></textarea>
+                <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required onkeyup="togglePostButton()" name="description"></textarea>
+                <input class="form-control-file mt-2" name="document" type="file" accept="*/*" />
+                <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
+                <div id="tags" class="hidden">
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" id="tag1" name="tag1" value="Need Notes">
+                        <label for="tag1">Need Notes</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" id="tag2" name="tag2" value="Looking for Group">
+                        <label for="tag2">Looking for Group</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" id="tag3" name="tag3" value="Question About Module">
+                        <label for="tag3">Question About Module</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" id="tag4" name="tag4" value="Review">
+                        <label for="tag4">Review</label>
+                    </div>
+                    <div class="p-1 w-auto">
+                        <input type="checkbox" id="tag5" name="tag5" value="Free Notes">
+                        <label for="tag5">Free Notes</label>
+                    </div>
+                </div>
+
+                <div class="justify-content-end align-items-end d-flex">
+                    <button type="reset" class="btn-cancel btn-pill hidden" id="cancelButton" onclick="hidePostButton()">Cancel</button>
+                    <button type="submit" class="btn-green btn-pill mt-2 hidden" id="postButton">Post</button>
+                </div>
+            </form>
+
+        </div>
+
+        <hr />
+
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col">
+                    @if (Model.posts.Count > 0)
+                    {
+                        @foreach (var post in Model.posts)
+                        {
+                            <div class="row mt-3">
+                                <div class="col-fixed width-50">
+                                    <img class="profile-picture wh-50" src="@post.student.Photo" />
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="row">
+                                            <a href="~/Student/ViewAccount?email=@post.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.Name</strong></a>
+                                            <p class="col-auto text-secondary">@post.calculateDate(post.postTime)</p>
+                                            @if (post.edited)
+                                            {
+                                                <p class="col-auto text-secondary">(edited)</p>
+                                            }
+                                            else
+                                            {
+                                                <p id="postEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
+                                            }
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            @if (Model.student.Email == post.student.Email && !post.deleted)
+                                            {
+                                                <div class="col-auto" id="editPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="editPost(@post.postId)"><small>Edit</small></button></div>
+                                                <div class="col-auto hidden" id="cancelEditPost(@post.postId)"><button class="btn-cancel btn-pill-small" onclick="cancelEdit(@post.postId, '@post.title', '@post.description')"><small>Cancel</small></button></div>
+                                                <div class="col-auto hidden" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePost(@post.postId)"><small>Delete</small></button></div>
+                                                <div class="col-auto hidden" id="saveChangesPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="updatePost(@post.postId, '@post.title', '@post.description')"><small>Save Changes</small></button></div>
+                                            }
+                                        </div>
+                                    </div>
+                                    @if (post.deleted)
+                                    {
+                                        <div id="deletePostContent(@post.postId)">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p class="text-danger italic">Post has been deleted...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="deletePostContent(@post.postId)">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 id="postTitle(@post.postId)">@post.title</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col text-justify">
+                                                    <p id="postDescription(@post.postId)">@post.description</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (post.file != null)
+                                        {
+                                            <a href="/Module/DownloadPostFile?postId=@post.postId">@post.file.FileName</a>
+                                        }
+                                    }
+
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            @foreach (var tag in post.tags)
+                                            {
+                                                <p class="tagDisplay h-auto w-auto">@tag.tag</p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        @if (post.likedByCurrStud)
+                                        {
+                                            <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                                        }
+                                        else
+                                        {
+                                            <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                                        }
+                                        <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
+                                        <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
+                                <div class="col-fixed width-50"></div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-fixed width-50">
+                                            <img class="profile-picture wh-50" src="@Model.student.Photo" />
+                                        </div>
+                                        <form class="col" method="post" action="~/Module/Comment" enctype="multipart/form-data">
+                                            <input hidden value="@Model.module.moduleCode" name="moduleCode" />
+                                            <input hidden value="@post.postId" name="postId" />
+                                            <textarea class="w-100 form-control" placeholder="Reply to post..." onkeyup="showCommentButton(@post.postId)" id="commentInput(@post.postId)" name="description"></textarea>
+                                            <input class="form-control-file mt-2" name="commentFor(@post.postId)" type="file" accept="*/*" />
+                                            <div class="justify-content-end align-items-end d-flex">
+                                                <button type="reset" class="hidden btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
+                                                <button type="submit" class="hidden btn-green btn-pill mt-2 ml-2" id="commentButton(@post.postId)">Comment</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (post.comments.Count() > 0)
+                            {
+                                <div class="row">
+                                    <button class="btn-view-reply btn-pill text-dark-green mt-1 small" style="margin-left:50px;">View Replies</button>
+                                    <div class="container hidden mt-3">
+                                        <div class="row">
+                                            <div class="col-fixed width-50"></div>
+                                            <div class="col">
+                                                @foreach (var comment in post.comments)
+                                                {
+                                                    <div class="row mt-1">
+                                                        <div class="col-fixed width-50">
+                                                            <img class="profile-picture wh-50" src="@comment.student.Photo" />
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="row">
+                                                                    <a href="~/Student/ViewAccount?email=@comment.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@comment.student.Name</strong></a>
+                                                                    <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
+                                                                    @if (comment.edited)
+                                                                    {
+                                                                        <p class="col-auto text-secondary">(edited)</p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p id="commentEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
+                                                                    }
+                                                                </div>
+                                                                <div class="d-flex justify-content-between">
+                                                                    @if (Model.student.Email == comment.student.Email && !comment.deleted)
+                                                                    {
+                                                                        <div class="col-auto" id="editComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="editComment(@comment.commentId)"><small>Edit</small></button></div>
+                                                                        <div class="col-auto hidden" id="cancelEditComment(@comment.commentId)"><button class="btn-cancel btn-pill-small" onclick="cancelEditComment(@comment.commentId, '@comment.description')"><small>Cancel</small></button></div>
+                                                                        <div class="col-auto hidden" id="deleteComment(@comment.commentId)"><button class="btn-green bg-danger btn-pill-small" onclick="deleteComment(@comment.commentId)"><small>Delete</small></button></div>
+                                                                        <div class="col-auto hidden" id="saveChangesComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="updateComment(@comment.commentId)"><small>Save Changes</small></button></div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            @if (comment.deleted)
+                                                            {
+                                                                <div id="deleteCommentContent(@comment.commentId)">
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <p class="text-danger italic">Comment has been deleted...</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div id="deleteCommentContent(@comment.commentId)">
+                                                                    <div class="row">
+                                                                        <div class="col text-justify">
+                                                                            <p id="commentDescription(@comment.commentId)">@comment.description</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if (comment.file != null)
+                                                                {
+                                                                    <a href="/Module/DownloadCommentFile?commentId=@comment.commentId">@comment.file.FileName</a>
+                                                                }
+                                                            }
+
+                                                            <div class="d-flex align-items-center">
+                                                                @if (@comment.likedByCurrStud)
+                                                                {
+                                                                    <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                                }
+                                                                <div class="ml-1" id="commentCountUpvote(@comment.commentId)">@comment.upvotes</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <div>No posts for this module...</div>
+                    }
+                </div>
+                <form action="~/Module/View" class="col-auto">
+                    <div class="row mb-2">
+                        <button class="btn-green btn-pill">Filter by Tag</button>
+                    </div>
+                    <input hidden value="@Model.module.moduleCode" name="moduleCode" />
+                    @foreach (var tag in Model.tags)
+                    {
+                        <div class="row">
+                            <input type="checkbox" id="filterTag_@tag.tag" name="filterTag" value=@tag.tagId @(tag.filtered ? "checked" : "")>
+                            <label for="filterTag_@tag.tag" class="ml-2">@tag.tag</label>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+        // for details on configuring this project to bundle and minify static web assets.
+
+        // Write your JavaScript code.
+        document.querySelectorAll('.btn-view-reply').forEach(button => {
+            button.addEventListener('click', function () {
+                const nextRow = this.nextElementSibling;
+                nextRow.classList.toggle('hidden');
+                if (nextRow.classList.contains('hidden')) {
+                    this.textContent = 'View Replies';
+                } else {
+                    this.textContent = 'Hide Replies';
+                }
+            });
+        });
+
+        function togglePostButton() {
+            var postInput = document.getElementById("postInput");
+            var postTitleInput = document.getElementById("postTitleInput");
+            var postButton = document.getElementById("postButton");
+            var cancelButton = document.getElementById("cancelButton");
+
+            if (postInput.value != "" && postTitleInput.value != "") {
+                if (postButton.classList.contains('hidden')) {
+                    postButton.classList.toggle('hidden');
+                    cancelButton.classList.toggle('hidden');
+                }
+            } else if (postInput.value == "" || postTitleInput.value == "") {
+                if (!postButton.classList.contains('hidden')) {
+                    postButton.classList.toggle('hidden');
+                    cancelButton.classList.toggle('hidden');
+                }
+            }
+        }
+        //document.getElementById("postInput").addEventListener("input", toggleCommentButton);
+
+        function showCommentButton(postId) {
+            var commentInput = document.getElementById("commentInput(" + postId + ")");
+            var cancelCommentButton = document.getElementById("cancelCommentButton(" + postId + ")");
+            var commentButton = document.getElementById("commentButton(" + postId + ")");
+
+            if (commentInput.value != "") {
+                if (cancelCommentButton.classList.contains('hidden')) {
+                    cancelCommentButton.classList.toggle('hidden');
+                    commentButton.classList.toggle('hidden');
+                }
+            } else {
+                if (!cancelCommentButton.classList.contains('hidden')) {
+                    cancelCommentButton.classList.toggle('hidden');
+                    commentButton.classList.toggle('hidden');
+                }
+            }
+        }
+
+        function hidePostButton() {
+            var postButton = document.getElementById("postButton");
+            var cancelButton = document.getElementById("cancelButton");
+            postButton.classList.toggle('hidden');
+            cancelButton.classList.toggle('hidden');
+        }
+
+        function showCommentBox(postId) {
+            var commentBox = document.getElementById("commentBox(" + postId + ")");
+            if (commentBox.classList.contains('hidden')) {
+                commentBox.classList.toggle('hidden');
+            }
+        }
+
+        function hideCommentBox(postId) {
+            var commentBox = document.getElementById("commentBox(" + postId + ")");
+            var cancelCommentButton = document.getElementById("cancelCommentButton(" + postId + ")");
+            var commentButton = document.getElementById("commentButton(" + postId + ")");
+            if (!commentBox.classList.contains('hidden')) {
+                commentBox.classList.toggle('hidden');
+                cancelCommentButton.classList.toggle('hidden');
+                commentButton.classList.toggle('hidden');
+            }
+        }
+
+        function upvotePost(postId) {
+            var postUpvote = document.getElementById("postUpvote(" + postId + ")");
+            var countUpvote = document.getElementById("countUpvote(" + postId + ")");
+
+            if (!postUpvote.classList.contains('bg-green')) {
+                countUpvote.innerText = Number(countUpvote.innerText) + 1;
+                postUpvote.classList.toggle('bg-green');
+                postUpvote.classList.toggle('bg-transparent');
+
+            } else {
+                countUpvote.innerText = Number(countUpvote.innerText) - 1;
+                postUpvote.classList.toggle('bg-green');
+                postUpvote.classList.toggle('bg-transparent');
+            }
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpvotePost", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId
+                },
+                success: function (response) {
+                },
+                error: function (xhr, status, error) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        function upvoteComment(commentId) {
+            var commentUpvote = document.getElementById("commentUpvote(" + commentId + ")");
+            var commentCountUpvote = document.getElementById("commentCountUpvote(" + commentId + ")");
+
+            if (!commentUpvote.classList.contains('bg-green')) {
+                commentCountUpvote.innerText = Number(commentCountUpvote.innerText) + 1;
+                commentUpvote.classList.toggle('bg-green');
+                commentUpvote.classList.toggle('bg-transparent');
+
+            } else {
+                commentCountUpvote.innerText = Number(commentCountUpvote.innerText) - 1;
+                commentUpvote.classList.toggle('bg-green');
+                commentUpvote.classList.toggle('bg-transparent');
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpvoteComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId
+                },
+                success: function (response) {
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function showTags() {
+            var tagButton = document.getElementById("tagButton");
+            if (tags.classList.contains('hidden')) {
+                tags.classList.toggle('hidden');
+                tagButton.innerHTML = "Hide Tags";
+
+            } else {
+                tags.classList.toggle('hidden');
+                tagButton.innerHTML = "Add Tags";
+            }
+        }
+
+        function showCreatePost() {
+            var showCreatePostButton = document.getElementById("showCreatePostButton");
+            var createPostDiv = document.getElementById("createPost");
+            if (createPostDiv.classList.contains('hidden')) {
+                createPostDiv.classList.toggle('hidden');
+                showCreatePostButton.innerHTML = "- Hide Draft";
+
+            } else {
+                createPostDiv.classList.toggle('hidden');
+                showCreatePostButton.innerHTML = "+ Create a Post";
+            }
+        }
+
+
+        function toggleCommentEditButton(commentId) {
+            var editButton = document.getElementById('editComment(' + commentId + ")");
+            editButton.classList.toggle("hidden");
+        }
+
+        function toggleCancelEditCommentButton(commentId) {
+            var cancelButton = document.getElementById('cancelEditComment(' + commentId + ")");
+            cancelButton.classList.toggle("hidden");
+        }
+
+        function toggleDeleteCommentButton(commentId) {
+            var deleteButton = document.getElementById('deleteComment(' + commentId + ")");
+            deleteButton.classList.toggle("hidden");
+        }
+
+        function toggleSaveCommentChangesButton(commentId) {
+            var saveButton = document.getElementById('saveChangesComment(' + commentId + ")");
+            saveButton.classList.toggle("hidden");
+        }
+
+        function editComment(commentId) {
+            var desc = document.getElementById('commentDescription(' + commentId + ")");
+            var descInput = document.createElement('textarea');
+
+            descInput.type = 'text';
+            descInput.value = desc.innerText;
+            desc.parentNode.replaceChild(descInput, desc);
+            descInput.classList.toggle("w-100");
+            descInput.classList.toggle("form-control");
+            descInput.classList.toggle("col");
+            descInput.id = "commentDescription(" + commentId + ")";
+
+            toggleCommentEditButton(commentId);
+            toggleCancelEditCommentButton(commentId);
+            toggleDeleteCommentButton(commentId);
+            toggleSaveCommentChangesButton(commentId);
+        }
+
+        function deleteComment(commentId) {
+            toggleCancelEditCommentButton(commentId);
+            toggleDeleteCommentButton(commentId);
+            toggleSaveCommentChangesButton(commentId);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId
+                },
+                success: function (response) {
+                    var content = document.getElementById("deleteCommentContent(" + commentId + ")");
+                    content.innerHTML = `
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="text-danger italic">Comment has been deleted...</p>
+                                            </div>
+                                        </div>
+                                    `;
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+
+        function cancelEditComment(commentId) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetCommentDetails", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId,
+                },
+                success: function (response) {
+                    var descriptionInput = document.getElementById('commentDescription(' + commentId + ")");
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = response.originalDescription;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "commentDescription(" + commentId + ")";
+
+                    toggleCommentEditButton(commentId);
+                    toggleCancelEditCommentButton(commentId);
+                    toggleDeleteCommentButton(commentId);
+                    toggleSaveCommentChangesButton(commentId);
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function updateComment(commentId) {
+            var descriptionInput = document.getElementById('commentDescription(' + commentId + ")");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("EditComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId,
+                    commentDescription: descriptionInput.value
+                },
+                success: function (response) {
+                    toggleCommentEditButton(commentId);
+                    toggleCancelEditCommentButton(commentId);
+                    toggleDeleteCommentButton(commentId);
+                    toggleSaveCommentChangesButton(commentId);
+
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = descriptionInput.value;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "commentDescription(" + commentId + ")";
+
+                    var commentEdited = document.getElementById('commentEdited(' + commentId + ")");
+                    if (commentEdited.classList.contains('hidden')) {
+                        commentEdited.classList.toggle('hidden');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Do not leave inputs blank');
+                }
+            });
+        }
+
+
+
+
+
+
+        function togglePostEditButton(postId) {
+            var editButton = document.getElementById('editPost(' + postId + ")");
+            editButton.classList.toggle("hidden");
+        }
+
+        function togglePostCancelEditButton(postId) {
+            var cancelButton = document.getElementById('cancelEditPost(' + postId + ")");
+            cancelButton.classList.toggle("hidden");
+        }
+
+        function toggleDeletePostButton(postId) {
+            var deleteButton = document.getElementById('deletePost(' + postId + ")");
+            deleteButton.classList.toggle("hidden");
+        }
+
+        function toggleSavePostChangesButton(postId) {
+            var saveButton = document.getElementById('saveChangesPost(' + postId + ")");
+            saveButton.classList.toggle("hidden");
+        }
+
+        function editPost(postId) {
+            var title = document.getElementById('postTitle(' + postId + ")");
+            var titleInput = document.createElement('textarea');
+
+            titleInput.type = 'text';
+            titleInput.value = title.innerText;
+            title.parentNode.replaceChild(titleInput, title);
+            titleInput.classList.toggle("w-100");
+            titleInput.classList.toggle("form-control");
+            titleInput.id = "postTitle(" + postId + ")";
+
+            var description = document.getElementById('postDescription(' + postId + ")");
+            var descriptionInput = document.createElement('textarea');
+            descriptionInput.type = 'text';
+            descriptionInput.value = description.innerText;
+            description.parentNode.replaceChild(descriptionInput, description);
+            descriptionInput.classList.toggle("w-100");
+            descriptionInput.classList.toggle("form-control");
+            descriptionInput.id = "postDescription(" + postId + ")";
+
+            togglePostEditButton(postId);
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
+            toggleDeletePostButton(postId);
+
+        }
+
+        function cancelEdit(postId) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetPostDetails", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId,
+                },
+                success: function (response) {
+                    var titleInput = document.getElementById('postTitle(' + postId + ")");
+                    var title = document.createElement('h5');
+
+                    title.type = 'text';
+                    title.innerText = response.originalTitle;
+                    titleInput.parentNode.replaceChild(title, titleInput);
+                    title.id = "postTitle(" + postId + ")";
+
+                    var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = response.originalDescription;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "postDescription(" + postId + ")";
+
+                    togglePostEditButton(postId);
+                    togglePostCancelEditButton(postId);
+                    toggleSavePostChangesButton(postId);
+                    toggleDeletePostButton(postId);
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function deletePost(postId) {
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
+            toggleDeletePostButton(postId);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeletePost", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId
+                },
+                success: function (response) {
+                    var content = document.getElementById("deletePostContent(" + postId + ")");
+                    content.innerHTML = `
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="text-danger italic">Post has been deleted...</p>
+                                            </div>
+                                        </div>
+                                    `;
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function updatePost(postId, postTitle, postDescription) {
+            var titleInput = document.getElementById('postTitle(' + postId + ")");
+            var descriptionInput = document.getElementById('postDescription(' + postId + ")");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("EditPost", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId,
+                    postTitle: titleInput.value,
+                    postDescription: descriptionInput.value
+                },
+                success: function (response) {
+                    togglePostEditButton(postId);
+                    togglePostCancelEditButton(postId);
+                    toggleSavePostChangesButton(postId);
+                    toggleDeletePostButton(postId);
+
+                    var title = document.createElement('h5');
+
+                    title.type = 'text';
+                    title.innerText = titleInput.value;
+                    titleInput.parentNode.replaceChild(title, titleInput);
+                    title.id = "postTitle(" + postId + ")";
+
+                    var description = document.createElement('p');
+
+                    description.type = 'text';
+                    description.innerText = descriptionInput.value;
+                    descriptionInput.parentNode.replaceChild(description, descriptionInput);
+                    description.id = "postDescription(" + postId + ")";
+
+                    var postEdited = document.getElementById('postEdited(' + postId + ")");
+                    if (postEdited.classList.contains('hidden')) {
+                        postEdited.classList.toggle('hidden');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Do not leave inputs blank');
+                }
+            });
+
+
+
+        }
+
+
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@ using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Hosting;
 using Org.BouncyCastle.Asn1;
 using Mysqlx.Crud;
+using Org.BouncyCastle.Crypto.Paddings;
 
 namespace NUS_Orbital.Controllers
 {
@@ -78,9 +79,19 @@ namespace NUS_Orbital.Controllers
             return RedirectToAction("Login", "Home");
         }
 
+        public IActionResult DownloadPostFile(int postId)
+        {
+            var fileData = moduleContext.GetPostFile(postId);
 
-        
-        public ActionResult Post(IFormCollection formData)
+            if (fileData == null)
+            {
+                return NotFound();
+            }
+
+            return File(fileData.FileData, fileData.ContentType, fileData.FileName);
+        }
+
+        public IActionResult Post(IFormCollection formData)
         {
             string title = formData["title"].ToString();
             string description = formData["description"].ToString();
@@ -112,7 +123,18 @@ namespace NUS_Orbital.Controllers
                     moduleContext.AddPostTag(postId, 5);
                 }
 
+                var file = formData.Files["document"];
+                if (file != null && file.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        file.CopyTo(memoryStream);
+                        var fileBytes = memoryStream.ToArray();
+                        moduleContext.AddPostFile (postId, file.FileName, file.ContentType, fileBytes);
+                    }
+                }
             }
+
             return RedirectToAction("View", "Module", new {ModuleCode = moduleCode});
         }
 
@@ -137,9 +159,32 @@ namespace NUS_Orbital.Controllers
             int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).StudentId;
             if (description != null)
             {
-                moduleContext.AddCommentToPost(description, postId, studentId);
+                int commentId = moduleContext.AddCommentToPost(description, postId, studentId);
+                string str = "commentFor(" + postId.ToString() + ")";
+                var file = formData.Files[str];
+                if (file != null && file.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        file.CopyTo(memoryStream);
+                        var fileBytes = memoryStream.ToArray();
+                        moduleContext.AddCommentFile(commentId, file.FileName, file.ContentType, fileBytes);
+                    }
+                }
             }
             return RedirectToAction("View", "Module", new { ModuleCode = moduleCode });
+        }
+
+        public IActionResult DownloadCommentFile(int commentId)
+        {
+            var fileData = moduleContext.GetCommentFile(commentId);
+
+            if (fileData == null)
+            {
+                return NotFound();
+            }
+
+            return File(fileData.FileData, fileData.ContentType, fileData.FileName);
         }
 
         [HttpPost]

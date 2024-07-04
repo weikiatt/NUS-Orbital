@@ -21,7 +21,7 @@
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-     
+
 </head>
 
 
@@ -37,21 +37,21 @@
             <div class="col text-justify">
                 <p>@Model.module.description</p>
             </div>
-        </div> 
+        </div>
     </div>
 
     <div class="container mt-3 mb-3">
         <h5>Reviews and Discussions</h5>
         <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
         <div class="row mt-3 hidden" id="createPost">
-            <div class="col-fixed width-50"> 
+            <div class="col-fixed width-50">
                 <img class="profile-picture wh-50" src="@Model.student.Photo" />
             </div>
-            <form class="col" method="post" action="~/Module/Post">
-                
+            <form class="col" method="post" action="~/Module/Post" enctype="multipart/form-data">
                 <input hidden value="@Model.module.moduleCode" name="moduleCode" />
                 <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required onkeyup="togglePostButton()" name="title"></textarea>
                 <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required onkeyup="togglePostButton()" name="description"></textarea>
+                <input class="form-control-file mt-2" name="document" type="file" accept="*/*" />
                 <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
                 <div id="tags" class="hidden">
                     <div class="p-1 w-auto">
@@ -89,187 +89,199 @@
         <div class="container mt-3">
             <div class="row">
                 <div class="col">
-                @if (Model.posts.Count > 0) {
-                    @foreach (var post in Model.posts)
+                    @if (Model.posts.Count > 0)
                     {
-                        <div class="row mt-3">
-                            <div class="col-fixed width-50">
-                                <img class="profile-picture wh-50" src="@post.student.Photo" />
-                            </div>
-                            <div class="col">
-                                <div class="d-flex justify-content-between">
-                                    <div class="row">
-                                        <a href="~/Student/ViewAccount?email=@post.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.Name</strong></a>
-                                        <p class="col-auto text-secondary">@post.calculateDate(post.postTime)</p>
-                                        @if (post.edited)
-                                        {
-                                            <p class="col-auto text-secondary">(edited)</p>
-                                        }
-                                        else
-                                        {
-                                            <p id="postEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
-                                        }
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        @if (Model.student.Email == post.student.Email && !post.deleted)
-                                        {
-                                            <div class="col-auto" id="editPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="editPost(@post.postId)"><small>Edit</small></button></div>
-                                            <div class="col-auto hidden" id="cancelEditPost(@post.postId)"><button class="btn-cancel btn-pill-small" onclick="cancelEdit(@post.postId, '@post.title', '@post.description')"><small>Cancel</small></button></div>
-                                            <div class="col-auto hidden" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePost(@post.postId)"><small>Delete</small></button></div>
-                                            <div class="col-auto hidden" id="saveChangesPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="updatePost(@post.postId, '@post.title', '@post.description')"><small>Save Changes</small></button></div>
-                                        }
-                                    </div>
-                                </div>
-                                @if (post.deleted)
-                                {
-                                    <div id="deletePostContent(@post.postId)">
-                                        <div class="row">
-                                            <div class="col">
-                                                <p class="text-danger italic">Post has been deleted...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                } else
-                                {
-                                    <div id="deletePostContent(@post.postId)">
-                                        <div class="row">
-                                            <div class="col">
-                                                <h5 id="postTitle(@post.postId)">@post.title</h5>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col text-justify">
-                                                <p id="postDescription(@post.postId)">@post.description</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        @foreach (var tag in post.tags)
-                                        {
-                                            <p class="tagDisplay h-auto w-auto">@tag.tag</p>
-                                        }
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    @if (post.likedByCurrStud)
-                                    {
-                                        <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
-                                    }
-                                    else
-                                    {
-                                        <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
-                                    }
-                                    <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
-                                    <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
-                            <div class="col-fixed width-50"></div>
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col-fixed width-50">
-                                        <img class="profile-picture wh-50" src="@Model.student.Photo" />
-                                    </div>
-                                    <form class="col" method="post" action="~/Module/Comment">
-                                        <input hidden value="@Model.module.moduleCode" name="moduleCode" />
-                                        <input hidden value="@post.postId" name="postId" />
-                                        <textarea class="w-100 form-control" placeholder="Reply to post..." onkeyup="showCommentButton(@post.postId)" id="commentInput(@post.postId)" name="description"></textarea>
-                                        <div class="justify-content-end align-items-end d-flex">
-                                            <button type="reset" class="hidden btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
-                                            <button type="submit" class="hidden btn-green btn-pill mt-2 ml-2" id="commentButton(@post.postId)">Comment</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        @if (post.comments.Count() > 0)
+                        @foreach (var post in Model.posts)
                         {
-                            <div class="row">
-                                <button class="btn-view-reply btn-pill text-dark-green mt-1 small" style="margin-left:50px;">View Replies</button>
-                                <div class="container hidden mt-3">
-                                    <div class="row">
-                                        <div class="col-fixed width-50"></div>
-                                        <div class="col">
-                                            @foreach (var comment in post.comments)
+                            <div class="row mt-3">
+                                <div class="col-fixed width-50">
+                                    <img class="profile-picture wh-50" src="@post.student.Photo" />
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="row">
+                                            <a href="~/Student/ViewAccount?email=@post.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@post.student.Name</strong></a>
+                                            <p class="col-auto text-secondary">@post.calculateDate(post.postTime)</p>
+                                            @if (post.edited)
                                             {
-                                                <div class="row mt-1">
-                                                    <div class="col-fixed width-50">
-                                                        <img class="profile-picture wh-50" src="@comment.student.Photo" />
-                                                    </div>
-                                                    <div class="col">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div class="row">
-                                                                <a href="~/Student/ViewAccount?email=@comment.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@comment.student.Name</strong></a>
-                                                                <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
-                                                                @if (comment.edited)
-                                                                {
-                                                                    <p class="col-auto text-secondary">(edited)</p>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <p id="commentEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
-                                                                }
-                                                            </div>
-                                                            <div class="d-flex justify-content-between">
-                                                                @if (Model.student.Email == comment.student.Email && !comment.deleted)
-                                                                {
-                                                                    <div class="col-auto" id="editComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="editComment(@comment.commentId)"><small>Edit</small></button></div>
-                                                                    <div class="col-auto hidden" id="cancelEditComment(@comment.commentId)"><button class="btn-cancel btn-pill-small" onclick="cancelEditComment(@comment.commentId, '@comment.description')"><small>Cancel</small></button></div>
-                                                                    <div class="col-auto hidden" id="deleteComment(@comment.commentId)"><button class="btn-green bg-danger btn-pill-small" onclick="deleteComment(@comment.commentId)"><small>Delete</small></button></div>
-                                                                    <div class="col-auto hidden" id="saveChangesComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="updateComment(@comment.commentId)"><small>Save Changes</small></button></div>
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                        @if (comment.deleted)
-                                                        {
-                                                            <div id="deleteCommentContent(@comment.commentId)">
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <p class="text-danger italic">Comment has been deleted...</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        } 
-                                                        else
-                                                        {
-                                                            <div id="deleteCommentContent(@comment.commentId)">
-                                                                <div class="row">
-                                                                    <div class="col text-justify">
-                                                                        <p id="commentDescription(@comment.commentId)">@comment.description</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                            
-                                                        <div class="d-flex align-items-center">
-                                                            @if (@comment.likedByCurrStud)
-                                                            {
-                                                                <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
-                                                            }
-                                                            else
-                                                            {
-                                                                <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
-                                                            }
-                                                            <div class="ml-1" id="commentCountUpvote(@comment.commentId)">@comment.upvotes</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <p class="col-auto text-secondary">(edited)</p>
+                                            }
+                                            else
+                                            {
+                                                <p id="postEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
+                                            }
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            @if (Model.student.Email == post.student.Email && !post.deleted)
+                                            {
+                                                <div class="col-auto" id="editPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="editPost(@post.postId)"><small>Edit</small></button></div>
+                                                <div class="col-auto hidden" id="cancelEditPost(@post.postId)"><button class="btn-cancel btn-pill-small" onclick="cancelEdit(@post.postId, '@post.title', '@post.description')"><small>Cancel</small></button></div>
+                                                <div class="col-auto hidden" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePost(@post.postId)"><small>Delete</small></button></div>
+                                                <div class="col-auto hidden" id="saveChangesPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="updatePost(@post.postId, '@post.title', '@post.description')"><small>Save Changes</small></button></div>
                                             }
                                         </div>
                                     </div>
+                                    @if (post.deleted)
+                                    {
+                                        <div id="deletePostContent(@post.postId)">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p class="text-danger italic">Post has been deleted...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="deletePostContent(@post.postId)">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 id="postTitle(@post.postId)">@post.title</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col text-justify">
+                                                    <p id="postDescription(@post.postId)">@post.description</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (post.file != null)
+                                        {
+                                            <a href="/Module/DownloadPostFile?postId=@post.postId">@post.file.FileName</a>
+                                        }
+                                    }
+
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            @foreach (var tag in post.tags)
+                                            {
+                                                <p class="tagDisplay h-auto w-auto">@tag.tag</p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        @if (post.likedByCurrStud)
+                                        {
+                                            <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                                        }
+                                        else
+                                        {
+                                            <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                                        }
+                                        <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
+                                        <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
+                                <div class="col-fixed width-50"></div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-fixed width-50">
+                                            <img class="profile-picture wh-50" src="@Model.student.Photo" />
+                                        </div>
+                                        <form class="col" method="post" action="~/Module/Comment" enctype="multipart/form-data">
+                                            <input hidden value="@Model.module.moduleCode" name="moduleCode" />
+                                            <input hidden value="@post.postId" name="postId" />
+                                            <textarea class="w-100 form-control" placeholder="Reply to post..." onkeyup="showCommentButton(@post.postId)" id="commentInput(@post.postId)" name="description"></textarea>
+                                            <input class="form-control-file mt-2" name="commentFor(@post.postId)" type="file" accept="*/*" />
+                                            <div class="justify-content-end align-items-end d-flex">
+                                                <button type="reset" class="hidden btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
+                                                <button type="submit" class="hidden btn-green btn-pill mt-2 ml-2" id="commentButton(@post.postId)">Comment</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (post.comments.Count() > 0)
+                            {
+                                <div class="row">
+                                    <button class="btn-view-reply btn-pill text-dark-green mt-1 small" style="margin-left:50px;">View Replies</button>
+                                    <div class="container hidden mt-3">
+                                        <div class="row">
+                                            <div class="col-fixed width-50"></div>
+                                            <div class="col">
+                                                @foreach (var comment in post.comments)
+                                                {
+                                                    <div class="row mt-1">
+                                                        <div class="col-fixed width-50">
+                                                            <img class="profile-picture wh-50" src="@comment.student.Photo" />
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="row">
+                                                                    <a href="~/Student/ViewAccount?email=@comment.student.Email" method="get" class="col-auto"><strong class="text-green text-uppercase">@comment.student.Name</strong></a>
+                                                                    <p class="col-auto text-secondary ml-2">@comment.calculateDate(@comment.commentTime)</p>
+                                                                    @if (comment.edited)
+                                                                    {
+                                                                        <p class="col-auto text-secondary">(edited)</p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p id="commentEdited(@post.postId)" class="col-auto text-secondary hidden">(edited)</p>
+                                                                    }
+                                                                </div>
+                                                                <div class="d-flex justify-content-between">
+                                                                    @if (Model.student.Email == comment.student.Email && !comment.deleted)
+                                                                    {
+                                                                        <div class="col-auto" id="editComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="editComment(@comment.commentId)"><small>Edit</small></button></div>
+                                                                        <div class="col-auto hidden" id="cancelEditComment(@comment.commentId)"><button class="btn-cancel btn-pill-small" onclick="cancelEditComment(@comment.commentId, '@comment.description')"><small>Cancel</small></button></div>
+                                                                        <div class="col-auto hidden" id="deleteComment(@comment.commentId)"><button class="btn-green bg-danger btn-pill-small" onclick="deleteComment(@comment.commentId)"><small>Delete</small></button></div>
+                                                                        <div class="col-auto hidden" id="saveChangesComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="updateComment(@comment.commentId)"><small>Save Changes</small></button></div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            @if (comment.deleted)
+                                                            {
+                                                                <div id="deleteCommentContent(@comment.commentId)">
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <p class="text-danger italic">Comment has been deleted...</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div id="deleteCommentContent(@comment.commentId)">
+                                                                    <div class="row">
+                                                                        <div class="col text-justify">
+                                                                            <p id="commentDescription(@comment.commentId)">@comment.description</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if (comment.file != null)
+                                                                {
+                                                                    <a href="/Module/DownloadCommentFile?commentId=@comment.commentId">@comment.file.FileName</a>
+                                                                }
+                                                            }
+
+                                                            <div class="d-flex align-items-center">
+                                                                @if (@comment.likedByCurrStud)
+                                                                {
+                                                                    <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                                }
+                                                                <div class="ml-1" id="commentCountUpvote(@comment.commentId)">@comment.upvotes</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
                     }
-                } else
-                {
-                    <div>No posts for this module...</div>
-                }
+                    else
+                    {
+                        <div>No posts for this module...</div>
+                    }
                 </div>
                 <form action="~/Module/View" class="col-auto">
                     <div class="row mb-2">
@@ -506,12 +518,12 @@
                 success: function (response) {
                     var content = document.getElementById("deleteCommentContent(" + commentId + ")");
                     content.innerHTML = `
-                                <div class="row">
-                                    <div class="col">
-                                        <p class="text-danger italic">Comment has been deleted...</p>
-                                    </div>
-                                </div>
-                            `;
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <p class="text-danger italic">Comment has been deleted...</p>
+                                                    </div>
+                                                </div>
+                                            `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -683,12 +695,12 @@
                 success: function (response) {
                     var content = document.getElementById("deletePostContent(" + postId + ")");
                     content.innerHTML = `
-                                <div class="row">
-                                    <div class="col">
-                                        <p class="text-danger italic">Post has been deleted...</p>
-                                    </div>
-                                </div>
-                            `;
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <p class="text-danger italic">Post has been deleted...</p>
+                                                    </div>
+                                                </div>
+                                            `;
                 },
                 error: function (xhr, status, error) {
                 }

@@ -25,6 +25,7 @@ namespace NUS_Orbital.Models
         public List<Tag> tags;
         public bool edited;
         public bool deleted;
+        public FileDataModel file;
         public Post(Module module, int postId, DateTime postTime, string title, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags, bool edited, bool deleted)
         {
             this.module = module;
@@ -40,7 +41,23 @@ namespace NUS_Orbital.Models
             this.edited = edited;
             this.deleted = deleted;
         }
-        
+
+        public Post(Module module, int postId, DateTime postTime, string title, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags, bool edited, bool deleted, FileDataModel file)
+        {
+            this.module = module;
+            this.postId = postId;
+            this.postTime = postTime;
+            this.title = title;
+            this.description = description;
+            this.upvotes = upvotes;
+            this.student = student;
+            this.comments = comments;
+            this.likedByCurrStud = likedByCurrStud;
+            this.tags = tags;
+            this.edited = edited;
+            this.deleted = deleted;
+            this.file = file;
+        }
 
         public bool TagExistInPost(List<int> filterTagIds)
         {

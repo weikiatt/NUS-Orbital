@@ -6,6 +6,7 @@ using NUS_Orbital.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUS_Orbital.DAL;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Org.BouncyCastle.Crypto.Paddings;
 
 namespace NUS_Orbital.DAL
 {
@@ -92,8 +93,7 @@ namespace NUS_Orbital.DAL
             List<Post> postList = new List<Post>();
             foreach (DataRow row in result.Tables["Posts"].Rows)
             {
-                postList.Add(new Post
-                (
+                Post post = new Post(
                     module,
                     Convert.ToInt32(row["PostID"]),
                     Convert.ToDateTime(row["PostTime"]),
@@ -104,11 +104,53 @@ namespace NUS_Orbital.DAL
                     GetAllComments(Convert.ToInt32(row["PostID"]), student),
                     DoesPostUpvoteExist(Convert.ToInt32(row["PostID"]), student.StudentId),
                     GetAllTagsForPost(Convert.ToInt32(row["PostID"])),
-                    Convert.ToInt32(row["Edited"]) == 0 ? false: true,
+                    Convert.ToInt32(row["Edited"]) == 0 ? false : true,
                     Convert.ToInt32(row["Deleted"]) == 0 ? false : true
-                ));
+                );
+                if (DoesPostFileExist(post.postId))
+                {
+                    post.file =  GetPostFile(post.postId);
+                }
+                postList.Add(post);
             }
             return postList;
+        }
+
+        public bool DoesPostFileExist(int postId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM POST_FILES WHERE PostID=@postId", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "PostFiles");
+            conn.Close();
+            if (result.Tables["PostFiles"].Rows.Count > 0)
+                return true; // Module code exists
+            return false; // Module code does not exist
+        }
+
+        public FileDataModel GetPostFile(int postId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM POST_FILES WHERE PostID=@postId", conn);
+            cmd.Parameters.AddWithValue("@postId", postId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "File");
+            conn.Close();
+            if (result.Tables["File"].Rows.Count > 0)
+            {
+                DataTable table = result.Tables["File"];
+                return new FileDataModel(
+                    table.Rows[0]["FileName"].ToString(),
+                    table.Rows[0]["ContentType"].ToString(),
+                    (byte[])table.Rows[0]["FileData"]
+                );
+            }
+            return null;
         }
 
         public int GetNumberOfPostUpvotes(int postId)
@@ -173,9 +215,8 @@ namespace NUS_Orbital.DAL
             List<Comment> comments = new List<Comment>();
             foreach (DataRow row in result.Tables["Comments"].Rows)
             {
-                comments.Add(new Comment
-                (
 
+                Comment comment = new Comment(
                     Convert.ToInt32(row["CommentID"]),
                     Convert.ToDateTime(row["CommentTime"]),
                     row["Description"].ToString(),
@@ -185,17 +226,59 @@ namespace NUS_Orbital.DAL
                     DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.StudentId),
                     Convert.ToInt32(row["Edited"]) == 0 ? false : true,
                     Convert.ToInt32(row["Deleted"]) == 0 ? false : true
-
-                ));
+                );
+                if (DoesCommentFileExist(comment.commentId)){
+                    comment.file = GetCommentFile(comment.commentId);
+                };
+                comments.Add(comment);
             }
             return comments;
         }
 
-        public void AddCommentToPost(String description, int postId, int studentId)
+
+        public bool DoesCommentFileExist(int commentId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM COMMENT_FILES WHERE CommentID=@commentId", conn);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "CommentFiles");
+            conn.Close();
+            if (result.Tables["CommentFiles"].Rows.Count > 0)
+                return true; // Module code exists
+            return false; // Module code does not exist
+        }
+
+        public FileDataModel GetCommentFile(int commentId)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("SELECT * FROM COMMENT_FILES WHERE CommentID=@commentId", conn);
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "File");
+            conn.Close();
+            if (result.Tables["File"].Rows.Count > 0)
+            {
+                DataTable table = result.Tables["File"];
+                return new FileDataModel(
+                    table.Rows[0]["FileName"].ToString(),
+                    table.Rows[0]["ContentType"].ToString(),
+                    (byte[])table.Rows[0]["FileData"]
+                );
+            }
+            return null;
+        }
+
+        public int AddCommentToPost(String description, int postId, int studentId)
         {
             StudentDAL studentContext = new StudentDAL();
             SqlCommand cmd = new SqlCommand
                 ("INSERT INTO COMMENTS(CommentTime, Description, PostID, StudentID)" +
+                "OUTPUT INSERTED.CommentID " +
                 "VALUES (@commentTime, @description, @postId, @studentID)", conn);
 
             cmd.Parameters.AddWithValue("@commentTime", DateTime.Now);
@@ -204,8 +287,9 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@studentID", studentId);
 
             conn.Open();
-            cmd.ExecuteScalar();
+            int id = (int)cmd.ExecuteScalar();
             conn.Close();
+            return id;
         }
 
         public void AddUpvoteToPost(int postId, int studentId)
@@ -463,5 +547,39 @@ namespace NUS_Orbital.DAL
             cmd.ExecuteNonQuery();
             conn.Close();
         }
+
+
+        public void AddPostFile(int postId, string fileName, string contentType, byte[] fileData)
+        {
+            SqlCommand cmd = new SqlCommand
+                 ("INSERT INTO POST_FILES (PostID, FileName, ContentType, FileData) " +
+                 "VALUES (@postId, @fileName, @contentType, @fileData)", conn);
+
+            cmd.Parameters.AddWithValue("@postId", postId);
+            cmd.Parameters.AddWithValue("@fileName", fileName);
+            cmd.Parameters.AddWithValue("@contentType", contentType);
+            cmd.Parameters.AddWithValue("@fileData", fileData);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
+        public void AddCommentFile(int commentId, string fileName, string contentType, byte[] fileData)
+        {
+            SqlCommand cmd = new SqlCommand
+                 ("INSERT INTO COMMENT_FILES (CommentID, FileName, ContentType, FileData) " +
+                 "VALUES (@commentId, @fileName, @contentType, @fileData)", conn);
+
+            cmd.Parameters.AddWithValue("@commentId", commentId);
+            cmd.Parameters.AddWithValue("@fileName", fileName);
+            cmd.Parameters.AddWithValue("@contentType", contentType);
+            cmd.Parameters.AddWithValue("@fileData", fileData);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
     }
 }
