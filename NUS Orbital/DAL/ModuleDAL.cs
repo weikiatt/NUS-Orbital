@@ -22,7 +22,7 @@ namespace NUS_Orbital.DAL
             this.conn.ConnectionString = connstring;
         }
 
-        public List<Module> GetAllModules() 
+        public List<Module> GetAllModulesAsAdmin() 
         {
             SqlCommand cmd = new SqlCommand(
             "SELECT * FROM MODULES ORDER BY ModuleCode", conn);
@@ -38,7 +38,31 @@ namespace NUS_Orbital.DAL
                 (
                     row["ModuleCode"].ToString(),
                     row["ModuleName"].ToString(),
-                    row["Description"].ToString()
+                    row["Description"].ToString(),
+                    Convert.ToInt32(row["Hidden"]) == 0 ? false : true
+                ));
+            }
+            return moduleList;
+        }
+
+        public List<Module> GetAllModulesAsStudent()
+        {
+            SqlCommand cmd = new SqlCommand(
+            "SELECT * FROM MODULES WHERE Hidden=0 ORDER BY ModuleCode", conn);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataSet result = new DataSet();
+            conn.Open();
+            da.Fill(result, "ModuleDetails");
+            conn.Close();
+            List<Module> moduleList = new List<Module>();
+            foreach (DataRow row in result.Tables["ModuleDetails"].Rows)
+            {
+                moduleList.Add(new Module
+                (
+                    row["ModuleCode"].ToString(),
+                    row["ModuleName"].ToString(),
+                    row["Description"].ToString(),
+                    Convert.ToInt32(row["Hidden"]) == 0 ? false : true
                 ));
             }
             return moduleList;
@@ -72,9 +96,13 @@ namespace NUS_Orbital.DAL
             if (result.Tables["ModuleCode"].Rows.Count > 0)
             {
                 DataTable table = result.Tables["ModuleCode"];
-                return new Module(moduleCode, table.Rows[0]["ModuleName"].ToString(), table.Rows[0]["Description"].ToString());
+                return new Module(moduleCode, 
+                    table.Rows[0]["ModuleName"].ToString(), 
+                    table.Rows[0]["Description"].ToString(),
+                    Convert.ToInt32(table.Rows[0]["Hidden"]) == 0 ? false : true
+                    );
             }
-            return new Module(moduleCode, "none", "none");
+            return null;
 
         }
 
@@ -576,6 +604,36 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@contentType", contentType);
             cmd.Parameters.AddWithValue("@fileData", fileData);
 
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
+        public void AddModule(String moduleCode, String moduleName, String description, bool hidden)
+        {
+            StudentDAL studentContext = new StudentDAL();
+            SqlCommand cmd = new SqlCommand
+                ("INSERT INTO MODULES(ModuleCode, ModuleName, Description, Hidden) " +
+                "VALUES (@moduleCode, @moduleName, @description, @hidden)", conn);
+
+            cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
+            cmd.Parameters.AddWithValue("@moduleName", moduleName);
+            cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@hidden", hidden);
+
+            conn.Open();
+            cmd.ExecuteScalar();
+            conn.Close();
+        }
+
+        public void UpdateModule(string moduleCode, string moduleName, string description, bool hidden)
+        {
+            SqlCommand cmd = new SqlCommand
+            ("UPDATE MODULES SET ModuleName=@moduleName, Description=@description, Hidden=@hidden WHERE ModuleCode=@moduleCode", conn);
+            cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
+            cmd.Parameters.AddWithValue("@moduleName", moduleName);
+            cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@hidden", hidden);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();

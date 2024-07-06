@@ -25,9 +25,10 @@
             <div class="row mb-3">
                 <div class="col-auto d-flex flex-column justify-content-center align-items-center">
                     <img class="profile-picture wh-150" id="profile-pic" src="@Model.Photo" alt="Profile Picture">
-                    <input class="form-control-file" asp-for="FileToUpload" type="file" id="fileToUpload" accept="image/jpeg" onchange="previewProfilePicture()">
-                    <div>@TempData["Message"]</div>
-
+                    <label class="edit-btn">
+                        <input class="" asp-for="FileToUpload" type="file" id="fileToUpload" accept="image/*" onchange="previewProfilePicture()">
+                        &#9998;
+                    </label>
                 </div>
                 <div class="col">
                     <div class="mb-3">
@@ -57,6 +58,7 @@
             <div class="row justify-content-center">
                 <button type="submit" class="btn-green w300-h40">Save Changes</button>
             </div>
+            <div class="text-center" style="color:green">@TempData["Message"]</div>
         </form>
     </div>
     <script>
@@ -74,6 +76,31 @@
             }
         }
     </script>
+    <style>
+        .edit-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+            .edit-btn input[type="file"] {
+                display: none;
+            }
+
+            .edit-btn:hover {
+                background-color: rgba(0, 0, 0, 0.7);
+            }
+    </style>
 </body>
 </html>
 

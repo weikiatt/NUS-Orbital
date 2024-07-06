@@ -20,12 +20,13 @@ namespace NUS_Orbital.Models
         public String moduleName { get; set; }
         [Required]
         public String description { get; set; }
-
-        public Module(String moduleCode, String moduleName, String description)
+        public bool hidden { get; set; }
+        public Module(String moduleCode, String moduleName, String description, bool hidden)
         {
             this.moduleCode = moduleCode;
             this.moduleName = moduleName;
             this.description = description;
+            this.hidden = hidden;
         }
 
     }

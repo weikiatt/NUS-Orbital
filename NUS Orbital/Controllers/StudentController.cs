@@ -53,28 +53,12 @@ namespace NUS_Orbital.Controllers
             {
                 student.Description = "";
             }
+            TempData["Message"] = "Changes saved successfully.";
             studentContext.UpdateStudent(student);
-
             if (student.FileToUpload != null && student.FileToUpload.Length > 0)
             {
                 try
                 {
-                    /*
-                    string fileExt = Path.GetExtension(
-                    student.fileToUpload.FileName);
-                    string uploadedFile = student.name + fileExt;
-                    string savePath = Path.Combine(
-                     Directory.GetCurrentDirectory(),
-                     "wwwroot\\images\\StudentPhotos", uploadedFile);
-                    using (var fileSteam = new FileStream(
-                     savePath, FileMode.Create))
-                    {
-                        await student.fileToUpload.CopyToAsync(fileSteam);
-                    }
-                    student.photo = uploadedFile;
-                    TempData["Message"] = "File uploaded successfully.";
-                    studentContext.UpdatePhoto(student);*/
-
                     using (var memoryStream = new MemoryStream())
                     {
                         await student.FileToUpload.CopyToAsync(memoryStream);
@@ -82,7 +66,6 @@ namespace NUS_Orbital.Controllers
                         studentContext.UpdatePhoto2(student, fileData);
                         student = studentContext.GetStudentDetailsWithID(student.StudentId);
                     }
-                    TempData["Message"] = "File uploaded successfully.";
                 }
                 catch (IOException)
                 {

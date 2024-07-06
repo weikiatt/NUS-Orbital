@@ -42,15 +42,18 @@
 
     <div class="container mt-3 mb-3">
         <h5>Reviews and Discussions</h5>
-        <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
+        @if (Context.Session.GetString("role") != "admin")
+        {
+            <button class="btn-pill btn-green" onclick="showCreatePost()" id="showCreatePostButton">+ Create a Post</button>
+        }
         <div class="row mt-3 hidden" id="createPost">
             <div class="col-fixed width-50">
                 <img class="profile-picture wh-50" src="@Model.student.Photo" />
             </div>
             <form class="col" method="post" action="~/Module/Post" enctype="multipart/form-data">
                 <input hidden value="@Model.module.moduleCode" name="moduleCode" />
-                <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required onkeyup="togglePostButton()" name="title"></textarea>
-                <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required onkeyup="togglePostButton()" name="description"></textarea>
+                <textarea class="w-100 form-control" placeholder="Title..." id="postTitleInput" required oninput="togglePostButton()" name="title"></textarea>
+                <textarea class="w-100 form-control mt-2" placeholder="Body..." id="postInput" required oninput="togglePostButton()" name="description"></textarea>
                 <input class="form-control-file mt-2" name="document" type="file" accept="*/*" />
                 <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
                 <div id="tags" class="hidden">
@@ -119,6 +122,10 @@
                                                 <div class="col-auto hidden" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePost(@post.postId)"><small>Delete</small></button></div>
                                                 <div class="col-auto hidden" id="saveChangesPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="updatePost(@post.postId, '@post.title', '@post.description')"><small>Save Changes</small></button></div>
                                             }
+                                            @if (Context.Session.GetString("role") == "admin" &&!post.deleted)
+                                            {
+                                                <div class="col-auto" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePostAdmin(@post.postId)"><small>Delete</small></button></div>
+                                            }
                                         </div>
                                     </div>
                                     @if (post.deleted)
@@ -159,18 +166,21 @@
                                             }
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-center">
-                                        @if (post.likedByCurrStud)
-                                        {
-                                            <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
-                                        }
-                                        else
-                                        {
-                                            <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
-                                        }
-                                        <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
-                                        <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
-                                    </div>
+                                    @if (Context.Session.GetString("role") != "admin")
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            @if (post.likedByCurrStud)
+                                            {
+                                                <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                                            }
+                                            else
+                                            {
+                                                <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvotePost(@post.postId)" id="postUpvote(@post.postId)"><i class="fa fa-thumbs-up"></i></button>
+                                            }
+                                            <div class="ml-1" id="countUpvote(@post.postId)">@post.upvotes</div>
+                                            <button class="border-0 btn-cancel btn-pill ml-1 small" onclick="showCommentBox(@post.postId)">Reply</button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             <div class="row mt-3 comment-box hidden" id="commentBox(@post.postId)">
@@ -183,7 +193,7 @@
                                         <form class="col" method="post" action="~/Module/Comment" enctype="multipart/form-data">
                                             <input hidden value="@Model.module.moduleCode" name="moduleCode" />
                                             <input hidden value="@post.postId" name="postId" />
-                                            <textarea class="w-100 form-control" placeholder="Reply to post..." onkeyup="showCommentButton(@post.postId)" id="commentInput(@post.postId)" name="description"></textarea>
+                                            <textarea class="w-100 form-control" placeholder="Reply to post..." oninput="showCommentButton(@post.postId)" id="commentInput(@post.postId)" name="description"></textarea>
                                             <input class="form-control-file mt-2" name="commentFor(@post.postId)" type="file" accept="*/*" />
                                             <div class="justify-content-end align-items-end d-flex">
                                                 <button type="reset" class="hidden btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
@@ -230,6 +240,10 @@
                                                                         <div class="col-auto hidden" id="deleteComment(@comment.commentId)"><button class="btn-green bg-danger btn-pill-small" onclick="deleteComment(@comment.commentId)"><small>Delete</small></button></div>
                                                                         <div class="col-auto hidden" id="saveChangesComment(@comment.commentId)"><button class="btn-green btn-pill-small" onclick="updateComment(@comment.commentId)"><small>Save Changes</small></button></div>
                                                                     }
+                                                                    @if (Context.Session.GetString("role") == "admin" && !comment.deleted)
+                                                                    {
+                                                                        <div class="col-auto" id="deleteComment(@comment.commentId)"><button class="btn-green bg-danger btn-pill-small" onclick="deleteCommentAdmin(@comment.commentId)"><small>Delete</small></button></div>
+                                                                    }
                                                                 </div>
                                                             </div>
                                                             @if (comment.deleted)
@@ -256,18 +270,20 @@
                                                                     <a href="/Module/DownloadCommentFile?commentId=@comment.commentId">@comment.file.FileName</a>
                                                                 }
                                                             }
-
-                                                            <div class="d-flex align-items-center">
-                                                                @if (@comment.likedByCurrStud)
-                                                                {
-                                                                    <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
-                                                                }
-                                                                <div class="ml-1" id="commentCountUpvote(@comment.commentId)">@comment.upvotes</div>
-                                                            </div>
+                                                            @if (Context.Session.GetString("role") != "admin")
+                                                            {
+                                                                <div class="d-flex align-items-center">
+                                                                    @if (@comment.likedByCurrStud)
+                                                                    {
+                                                                        <button class="like-button bg-green rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <button class="like-button bg-transparent rounded-circle wh-30 border-0" onclick="upvoteComment(@comment.commentId)" id="commentUpvote(@comment.commentId)"><i class="fa fa-thumbs-up"></i></button>
+                                                                    }
+                                                                    <div class="ml-1" id="commentCountUpvote(@comment.commentId)">@comment.upvotes</div>
+                                                                </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 }
@@ -505,8 +521,8 @@
 
         function deleteComment(commentId) {
             toggleCancelEditCommentButton(commentId);
-            toggleDeleteCommentButton(commentId);
             toggleSaveCommentChangesButton(commentId);
+            toggleDeleteCommentButton(commentId);
 
             $.ajax({
                 type: 'POST',
@@ -530,6 +546,30 @@
             });
         }
 
+        function deleteCommentAdmin(commentId) {
+            toggleDeleteCommentButton(commentId);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteComment", "Module")',
+                dataType: 'json',
+                data: {
+                    commentId: commentId
+                },
+                success: function (response) {
+                    var content = document.getElementById("deleteCommentContent(" + commentId + ")");
+                    content.innerHTML = `
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <p class="text-danger italic">Comment has been deleted...</p>
+                                                            </div>
+                                                        </div>
+                                                    `;
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
 
         function cancelEditComment(commentId) {
             $.ajax({
@@ -681,8 +721,8 @@
         }
 
         function deletePost(postId) {
-            togglePostCancelEditButton(postId);
-            toggleSavePostChangesButton(postId);
+                togglePostCancelEditButton(postId);
+                toggleSavePostChangesButton(postId);
             toggleDeletePostButton(postId);
 
             $.ajax({
@@ -701,6 +741,31 @@
                                                     </div>
                                                 </div>
                                             `;
+                },
+                error: function (xhr, status, error) {
+                }
+            });
+        }
+
+        function deletePostAdmin(postId) {
+            toggleDeletePostButton(postId);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeletePost", "Module")',
+                dataType: 'json',
+                data: {
+                    postId: postId
+                },
+                success: function (response) {
+                    var content = document.getElementById("deletePostContent(" + postId + ")");
+                    content.innerHTML = `
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <p class="text-danger italic">Post has been deleted...</p>
+                                                            </div>
+                                                        </div>
+                                                    `;
                 },
                 error: function (xhr, status, error) {
                 }

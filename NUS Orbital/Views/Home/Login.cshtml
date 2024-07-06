@@ -23,7 +23,7 @@
         </br>
         <div class="container">
             <form class="row" method ="post" action="~/Home/Login">
-                <div class="col-auto bg-green p-5">
+                <div class="col-lg-5 col-sm-10 bg-green p-5">
                     <p class="text-danger">@TempData["Login"]</p>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
@@ -34,11 +34,13 @@
                         <input type="password" class="form-control" id="password" name="password">
                     </div>
                     <div class="mb-3">
-                        <button class="btn-green w-100">Login</button>
+                        <button class="btn-white w-100 pt-2 pb-2">Login</button>
                     </div>
-                    <div>
+                    <div class="justify-content-center text-center mt-3">
                         <a href="~/Home/Register">Don't have an account? Register now!</a>
-                        
+                    </div>
+                    <div class="justify-content-center text-center mt-3">
+                        <a href="~/Home/AdminLogin">Admin Login</a>
                     </div>
                 </div>
             </form>

@@ -15,25 +15,16 @@ namespace NUS_Orbital.Controllers
         private StudentDAL studentContext = new StudentDAL();
 
         [HttpGet]
-        public IActionResult Index(string query)
+        public IActionResult Index()
         {
             if (HttpContext.Session.GetString("authenticated") == "true")
             {
-                List<Module> moduleList = moduleContext.GetAllModules();
-                if (query == null)
+                if (HttpContext.Session.GetString("role") == "admin")
                 {
-                    return View(moduleList);
+                    return View(moduleContext.GetAllModulesAsAdmin());
                 }
-                query = query.ToLower();
-                List<Module> filteredModuleList = new List<Module>();
-                foreach (Module module in  moduleList)
-                {
-                    if(module.moduleCode.ToLower().Contains(query)  || module.moduleName.ToLower().Contains(query))
-                    {
-                        filteredModuleList.Add(module);
-                    }
-                }
-                return View(filteredModuleList);
+                return View(moduleContext.GetAllModulesAsStudent());
+                
             }
             TempData["Login"] = "Login to view more info about modules";
             return RedirectToAction("Login", "Home");
@@ -100,7 +91,7 @@ namespace NUS_Orbital.Controllers
             if (description != null)
             {
                 int postId = moduleContext.AddPost(moduleCode, title, description, studentId);
-                TempData["postid"] = postId;
+                //TempData["postid"] = postId;
                 
                 if (formData["tag1"].Count > 0)
                 {
@@ -266,5 +257,30 @@ namespace NUS_Orbital.Controllers
             moduleContext.DeleteComment(commentId);
             return Json(new { success = true });
         }
+
+        [HttpPost]
+        public IActionResult AddModule(IFormCollection formData)
+        {
+            string moduleCode = formData["moduleCode"].ToString();
+            string moduleName = formData["moduleName"].ToString();
+            string description = formData["description"].ToString();
+            bool hidden = formData["hide"].Count > 0;
+            moduleContext.AddModule(moduleCode, moduleName, description, hidden);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult EditModule(IFormCollection formData)
+        {
+            string moduleCode = formData["moduleCode"].ToString();
+            string moduleName = formData["moduleName"].ToString();
+            string description = formData["description"].ToString();
+            bool hidden = formData["hide"].Count > 0;
+            moduleContext.UpdateModule(moduleCode, moduleName, description, hidden);
+
+            return RedirectToAction("Index");  // Redirect to the list page
+        }
+
     }
 }

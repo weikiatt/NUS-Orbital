@@ -10,7 +10,7 @@ namespace NUS_Orbital.Controllers
         private readonly ILogger<HomeController> _logger;
         private StudentDAL studentContext = new StudentDAL();
         private ModuleDAL moduleContext = new ModuleDAL();
-
+        private AdminDAL adminContext = new AdminDAL();
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -50,6 +50,7 @@ namespace NUS_Orbital.Controllers
                 HttpContext.Session.SetString("authenticated", "true");
                 HttpContext.Session.SetString("Email", email);
                 HttpContext.Session.SetString("name", studentContext.GetName(email));
+                HttpContext.Session.SetString("role", "user");
                 return View("Index");
             }
             TempData["Login"] = "Invalid login credentials!";
@@ -58,7 +59,7 @@ namespace NUS_Orbital.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(Student student)
+        public ActionResult Register(Student student, IFormCollection formData)
         {
             bool register = true;
             if(studentContext.DoesEmailExist(student.Email))
@@ -89,7 +90,7 @@ namespace NUS_Orbital.Controllers
             HttpContext.Session.SetString("authenticated", "true");
             HttpContext.Session.SetString("Email", student.Email);
             HttpContext.Session.SetString("name", student.Name);
-
+            HttpContext.Session.SetString("role", "user");
             student.ProfilePicture = GetImageAsByteArray(Url.Content("wwwroot/images/StudentPhotos/user.png"));
             studentContext.Add(student);
             return View("Index");
@@ -128,6 +129,26 @@ namespace NUS_Orbital.Controllers
             return RedirectToAction("Login", "Home");
         }*/
 
-        
+        public ActionResult AdminLogin()
+        {
+            return View("AdminLogin");
+        }
+
+        [HttpPost]
+        public IActionResult AdminLogin(IFormCollection formData)
+        {
+            string name = formData["name"].ToString().ToLower();
+            string password = formData["password"].ToString();
+            if (adminContext.DoesLoginCredentialExist(name, password))
+            {
+                HttpContext.Session.SetString("authenticated", "true");
+                HttpContext.Session.SetString("Email", "admin");
+                HttpContext.Session.SetString("name", "admin");
+                HttpContext.Session.SetString("role", "admin");
+                return View("Index");
+            }
+            TempData["Login"] = "Invalid login credentials!";
+            return RedirectToAction("AdminLogin", "Home");
+        }
     }
 }

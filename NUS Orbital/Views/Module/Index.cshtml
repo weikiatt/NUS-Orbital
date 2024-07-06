@@ -21,18 +21,140 @@
 </head>
 <body>
     <div class="container">
-        <input placeholder="Module code, module name" class="form-control mt-3" id="query" name="query" onkeyup="updateList()">
-        <div class="list-group mt-3 mb-3" id="results">
-            @foreach (var module in Model)
-            {
-                <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action" id="module(@module.moduleCode">
-                    <h5 class="mb-1 text-green">@module.moduleCode @module.moduleName</h5>
-                    <p class="mb-1">@module.description</p>
-                </a>
-            }
-        </div>
+        @if (Context.Session.GetString("role") == "admin")
+        {
+            <button onclick="showAddModule()" id="addModuleButton" class="mt-3">+ Add Module</button>
+            <form id="addModuleDiv" class="hidden" action="~/Module/AddModule" method="post" enctype="multipart/form-data">
+                <div id="moduleCodeFormat" class="text-danger">Please enter 2-3 alphabets followed by 4 numbers.</div>
+                <input class="w-50 form-control mt-2" placeholder="Module Code..." id="moduleCode" required oninput="toggleAddModuleButton()" name="moduleCode"></input>
+                <input class="w-50 form-control mt-2" placeholder="Module Name..." id="moduleName" required oninput="toggleAddModuleButton()" name="moduleName"></input>
+                <textarea class="w-100 form-control mt-2" placeholder="Description..." id="description" required oninput="toggleAddModuleButton()" name="description"></textarea>
+                <input type="checkbox" id="hide" name="hide">
+                <label for="hide">Hide Module From Students</label>
+                <div class="justify-content-end align-items-end d-flex">
+                    <button type="submit" class="btn-green btn-pill mt-2" disabled id="submitBtn">Submit</button>
+                </div>
+            </form>
+            <hr />
+            <input placeholder="Module code, module name" class="form-control mt-3" id="query" name="query" oninput="updateListAdmin()">
+            <table class="table" style="table-layout: fixed">
+                <thead>
+                    <tr id="header">
+                        <th scope="col" style="width:15%">Module Code</th>
+                        <th scope="col" style="width:65%">Module Name</th>
+                        <th scope="col" style="width:10%">View</th>
+                        <th scope="col" style="width:10%">Edit</th>
+                    </tr>
+                </thead>
+                <tbody id="results">
+                    @foreach (var module in Model)
+                    {
+                        <tr id="module(@module.moduleCode">
+                            <th scope="row">@module.moduleCode</th>
+                            <td id="moduleName(@module.moduleName">@module.moduleName</td>
+                            <td><a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})">View</a></td>
+                            <td><button class="btn bg-green" onclick="showEditModal('@module.moduleCode', '@module.moduleName', '@module.description', '@module.hidden')">Edit</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="modal fade" id="editModuleModal" tabindex="-1" role="dialog" aria-labelledby="editModuleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModuleModalLabel">Edit Module</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="editModuleForm" method="post" action="~/Module/EditModule" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="moduleCodeEdit">Module Code</label>
+                                    <input type="text" class="form-control" id="moduleCodeEdit" name="moduleCode" required readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="moduleNameEdit">Module Name</label>
+                                    <input type="text" class="form-control" id="moduleNameEdit" name="moduleName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="descriptionEdit">Description</label>
+                                    <textarea class="form-control" id="descriptionEdit" name="description" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" id="hideEdit" name="hide">
+                                    <label for="hideEdit">Hide Module From Students</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-cancel" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-green btn-pill">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        } else
+        {
+            <input placeholder="Module code, module name" class="form-control mt-3" id="query" name="query" oninput="updateList()">
+            <div class="list-group mt-3 mb-3" id="results">
+                @foreach (var module in Model)
+                {
+                    <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action" id="module(@module.moduleCode">
+                        <h5 class="mb-1 text-green">@module.moduleCode @module.moduleName</h5>
+                        <p class="mb-1">@module.description</p>
+                    </a>
+                }
+            </div>
+        }
+        
     </div>
     <script>
+        function showEditModal(moduleCode, moduleName, description, hidden) {
+            // Set the form fields in the modal
+            document.getElementById('moduleCodeEdit').value = moduleCode;
+            document.getElementById('moduleNameEdit').value = moduleName;
+            document.getElementById('descriptionEdit').value = description;
+            document.getElementById('hideEdit').checked = hidden === "True";  // Convert string to boolean
+
+            // Show the modal
+            $('#editModuleModal').modal('show');
+        }
+
+        function toggleAddModuleButton() {
+            var moduleCodeInput = document.getElementById('moduleCode');
+            var moduleNameInput = document.getElementById('moduleName');
+            var descriptionInput = document.getElementById('description');
+            var moduleCodeFormat = document.getElementById('moduleCodeFormat');
+            var submitBtn = document.getElementById('submitBtn');
+
+            // Regex to check 2-3 alphabets followed by 4 numbers
+            var moduleCodeRegex = /^[a-zA-Z]{2,3}\d{4}$/;
+
+            // Check if moduleCode matches the format and description is not empty
+            if (moduleCodeRegex.test(moduleCodeInput.value) && moduleNameInput.value.trim() !== '' && descriptionInput.value.trim() !== '') {
+                submitBtn.disabled = false;
+                moduleCodeFormat.innerHTML = "";
+            } else {
+                submitBtn.disabled = true;
+                moduleCodeFormat.innerHTML = moduleCodeRegex.test(moduleCodeInput.value) ? "" : "Please enter 2-3 alphabets followed by 4 numbers";
+            }
+        }
+
+        function showAddModule() {
+            var addModuleButton = document.getElementById("addModuleButton");
+            var addModuleDiv = document.getElementById("addModuleDiv");
+            if (addModuleDiv.classList.contains('hidden')) {
+                addModuleDiv.classList.remove('hidden');
+                addModuleButton.innerHTML = "- Hide Draft";
+            } else {
+                addModuleDiv.classList.add('hidden');
+                addModuleButton.innerHTML = "+ Add Module";
+            }
+        }
+
+        
+
         function updateList() {
             var query = document.getElementById("query").value.toLowerCase();
             const allMods = document.querySelectorAll('a[id ^= "module("]'); 
@@ -62,6 +184,44 @@
 
             paragraphs.forEach(function (paragraph) {
                 paragraph.innerHTML = paragraph.textContent; // Reset to original text
+            });
+        }
+
+
+
+
+
+        function highlightTextAdmin(element, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            const paragraphs = element.querySelectorAll('th, td[id^="moduleName"]');
+
+            paragraphs.forEach(function (paragraph) {
+                paragraph.innerHTML = paragraph.textContent.replace(regex, '<span class="highlight">$1</span>');
+            });
+        }
+
+        function resetHighlightAdmin(element) {
+            const paragraphs = element.querySelectorAll('th, td[id^="moduleName"]');
+
+            paragraphs.forEach(function (paragraph) {
+                paragraph.innerHTML = paragraph.textContent; // Reset to original text
+            });
+        }
+
+
+        
+        function updateListAdmin() {
+            var query = document.getElementById("query").value.toLowerCase();
+            const allMods = document.querySelectorAll('tr[id ^= "module("]');
+            allMods.forEach(function (mod) {
+                var text = mod.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    mod.classList.remove('hidden');
+                    highlightTextAdmin(mod, query);
+                } else {
+                    mod.classList.add('hidden');
+                    resetHighlightAdmin(mod);
+                }
             });
         }
     </script>
