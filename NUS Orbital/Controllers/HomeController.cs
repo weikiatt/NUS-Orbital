@@ -79,7 +79,11 @@ namespace NUS_Orbital.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Student student, IFormCollection formData)
         {
-            
+            if (studentContext.DoesEmailExist(student.Email))
+            {
+                TempData["EmailValidation"] = "Email already exists!";
+                return View(student);
+            };
             student.ProfilePicture = GetImageAsByteArray(Url.Content("wwwroot/images/StudentPhotos/user.png"));
             studentContext.Add(student);
             student = studentContext.GetStudentDetailsWithEmail(student.Email);
