@@ -19,31 +19,32 @@
 </head>
 
 <body>
+    <style>
+    </style>
     <div class="bg-img">
-
-    <div class="container pt-5">
-    @if (Context.Session.GetString("authenticated") == null || Context.Session.GetString("authenticated") == "false")
-    {   
-        <div class="col">
-            <h4 class="row">Welcome to</h4>
-            <h4 class="row text-decoration-underline">The Forum Talk</h4>
-            <br />
-            <h4 class="row">Connect with others today!</h4>
-            <form class="row" action="~/Home/Register">
-                <button class="btn-green w300-h40">GET STARTED</button>
-            </form>
-        </div>
-    } else
-    {
+       
+        <div class="container pt-5">
+            @if (Context.Session.GetString("authenticated") == null || Context.Session.GetString("authenticated") == "false")
+            {   
+                <div class="col">
+                    <h4 class="row">Welcome to</h4>
+                    <h4 class="row text-decoration-underline">The Forum Talk</h4>
+                    <br />
+                    <h4 class="row">Connect with others today!</h4>
+                    <form class="row" action="~/Home/Register">
+                        <button class="btn-green w300-h40">GET STARTED</button>
+                    </form>
+                </div>
+            } else
+            {
         
-        <div class="row" style="height:30vh;">
-            <div class="col align-items-center justify-content-center d-flex text-center">
-                <h1>Welcome back @Context.Session.GetString("name")!</h1>
-            </div>
+                <div class="row" style="height:30vh;">
+                    <div class="col align-items-center justify-content-center d-flex text-center">
+                        <h1>Welcome back @Context.Session.GetString("name")!</h1>
+                    </div>
+                </div>
+            }
         </div>
-    }
-    </div>
-
     </div>
 
 

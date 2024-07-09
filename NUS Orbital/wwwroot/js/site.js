@@ -41,13 +41,11 @@ function showCommentButton(postId) {
 
     if (commentInput.value != "") {
         if (cancelCommentButton.classList.contains('hidden')) {
-            cancelCommentButton.classList.toggle('hidden');
-            commentButton.classList.toggle('hidden');
+            commentButton.disabled = false;
         }
     } else {
         if (!cancelCommentButton.classList.contains('hidden')) {
-            cancelCommentButton.classList.toggle('hidden');
-            commentButton.classList.toggle('hidden');
+            commentButton.disabled = true;
         }
     }
 }
