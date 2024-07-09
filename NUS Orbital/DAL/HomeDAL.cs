@@ -41,7 +41,7 @@ namespace NUS_Orbital.DAL
         {
             SqlCommand cmd = new SqlCommand
                 ("UPDATE STUDENT_VERIFICATION SET Expired = 1 " +
-                "WHERE DATEDIFF(MINUTE, FORMAT(DateSent, 'yyyy-MM-dd HH:mm:ss.fffffff'), FORMAT(GetDate(), 'yyyy-MM-dd HH:mm:ss.fffffff')) > -475", conn);
+                "WHERE DATEDIFF(MINUTE, FORMAT(DateSent, 'yyyy-MM-dd HH:mm:ss.fffffff'), FORMAT(GetDate(), 'yyyy-MM-dd HH:mm:ss.fffffff')) > 5", conn);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
