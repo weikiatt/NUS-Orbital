@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using NUS_Orbital.DAL;
 using NUS_Orbital.Models;
 using System.Diagnostics;
@@ -11,16 +12,28 @@ namespace NUS_Orbital.Controllers
         private StudentDAL studentContext = new StudentDAL();
         private ModuleDAL moduleContext = new ModuleDAL();
         private AdminDAL adminContext = new AdminDAL();
+        private HomeDAL homeContext = new HomeDAL();
+        private readonly EmailService _emailService = new EmailService();
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
 
+        public IActionResult SendEmail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SendEmail(string toEmail, string subject, string body)
+        {
+            await _emailService.SendEmailAsync(toEmail, subject, body);
+            return RedirectToAction("Index");
+        }
+
+
         public IActionResult Index()
         {
-            /* test34
-            HttpContext.Session.SetString("authenticated", "true");
-            HttpContext.Session.SetString("name", "temp name");*/
             return View();
         }
 
@@ -47,6 +60,11 @@ namespace NUS_Orbital.Controllers
             string password = formData["password"].ToString();
             if (studentContext.DoesLoginCredentialExist(email, password))
             {
+                if (!homeContext.IsStudentVerified(email))
+                {
+                    TempData["VerificationCode"] = "A verification code has been sent to " + email + " before, please verify your email first, remember to check your spam or junk folders if you cannot find the email.";
+                    return RedirectToAction("Verification", new { StudentId = studentContext.GetStudentDetailsWithEmail(email).StudentId });
+                }
                 HttpContext.Session.SetString("authenticated", "true");
                 HttpContext.Session.SetString("Email", email);
                 HttpContext.Session.SetString("name", studentContext.GetName(email));
@@ -61,40 +79,63 @@ namespace NUS_Orbital.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Student student, IFormCollection formData)
         {
-            bool register = true;
-            if(studentContext.DoesEmailExist(student.Email))
-            {
-                TempData["EmailValidation"] = "Email already exists!";
-                register = false;
-            }
-            if (student.Password.Length < 8)
-            {
-                TempData["PasswordLength"] = "Minimum password length is 8";
-                register = false;
-            }
-            if (!student.Password.Any(char.IsUpper))
-            {
-                TempData["PasswordUpperCase"] = "Password should contain one uppercase";
-                register = false;
-            }
-            if (!student.Password.Any(char.IsLower))
-            {
-                TempData["PasswordLowerCase"] = "Password should contain one lowercase";
-                register = false;
-            }
-            if (!register)
-            {
-                return View(student);
-            }
-
-            HttpContext.Session.SetString("authenticated", "true");
-            HttpContext.Session.SetString("Email", student.Email);
-            HttpContext.Session.SetString("name", student.Name);
-            HttpContext.Session.SetString("role", "user");
+            
             student.ProfilePicture = GetImageAsByteArray(Url.Content("wwwroot/images/StudentPhotos/user.png"));
             studentContext.Add(student);
-            return View("Index");
+            student = studentContext.GetStudentDetailsWithEmail(student.Email);
+            string verificationCode = VerificationCodeGenerator.GenerateCode();
+            _emailService.SendVerificationCodeAsync(student.Email, verificationCode);
+            homeContext.AddVerification(student.StudentId, verificationCode, DateTime.Now);
+            TempData["VerificationCode"] = "A verification code has been sent to " + student.Email + ", please check your spam or junk folders if you cannot find the email.";
+            return RedirectToAction("Verification", new { StudentId = student.StudentId });
         }
+
+
+        [HttpGet]
+        public ActionResult Verification(int studentId)
+        {
+            if (TempData["VerificationCode"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+            var student = studentContext.GetStudentDetailsWithID(studentId);
+            return View(student);
+        }
+
+        [HttpPost]
+        public ActionResult Verification(Student student, IFormCollection formData)
+        {
+            string verificationCode = formData["input1"].ToString() + formData["input2"].ToString() + formData["input3"].ToString() 
+                + formData["input4"].ToString() + formData["input5"].ToString() + formData["input6"].ToString();
+            
+            homeContext.Expire();
+            if (homeContext.VerifyCode(student.StudentId, verificationCode))
+            {
+                homeContext.VerifyStudent(student.StudentId);
+                homeContext.ExpireCode(student.StudentId);
+                student = studentContext.GetStudentDetailsWithID(student.StudentId);
+                HttpContext.Session.SetString("authenticated", "true");
+                HttpContext.Session.SetString("Email", student.Email);
+                HttpContext.Session.SetString("name", student.Name);
+                HttpContext.Session.SetString("role", "user");
+                return RedirectToAction("Index");
+            }
+            TempData["EXPIRED"] = "Verification code is wrong or has expired";
+            return View(student);
+        }
+
+        [HttpGet]
+        public ActionResult ResendVerification(int studentId)
+        {
+            Student student = studentContext.GetStudentDetailsWithID(studentId);
+            homeContext.ExpireCode(student.StudentId);
+            string verificationCode = VerificationCodeGenerator.GenerateCode();
+            _emailService.SendVerificationCodeAsync(student.Email, verificationCode);
+            homeContext.AddVerification(student.StudentId, verificationCode, DateTime.Now);
+            TempData["VerificationCode"] = "A verification code has been resent to " + student.Email + ", please check your spam or junk folders if you cannot find the email.";
+            return RedirectToAction("Verification", new { StudentId = student.StudentId });
+        }
+
 
         public byte[] GetImageAsByteArray(string filePath)
         {
@@ -112,22 +153,6 @@ namespace NUS_Orbital.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
-
-        /*
-        public IActionResult FileUpload()
-        {
-            if (HttpContext.Session.GetString("authenticated") == "true")
-            {
-                Student currStud = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
-                Module module = moduleContext.GetModuleDetails("CS1010");
-                List<Post> postList = moduleContext.GetAllPosts(module, currStud);
-               
-
-                return View(new ModulePost(module, postList, currStud));
-            }
-            TempData["Login"] = "Login to view more info about modules";
-            return RedirectToAction("Login", "Home");
-        }*/
 
         public ActionResult AdminLogin()
         {

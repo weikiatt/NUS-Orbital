@@ -1,0 +1,104 @@
+﻿@model NUS_Orbital.Models.Student
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Verification</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/NUS_Orbital.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script defer src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</head>
+
+
+<body>
+    <div class="bg-img">
+        </br>
+        <div class="container">
+            
+            <form class="row" method="post" action="~/Home/Verification" enctype="multipart/form-data" style="width: 400px;">
+                <div class="col-auto bg-green text-center p-5 justify-content-center align-items-center d-flex flex-column">
+                    <div style="max-width:350px;text-align: justify">
+                        @TempData["VerificationCode"]
+                        @TempData["Expired"]
+                    </div>
+                    <input class="form-control" asp-for="StudentId" hidden />
+                    <div id='inputs' class="row mt-2">
+                        <input id='input1' name="input1" class="verify-input" type='text' maxLength="1" oninput="checkInputs()" />
+                        <input id='input2' name="input2" class="verify-input" type='text' maxLength="1" oninput="checkInputs()" />
+                        <input id='input3' name="input3" class="verify-input" type='text' maxLength="1" oninput="checkInputs()" />
+                        <input id='input4' name="input4" class="verify-input" type='text' maxLength="1" oninput="checkInputs()" />
+                        <input id='input5' name="input5" class="verify-input" type='text' maxLength="1" oninput="checkInputs()" />
+                        <input id='input6' name="input6" class="verify-input" type='text' maxLength="1" oninput="checkInputs()" />
+                    </div>
+                    <div class="row mt-2">
+                        <button type="submit" id="submitBtn" class="btn-white" disabled>Submit</button>
+                    </div>
+                    <div class="row mt-2">
+                        <a href="@Url.Action("ResendVerification", "Home", new { studentId = Model.StudentId })">Resend Verification Code</a>
+                    </div>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        
+    </style>
+    <script>
+        const inputs = ["input1", "input2", "input3", "input4", "input5", "input6"];
+
+        inputs.map((id) => {
+            const input = document.getElementById(id);
+            addListener(input);
+        });
+
+        function addListener(input) {
+            input.addEventListener("keyup", () => {
+                const code = parseInt(input.value);
+                if (code >= 0 && code <= 9) {
+                    const n = input.nextElementSibling;
+                    if (n) n.focus();
+                } else {
+                    input.value = "";
+                }
+
+                const key = event.key; // const {key} = event; ES6+
+                if (key === "Backspace" || key === "Delete") {
+                    const prev = input.previousElementSibling;
+                    if (prev) prev.focus();
+                }
+            });
+        }
+
+
+        function checkInputs() {
+            const inputs = document.querySelectorAll('.verify-input');
+            const submitBtn = document.getElementById('submitBtn');
+            let allFilled = true;
+
+            inputs.forEach(input => {
+                if (input.value === '') {
+                    allFilled = false;
+                }
+            });
+
+            submitBtn.disabled = !allFilled;
+        }
+    </script>
+</body>
+
+</html>

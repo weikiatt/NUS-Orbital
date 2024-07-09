@@ -46,6 +46,7 @@ namespace NUS_Orbital.Models
         
         [Display(Name = "Photo")]
         public string Photo { get; set; }
+        public bool verified { get; set; }
 
         public Student(String email, String name, String password)
         {
@@ -58,7 +59,7 @@ namespace NUS_Orbital.Models
             this.Photo = "user.png";
         }
 
-        public Student(int studentId, String name, String email, String course, String description, String photo, byte[] profilePicture)
+        public Student(int studentId, String name, String email, String course, String description, String photo, byte[] profilePicture, bool verified)
         {
             this.StudentId = studentId;
             this.Name = name;
@@ -67,6 +68,7 @@ namespace NUS_Orbital.Models
             this.Description = description;
             this.Photo = photo;
             this.ProfilePicture = profilePicture;
+            this.verified = verified;
         }
 
         public Student()

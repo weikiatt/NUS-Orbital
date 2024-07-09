@@ -138,10 +138,11 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Course"].ToString(),
                     table.Rows[0]["Description"].ToString(),
                     $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}",
-                    table.Rows[0]["ProfilePicture"] as byte[]
+                    table.Rows[0]["ProfilePicture"] as byte[],
+                    Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true
                 );
             }
-            return new Student();
+            return null;
         }
 
         public Student GetStudentDetailsWithEmail(string email)
@@ -164,7 +165,8 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["Course"].ToString(),
                     table.Rows[0]["Description"].ToString(),
                     $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}",
-                    table.Rows[0]["ProfilePicture"] as byte[]
+                    table.Rows[0]["ProfilePicture"] as byte[],
+                    Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true
                 );
             }
             return new Student();

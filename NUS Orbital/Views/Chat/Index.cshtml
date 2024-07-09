@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Chat</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -22,47 +23,27 @@
     <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <style>
-        .scrollbar {
-            height: 300px;
-            width: 50%;
-            overflow: auto;
-            padding: 0 10px;
-        }
-
-        .scrollbar::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        .scrollbar::-webkit-scrollbar-track {
-            border-radius: 8px;
-                background-color: #a6bfa5ff;
-            border: 1px solid #cacaca;
-        }
-
-        .scrollbar::-webkit-scrollbar-thumb {
-            border-radius: 8px;
-            background-color:#00892B;
-        }
-    </style>
-
-    <div class="container">
+    <div class="container p-0">
         <div class="row">
-            <div class="example col-auto d-flex flex-column bg-white h-auto scrollbar w-auto" style="max-height:400px;">
-                <p>People you have chat with</p>
-                @foreach(var stud in Model.students)
-                {
-                    <button class="chatTab w-100 mt-2 justify-content-start align-items-center d-flex" onclick="showChat(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)">
-                        <img class="profile-picture wh-50" src="@stud.otherStudent.Photo" />
-                        <p class="mb-0 ml-2 chatName">@stud.otherStudent.Name</p>
-                    </button>
-                }
+            <div class="col-auto d-flex flex-column bg-white h-auto" style="max-height: 460px; border-right: 1px solid lightgrey;">
+                <div class="search-bar no-outline" style="border-bottom: 1px solid lightgrey">
+                    <strong>Chat List</strong>
+                </div>
+                <div class="w-100 h-auto scrollbar content">
+                    @foreach (var stud in Model.students)
+                    {
+                        <button class="chatTab no-outline w-100 justify-content-start align-items-center d-flex bg-white" onclick="showChat(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)" id="chatTab(@stud.otherStudent.StudentId)">
+                            <img class="profile-picture wh-50" src="@stud.otherStudent.Photo" />
+                            <p class="mb-0 ml-2 chatName">@stud.otherStudent.Name</p>
+                        </button>
+                    }
+                </div>
             </div>
             <div class="col bg-white">
                 @foreach (var stud in Model.students)
                 {
                     <div id="chat(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)" class="mt-3 hidden">
-                        <a href="~/Student/ViewAccount?email=@stud.otherStudent.Email" method="get" class="col-auto text-black justify-content-start align-items-center d-flex">
+                        <a href="~/Student/ViewAccount?email=@stud.otherStudent.Email" method="get" class="col-auto text-black justify-content-start align-items-center d-flex p-2" style="height:60px; border-bottom: 1px solid lightgrey">
                             <img class="profile-picture wh-50" src="@stud.otherStudent.Photo" />
                             <strong class="mb-0 ml-2">@stud.otherStudent.Name</strong>
                         </a>
@@ -87,8 +68,8 @@
                                 }
                             }
                         </div>
-                        <div class="d-flex bg-green p-1 mt-2">
-                            <textarea id="inputMsg(@stud.otherStudent.StudentId)" class="mt-2 w-100 form-control mr-4 chatInput" placeholder="message..."></textarea>
+                        <div class="d-flex p-1 mt-2" style="border-top: 1px solid lightgrey">
+                            <textarea id="inputMsg(@stud.otherStudent.StudentId)" class="mt-2 w-100 mr-4 border-0" placeholder="Write a message..." oninput="toggleSend(@stud.otherStudent.StudentId)" style="resize:none"></textarea>
                             <button id="sendButton(@stud.otherStudent.StudentId)" class="btn-cancel" onclick="sendMessage(@Model.currStudent.StudentId, @stud.otherStudent.StudentId)">Send</button>
                         </div>
                     </div>
@@ -98,6 +79,32 @@
         </div>
     </div>
     <script>
+
+        function updateChatList() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const chatTabs = document.querySelectorAll('.chatTab');
+
+            chatTabs.forEach(tab => {
+                const studentName = tab.querySelector('.chatName').textContent.toLowerCase();
+                if (studentName.includes(searchInput)) {
+                    tab.style.display = 'flex';
+                } else {
+                    tab.style.display = 'none';
+                }
+            });
+        }
+
+
+        function toggleSend(otherStudId) {
+            var inputMsg = document.getElementById('inputMsg(' + otherStudId + ')');
+            var sendButton = document.getElementById('sendButton(' + otherStudId + ')');
+            if (inputMsg.value.trim() !== '') {
+                sendButton.disabled = false;
+            } else {
+                sendButton.disabled = true;
+            }
+        }
+
 
         function flipString(str) {
             return str.split('').reverse().join('');
@@ -166,25 +173,21 @@
             currUser.scrollTop = currUser.scrollHeight;
         });
 
-        /*
-        document.getElementById("sendButton").disabled = true;
-        connection.start().then(function () {
-            document.getElementById("sendButton").disabled = false;
-        }).catch(function (err) {
-            return console.error(err.toString());
-        });*/
-
-        /*
-        document.getElementById("sendButton").addEventListener("click", function (event) {
-            var user = document.getElementById("userInput").value;
-            var message = document.getElementById("messageInput").value;
-            connection.invoke("SendMessage", user, message).catch(function (err) {
-                return console.error(err.toString());
-            });
-            event.preventDefault();
-        });*/
 
         function showChat(currStudId, otherStudId) {
+            var currChatTab = document.getElementById("chatTab(" + otherStudId + ")");
+            if (currChatTab) {
+                // Remove the highlight class from all tabs
+                document.querySelectorAll('.chatTab').forEach(function (tab) {
+                    tab.classList.remove("bg-green");
+                    tab.classList.add("bg-white");
+                });
+
+                // Add the highlight class to the selected tab
+                currChatTab.classList.add("bg-green");
+                currChatTab.classList.remove("bg-white");
+            }
+
             const allChats = document.querySelectorAll('div[id^="chat("]');
             allChats.forEach(function (div) {
                 div.classList.add("hidden"); // Hide all chat divs initially
@@ -198,6 +201,8 @@
                 var chatContent = document.getElementById("chatContent(" + currStudId + "," + otherStudId + ")");
                 chatContent.scrollTop = chatContent.scrollHeight;
             }
+
+            
         }
 
         function sendMessage(currStudId, otherStudId) {

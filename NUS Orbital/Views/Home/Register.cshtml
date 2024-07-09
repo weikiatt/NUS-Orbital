@@ -2,9 +2,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Registration</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="~/NUS_Orbital.styles.css" asp-append-version="true" />
@@ -16,8 +17,13 @@
             integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
 </head>
 <body>
+    <style>
+        
+
+    </style>
     <div class="bg-img">
         </br>
         <div class="container">
@@ -31,18 +37,24 @@
                     </div>
                     <div class="mb-3">
                         <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" id="name" required oninput="checkFormValidity()>
+                        <input asp-for="Name" class="form-control" id="name" required oninput="checkFormValidity()">
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" type="password" class="form-control" id="password" required oninput="checkFormValidity()">
+                        <div class="position-relative">
+                            <input asp-for="Password" type="password" class="form-control" style="padding-right:50px;" id="password" required oninput="checkFormValidity()">
+                            <span class="password-toggle-icon"><i class="fas fa-eye" id="passwordEye"></i></span>
+                        </div>
                         <div id="complexityMessage"></div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required oninput="checkFormValidity()">
+                        <div class="position-relative">
+                            <input type="password" class="form-control" class="form-control" style="padding-right:50px;" id="confirmPassword" required oninput="checkFormValidity()">
+                            <span class="password-toggle-icon"><i class="fas fa-eye" id="confirmPasswordEye"></i></span>
+                        </div>
                         <div id="confirmPasswordMessage"></div>
                     </div>
                     <div class="mb-3">
@@ -58,6 +70,36 @@
     </div>
 
     <script>
+        const passwordField = document.getElementById("password");
+        const togglePassword = document.getElementById('passwordEye');
+
+        togglePassword.addEventListener("click", function () {
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                togglePassword.classList.remove("fa-eye");
+                togglePassword.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                togglePassword.classList.remove("fa-eye-slash");
+                togglePassword.classList.add("fa-eye");
+            }
+        });
+
+        const confirmPasswordField = document.getElementById("confirmPassword");
+        const toggleConfirmPassword = document.getElementById('confirmPasswordEye');
+
+        toggleConfirmPassword.addEventListener("click", function () {
+            if (confirmPasswordField.type === "password") {
+                confirmPasswordField.type = "text";
+                toggleConfirmPassword.classList.remove("fa-eye");
+                toggleConfirmPassword.classList.add("fa-eye-slash");
+            } else {
+                confirmPasswordField.type = "password";
+                toggleConfirmPassword.classList.remove("fa-eye-slash");
+                toggleConfirmPassword.classList.add("fa-eye");
+            }
+        });
+
         function checkFormValidity() {
             var email = document.getElementById("email").value;
             var name = document.getElementById("name").value;

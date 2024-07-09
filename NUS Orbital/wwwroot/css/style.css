@@ -228,7 +228,6 @@ input[type=checkbox]:checked + label {
 }
 
 .chatTab {
-    background: white;
     border: none;
     padding-bottom: 10px;
     padding-top: 10px;
@@ -237,9 +236,9 @@ input[type=checkbox]:checked + label {
     justify-content: start;
 }
 
-.chatTab:hover {
-    background:#F5F5F5;
-}
+    .chatTab:hover {
+        background: #a6bfa5ff;
+    }
 
 .chatBubble {
     border-radius: 10px;
@@ -250,10 +249,88 @@ input[type=checkbox]:checked + label {
     word-break: break-all;
 }
 
-.chatInput {
-    border-radius: 25px;
-}
 
 .highlight {
     background-color: yellow;
 }
+
+.password-toggle-icon {
+    position: absolute;
+    top: 75%;
+    right: 20px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+    .password-toggle-icon i {
+        font-size: 18px;
+        line-height: 1;
+        color: #333;
+        transition: color 0.3s ease-in-out;
+        margin-bottom: 20px;
+    }
+
+        .password-toggle-icon i:hover {
+            color: #000;
+        }
+
+
+.scrollbar {
+    height: 300px;
+    width: 50%;
+    overflow: auto; /* Allows scrolling */
+    position: relative;
+    box-sizing: content-box; /* Ensures padding doesn't affect the total width */
+}
+
+    .scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px; 
+    }
+
+    .scrollbar::-webkit-scrollbar-track {
+        border-radius: 8px;
+        background-color: transparent;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background-color: transparent; 
+        transition: background-color 0.3s, opacity 0.3s; 
+    }
+
+    .scrollbar:hover::-webkit-scrollbar-thumb {
+        background-color: #a6bfa5ff; 
+        opacity: 1; 
+    }
+
+
+.no-outline:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.search-bar {
+    margin-bottom: 10px; /* Space between search bar and chat list */
+    background-color: #ffffff; /* White background */
+    border: none;
+}
+
+    .search-bar input {
+        border: none;
+        box-shadow: none;
+    }
+
+.verify-input {
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    border: none;
+    border-bottom: 3px solid #d2d2d2;
+    margin: 0 10px;
+}
+
+    .verify-input:focus {
+        border-bottom: 3px solid #a6bfa5ff;
+        outline: none;
+    }
