@@ -2,7 +2,7 @@
 {
     public class ChatList
     {
-        public Student currStudent;
+        public Student currStudent { get; set;}
         // chats currStudent have with other students
         public List<StudentChat> students;
         public ChatList(Student currStudent, List<StudentChat> students)
