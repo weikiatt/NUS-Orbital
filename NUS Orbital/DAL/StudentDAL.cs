@@ -22,8 +22,6 @@ namespace NUS_Orbital.DAL
         public StudentDAL()
         {
 
-            //string connstring = "Server=tcp:nus-orbital-tft.database.windows.net,1433;Initial Catalog=NUS_Orbital;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            //string connstring = "server=localhost;uid=root;pwd=password;database=nus_orbital";
             string connstring = "Server=tcp:nus-orbital-tft.database.windows.net,1433;Initial Catalog=NUS_Orbital;Persist Security Info=False;User ID=nus-orbital-tft-admin;Password=P@ssword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             this.conn = new SqlConnection();
             this.conn.ConnectionString = connstring;
@@ -158,6 +156,11 @@ namespace NUS_Orbital.DAL
             if (result.Tables["Student"].Rows.Count > 0)
             {
                 DataTable table = result.Tables["Student"];
+                Student student = new Student();
+                student.StudentId = Convert.ToInt32(table.Rows[0]["StudentID"]);
+
+                return student;
+                /* change here
                 return new Student(
                     Convert.ToInt32(table.Rows[0]["StudentID"]),
                     table.Rows[0]["Name"].ToString(),
@@ -168,6 +171,7 @@ namespace NUS_Orbital.DAL
                     table.Rows[0]["ProfilePicture"] as byte[],
                     Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true
                 );
+                */
             }
             return new Student();
         }
