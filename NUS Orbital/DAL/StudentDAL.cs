@@ -26,18 +26,6 @@ namespace NUS_Orbital.DAL
             this.conn = new SqlConnection();
             this.conn.ConnectionString = connstring;
 
-            /*
-            //Locate the appsettings.json file
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json");
-            //Read ConnectionString from appsettings.json file
-            Configuration = builder.Build();
-            string strConn = Configuration.GetConnectionString(
-            "DefaultConnection");
-            //Instantiate a SqlConnection object with the
-            //Connection String read.
-            conn = new MySqlConnection(strConn);*/
         }
 
         
@@ -155,23 +143,24 @@ namespace NUS_Orbital.DAL
             conn.Close();
             if (result.Tables["Student"].Rows.Count > 0)
             {
+
                 DataTable table = result.Tables["Student"];
                 Student student = new Student();
                 student.StudentId = Convert.ToInt32(table.Rows[0]["StudentID"]);
 
+                student.Name = Convert.ToString(table.Rows[0]["Name"]);
+
+                student.Course = Convert.ToString(table.Rows[0]["Course"]);
+
+                student.Description = Convert.ToString(table.Rows[0]["Description"]);
+
+                student.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}";
+
+                student.ProfilePicture = table.Rows[0]["ProfilePicture"] as byte[];
+
+                student.verified = Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true;
+
                 return student;
-                /* change here
-                return new Student(
-                    Convert.ToInt32(table.Rows[0]["StudentID"]),
-                    table.Rows[0]["Name"].ToString(),
-                    email,
-                    table.Rows[0]["Course"].ToString(),
-                    table.Rows[0]["Description"].ToString(),
-                    $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}",
-                    table.Rows[0]["ProfilePicture"] as byte[],
-                    Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true
-                );
-                */
             }
             return new Student();
         }
