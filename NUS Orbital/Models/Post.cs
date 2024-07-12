@@ -11,21 +11,21 @@ namespace NUS_Orbital.Models
 {
     public class Post
     {
-        public Module module;
-        public int postId;
-        public DateTime postTime;
+        public Module module { get; set; }
+        public int postId { get; set; }
+        public DateTime postTime { get; set; }
         [Required(ErrorMessage = "Field is empty")]
-        public string title;
+        public string title { get; set; }
         [Required(ErrorMessage="Field is empty")]
-        public string description;
-        public int upvotes;
-        public Student student;
-        public List<Comment> comments;
-        public bool likedByCurrStud;
-        public List<Tag> tags;
-        public bool edited;
-        public bool deleted;
-        public FileDataModel file;
+        public string description { get; set; }
+        public int upvotes { get; set; }
+        public Student student { get; set; }
+        public List<Comment> comments { get; set; }
+        public bool likedByCurrStud { get; set; }
+        public List<Tag> tags { get; set; }
+        public bool edited { get; set; }
+        public bool deleted { get; set; }
+        public FileDataModel file { get; set; }
         public Post(Module module, int postId, DateTime postTime, string title, string description, int upvotes, Student student, List<Comment> comments, bool likedByCurrStud, List<Tag> tags, bool edited, bool deleted)
         {
             this.module = module;

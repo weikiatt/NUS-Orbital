@@ -2,8 +2,8 @@
 {
     public class StudentChat
     {
-        public Student otherStudent;
-        public List<ChatLog> chatLog;
+        public Student otherStudent { get; set; }
+        public List<ChatLog> chatLog { get; set; }
         public StudentChat(Student otherStudent, List<ChatLog> chatLog)
         {
             this.otherStudent = otherStudent;

@@ -2,10 +2,10 @@
 {
     public class ChatLog
     {
-        public Student sender;
-        public Student receiver;
-        public string description;
-        public DateTime timeSent;
+        public Student sender { get; set; }
+        public Student receiver { get; set; }
+        public string description { get; set; }
+        public DateTime timeSent { get; set; }
         public ChatLog(Student sender, Student receiver, string description, DateTime timeSent)
         {
             this.sender = sender;

@@ -4,10 +4,11 @@ namespace NUS_Orbital.Models
 {
     public class ModulePost
     {
-        public Module module;
-        public List<Post> posts;
-        public Student student;
-        public List<Tag> tags;
+        public Module module { get; set; }
+        public List<Post> posts { get; set; }
+        public Student student { get; set; }
+        public List<Tag> tags { get; set; }
+
         private ModuleDAL moduleContext = new ModuleDAL();
         public ModulePost(Module module, List<Post> posts, Student student)
         {
