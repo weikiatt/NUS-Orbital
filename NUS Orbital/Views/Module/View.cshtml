@@ -42,9 +42,9 @@
         }
 
 
-        .file-input-icon:hover {
-            background: #F5F5F5;
-        }
+            .file-input-icon:hover {
+                background: #F5F5F5;
+            }
 
         .file-input {
             position: absolute;
@@ -69,8 +69,6 @@
             <div class="col-lg-3 col-md-4 text-center">
                 <h1 class="text-green text-uppercase">@Model.module.moduleCode</h1>
                 <p class="text-secondary">@Model.module.moduleName</p>
-                <p>@Model.module.units Units</p>
-                <p>@Model.module.graded</p>
             </div>
             <div class="col text-justify">
                 <p>@Model.module.description</p>
@@ -169,7 +167,7 @@
                                                 <div class="col-auto hidden" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePost(@post.postId)"><small>Delete</small></button></div>
                                                 <div class="col-auto hidden" id="saveChangesPost(@post.postId)"><button class="btn-green btn-pill-small" onclick="updatePost(@post.postId, '@post.title', '@post.description')"><small>Save Changes</small></button></div>
                                             }
-                                            @if (Context.Session.GetString("role") == "admin" &&!post.deleted)
+                                            @if (Context.Session.GetString("role") == "admin" && !post.deleted)
                                             {
                                                 <div class="col-auto" id="deletePost(@post.postId)"><button class="btn-green bg-danger btn-pill-small" onclick="deletePostAdmin(@post.postId)"><small>Delete</small></button></div>
                                             }
@@ -199,7 +197,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (post.file != null)
+                                        @if (post.file != null && !post.deleted)
                                         {
                                             <a href="/Module/DownloadPostFile?postId=@post.postId">@post.file.FileName</a>
                                         }
@@ -321,7 +319,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                @if (comment.file != null)
+                                                                @if (comment.file != null && !comment.deleted)
                                                                 {
                                                                     <a href="/Module/DownloadCommentFile?commentId=@comment.commentId">@comment.file.FileName</a>
                                                                 }
@@ -597,12 +595,12 @@
                 success: function (response) {
                     var content = document.getElementById("deleteCommentContent(" + commentId + ")");
                     content.innerHTML = `
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <p class="text-danger italic">Comment has been deleted...</p>
-                                                    </div>
-                                                </div>
-                                            `;
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <p class="text-danger italic">Comment has been deleted...</p>
+                                                            </div>
+                                                        </div>
+                                                    `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -622,12 +620,12 @@
                 success: function (response) {
                     var content = document.getElementById("deleteCommentContent(" + commentId + ")");
                     content.innerHTML = `
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <p class="text-danger italic">Comment has been deleted...</p>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <p class="text-danger italic">Comment has been deleted...</p>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -784,8 +782,8 @@
         }
 
         function deletePost(postId) {
-                togglePostCancelEditButton(postId);
-                toggleSavePostChangesButton(postId);
+            togglePostCancelEditButton(postId);
+            toggleSavePostChangesButton(postId);
             toggleDeletePostButton(postId);
 
             $.ajax({
@@ -798,12 +796,12 @@
                 success: function (response) {
                     var content = document.getElementById("deletePostContent(" + postId + ")");
                     content.innerHTML = `
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <p class="text-danger italic">Post has been deleted...</p>
-                                                    </div>
-                                                </div>
-                                            `;
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <p class="text-danger italic">Post has been deleted...</p>
+                                                            </div>
+                                                        </div>
+                                                    `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -823,12 +821,12 @@
                 success: function (response) {
                     var content = document.getElementById("deletePostContent(" + postId + ")");
                     content.innerHTML = `
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <p class="text-danger italic">Post has been deleted...</p>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <p class="text-danger italic">Post has been deleted...</p>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                 },
                 error: function (xhr, status, error) {
                 }
