@@ -28,7 +28,7 @@ namespace NUS_Orbital.DAL
 
         }
 
-        
+
         public bool DoesLoginCredentialExist(string email, string password)
         {
             SqlCommand cmd = new SqlCommand
@@ -114,21 +114,21 @@ namespace NUS_Orbital.DAL
             conn.Open();
             da.Fill(result, "Student");
             conn.Close();
+            Student student = new Student();
             if (result.Tables["Student"].Rows.Count > 0)
             {
                 DataTable table = result.Tables["Student"];
-                return new Student(
-                    studentId,
-                    table.Rows[0]["Name"].ToString(),
-                    table.Rows[0]["Email"].ToString(),
-                    table.Rows[0]["Course"].ToString(),
-                    table.Rows[0]["Description"].ToString(),
-                    $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}",
-                    table.Rows[0]["ProfilePicture"] as byte[],
-                    Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true
-                );
+                student.StudentId = Convert.ToInt32(table.Rows[0]["StudentID"]);
+                student.Email = Convert.ToString(table.Rows[0]["Email"]);
+                student.Name = Convert.ToString(table.Rows[0]["Name"]);
+                student.Course = Convert.ToString(table.Rows[0]["Course"]);
+                student.Description = Convert.ToString(table.Rows[0]["Description"]);
+                student.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}";
+                student.ProfilePicture = table.Rows[0]["ProfilePicture"] as byte[];
+                student.verified = Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true;
+                return student;
             }
-            return null;
+            return student;
         }
 
         public Student GetStudentDetailsWithEmail(string email)
@@ -141,28 +141,21 @@ namespace NUS_Orbital.DAL
             conn.Open();
             da.Fill(result, "Student");
             conn.Close();
+            Student student = new Student();
             if (result.Tables["Student"].Rows.Count > 0)
             {
-
                 DataTable table = result.Tables["Student"];
-                Student student = new Student();
                 student.StudentId = Convert.ToInt32(table.Rows[0]["StudentID"]);
                 student.Email = Convert.ToString(table.Rows[0]["Email"]);
                 student.Name = Convert.ToString(table.Rows[0]["Name"]);
-
                 student.Course = Convert.ToString(table.Rows[0]["Course"]);
-
                 student.Description = Convert.ToString(table.Rows[0]["Description"]);
-
                 student.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(table.Rows[0]["ProfilePicture"] as byte[])}";
-
                 student.ProfilePicture = table.Rows[0]["ProfilePicture"] as byte[];
-
                 student.verified = Convert.ToInt32(table.Rows[0]["Verified"]) == 0 ? false : true;
-
                 return student;
             }
-            return new Student();
+            return student;
         }
 
         public int UpdatePhoto2(Student student, byte[] profilePicture)

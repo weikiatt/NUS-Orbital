@@ -22,7 +22,7 @@ namespace NUS_Orbital.DAL
             this.conn.ConnectionString = connstring;
         }
 
-        public List<Module> GetAllModulesAsAdmin() 
+        public List<Module> GetAllModulesAsAdmin()
         {
             SqlCommand cmd = new SqlCommand(
             "SELECT * FROM MODULES ORDER BY ModuleCode", conn);
@@ -34,13 +34,14 @@ namespace NUS_Orbital.DAL
             List<Module> moduleList = new List<Module>();
             foreach (DataRow row in result.Tables["ModuleDetails"].Rows)
             {
-                moduleList.Add(new Module
-                (
-                    row["ModuleCode"].ToString(),
-                    row["ModuleName"].ToString(),
-                    row["Description"].ToString(),
-                    Convert.ToInt32(row["Hidden"]) == 0 ? false : true
-                ));
+                Module module = new Module();
+                module.moduleName = row["ModuleName"].ToString();
+                module.moduleCode = row["ModuleCode"].ToString();
+                module.description = row["Description"].ToString();
+                module.units = Convert.ToInt32(row["Units"]);
+                module.graded = Convert.ToInt32(row["Graded"]) == 0 ? "Completed Satisfactory/Unsatisfactory" : "Graded";
+                module.hidden = Convert.ToInt32(row["Hidden"]) == 0 ? false : true;
+                moduleList.Add(module);
             }
             return moduleList;
         }
@@ -57,13 +58,14 @@ namespace NUS_Orbital.DAL
             List<Module> moduleList = new List<Module>();
             foreach (DataRow row in result.Tables["ModuleDetails"].Rows)
             {
-                moduleList.Add(new Module
-                (
-                    row["ModuleCode"].ToString(),
-                    row["ModuleName"].ToString(),
-                    row["Description"].ToString(),
-                    Convert.ToInt32(row["Hidden"]) == 0 ? false : true
-                ));
+                Module module = new Module();
+                module.moduleName = row["ModuleName"].ToString();
+                module.moduleCode = row["ModuleCode"].ToString();
+                module.description = row["Description"].ToString();
+                module.units = Convert.ToInt32(row["Units"]);
+                module.graded = Convert.ToInt32(row["Graded"]) == 0 ? "Completed Satisfactory/Unsatisfactory" : "Graded";
+                module.hidden = Convert.ToInt32(row["Hidden"]) == 0 ? false : true;
+                moduleList.Add(module);
             }
             return moduleList;
         }
@@ -93,16 +95,18 @@ namespace NUS_Orbital.DAL
             conn.Open();
             da.Fill(result, "ModuleCode");
             conn.Close();
+            Module module = new Module();
             if (result.Tables["ModuleCode"].Rows.Count > 0)
             {
                 DataTable table = result.Tables["ModuleCode"];
-                return new Module(moduleCode, 
-                    table.Rows[0]["ModuleName"].ToString(), 
-                    table.Rows[0]["Description"].ToString(),
-                    Convert.ToInt32(table.Rows[0]["Hidden"]) == 0 ? false : true
-                    );
+                module.moduleName = table.Rows[0]["ModuleName"].ToString();
+                module.moduleCode = table.Rows[0]["ModuleCode"].ToString();
+                module.description = table.Rows[0]["Description"].ToString();
+                module.units = Convert.ToInt32(table.Rows[0]["Units"]);
+                module.graded = Convert.ToInt32(table.Rows[0]["Graded"]) == 0 ? "Completed Satisfactory/Unsatisfactory" : "Graded";
+                module.hidden = Convert.ToInt32(table.Rows[0]["Hidden"]) == 0 ? false : true;
             }
-            return null;
+            return module;
 
         }
 
@@ -137,7 +141,7 @@ namespace NUS_Orbital.DAL
                 );
                 if (DoesPostFileExist(post.postId))
                 {
-                    post.file =  GetPostFile(post.postId);
+                    post.file = GetPostFile(post.postId);
                 }
                 postList.Add(post);
             }
@@ -208,7 +212,7 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@title", title);
             cmd.Parameters.AddWithValue("@description", description);
             cmd.Parameters.AddWithValue("@studentID", studentId);
-            
+
             conn.Open();
             int postId = (int)cmd.ExecuteScalar();
             conn.Close();
@@ -255,7 +259,8 @@ namespace NUS_Orbital.DAL
                     Convert.ToInt32(row["Edited"]) == 0 ? false : true,
                     Convert.ToInt32(row["Deleted"]) == 0 ? false : true
                 );
-                if (DoesCommentFileExist(comment.commentId)){
+                if (DoesCommentFileExist(comment.commentId))
+                {
                     comment.file = GetCommentFile(comment.commentId);
                 };
                 comments.Add(comment);

@@ -43,43 +43,11 @@ namespace NUS_Orbital.Models
 
         public byte[] ProfilePicture { get; set; }
 
-        
+
         [Display(Name = "Photo")]
         public string Photo { get; set; }
         public bool verified { get; set; }
 
-        public Student(String email, String name, String password)
-        {
-            this.Email = email;
-            this.Name = name;
-            this.Password = password;
-            this.Course = "";
-            this.Description = "";
-            this.StudentId = 0;
-            this.Photo = "user.png";
-        }
-
-        public Student(int studentId, String name, String email, String course, String description, String photo, byte[] profilePicture, bool verified)
-        {
-            this.StudentId = studentId;
-            this.Name = name;
-            this.Email = email;
-            this.Course = course;
-            this.Description = description;
-            this.Photo = photo;
-            this.ProfilePicture = profilePicture;
-            this.verified = verified;
-        }
-
-        public Student()
-        {
-            this.StudentId = 0;
-            this.Name = "DNE";
-            this.Email = "DNE@gmail.com";
-            this.Course = "DNE";
-            this.Description = "DNE";
-            this.Photo = "user.png";
-        }
 
     }
 }
