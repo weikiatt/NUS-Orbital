@@ -147,7 +147,7 @@ namespace NUS_Orbital.DAL
                 DataTable table = result.Tables["Student"];
                 Student student = new Student();
                 student.StudentId = Convert.ToInt32(table.Rows[0]["StudentID"]);
-
+                student.Email = Convert.ToString(table.Rows[0]["Email"]);
                 student.Name = Convert.ToString(table.Rows[0]["Name"]);
 
                 student.Course = Convert.ToString(table.Rows[0]["Course"]);
