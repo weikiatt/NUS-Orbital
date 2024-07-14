@@ -29,46 +29,13 @@
 
 
 <body>
-    <style>
-        .file-input-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .file-input-icon {
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-        }
-
-
-            .file-input-icon:hover {
-                background: #F5F5F5;
-            }
-
-        .file-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .paperclip-icon {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-            cursor: pointer;
-        }
-    </style>
     <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-lg-3 col-md-4 text-center">
                 <h1 class="text-green text-uppercase">@Model.module.moduleCode</h1>
                 <p class="text-secondary">@Model.module.moduleName</p>
+                <p class="text-seconadry">Grading Basis: @Model.module.graded</p>
+                <p class="text-secondary">Units: @Model.module.units</p>
             </div>
             <div class="col text-justify">
                 <p>@Model.module.description</p>
@@ -595,12 +562,12 @@
                 success: function (response) {
                     var content = document.getElementById("deleteCommentContent(" + commentId + ")");
                     content.innerHTML = `
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <p class="text-danger italic">Comment has been deleted...</p>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <p class="text-danger italic">Comment has been deleted...</p>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -620,12 +587,12 @@
                 success: function (response) {
                     var content = document.getElementById("deleteCommentContent(" + commentId + ")");
                     content.innerHTML = `
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <p class="text-danger italic">Comment has been deleted...</p>
-                                                                    </div>
-                                                                </div>
-                                                            `;
+                                                                        <div class="row">
+                                                                            <div class="col">
+                                                                                <p class="text-danger italic">Comment has been deleted...</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -796,12 +763,12 @@
                 success: function (response) {
                     var content = document.getElementById("deletePostContent(" + postId + ")");
                     content.innerHTML = `
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <p class="text-danger italic">Post has been deleted...</p>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <p class="text-danger italic">Post has been deleted...</p>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                 },
                 error: function (xhr, status, error) {
                 }
@@ -821,12 +788,12 @@
                 success: function (response) {
                     var content = document.getElementById("deletePostContent(" + postId + ")");
                     content.innerHTML = `
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <p class="text-danger italic">Post has been deleted...</p>
-                                                                    </div>
-                                                                </div>
-                                                            `;
+                                                                        <div class="row">
+                                                                            <div class="col">
+                                                                                <p class="text-danger italic">Post has been deleted...</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
                 },
                 error: function (xhr, status, error) {
                 }
