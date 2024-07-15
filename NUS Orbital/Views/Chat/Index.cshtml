@@ -25,14 +25,14 @@
 <body>
     <div class="container p-0">
         <div class="row">
-            <div class="col-auto d-flex flex-column bg-white h-auto" style="max-height: 460px; border-right: 1px solid lightgrey;">
+            <div class="col-auto d-flex flex-column bg-white h-auto" style="max-height: 460px;width:300px; border-right: 1px solid lightgrey;">
                 <div class="search-bar no-outline" style="border-bottom: 1px solid lightgrey">
-                    <strong>Chat List</strong>
+                    <input id="searchInput" oninput="updateChatList()" placeholder="Search" />
                 </div>
                 <div class="w-100 h-auto scrollbar content">
                     @foreach (var stud in Model.students)
                     {
-                        <button class="chatTab no-outline w-100 justify-content-start align-items-center d-flex bg-white" onclick="showChat(@Model.currStudent.StudentId,@stud.otherStudent.StudentId)" id="chatTab(@stud.otherStudent.StudentId)">
+                        <button class="chatTab no-outline w-100 justify-content-start align-items-center d-flex bg-white" onclick="showChat(@Model.currStudent.StudentId, @stud.otherStudent.StudentId)" id="chatTab(@stud.otherStudent.StudentId)">
                             <img class="profile-picture wh-50" src="@stud.otherStudent.Photo" />
                             <p class="mb-0 ml-2 chatName">@stud.otherStudent.Name</p>
                         </button>
@@ -81,19 +81,19 @@
     <script>
 
         function updateChatList() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const chatTabs = document.querySelectorAll('.chatTab');
-
-            chatTabs.forEach(tab => {
-                const studentName = tab.querySelector('.chatName').textContent.toLowerCase();
+            var searchInput = document.getElementById('searchInput').value.toLowerCase().trim();
+            const chatTabs = document.querySelectorAll('button[id^="chatTab("]');
+            chatTabs.forEach(function (tab) {
+                const studentName = tab.textContent.toLowerCase();
                 if (studentName.includes(searchInput)) {
-                    tab.style.display = 'flex';
+                    tab.classList.remove('hidden');
+                    tab.classList.add('d-flex');
                 } else {
-                    tab.style.display = 'none';
+                    tab.classList.add('hidden');
+                    tab.classList.remove('d-flex');
                 }
             });
         }
-
 
         function toggleSend(otherStudId) {
             var inputMsg = document.getElementById('inputMsg(' + otherStudId + ')');
@@ -150,24 +150,24 @@
             if (currUser) {
                 var currUserContent = document.createElement("div");
                 currUserContent.innerHTML = `
-                                        <div class="justify-content-end d-flex w-auto ml-5 mr-3">
-                                                <div class="mt-1 bg-green border-2 p-2 chatBubble">
-                                        ${message}
-                                    </div>
-                                </div>
-                            `
+                                                <div class="justify-content-end d-flex w-auto ml-5 mr-3">
+                                                        <div class="mt-1 bg-green border-2 p-2 chatBubble">
+                                                ${message}
+                                            </div>
+                                        </div>
+                                    `
                 currUser.appendChild(currUserContent);
             }
             var otherUser = document.getElementById("chatContent(" + flipString(user) + ")");
             if (otherUser) {
                 var otherUserContent = document.createElement("div");
                 otherUserContent.innerHTML = `
-                                        <div class="justify-content-start d-flex w-auto mr-5 ml-3">
-                                                <div class="mt-1 bg-light border-2 p-2 chatBubble">
-                                        ${message}
-                                    </div>
-                                </div>
-                            `
+                                                <div class="justify-content-start d-flex w-auto mr-5 ml-3">
+                                                        <div class="mt-1 bg-light border-2 p-2 chatBubble">
+                                                ${message}
+                                            </div>
+                                        </div>
+                                    `
                 otherUser.appendChild(otherUserContent);
             }
             currUser.scrollTop = currUser.scrollHeight;
@@ -194,7 +194,7 @@
                 div.classList.remove("bg-white");
             });
             var chatToShow = document.getElementById("chat(" + currStudId + "," + otherStudId + ")");
-            
+
             if (chatToShow) {
                 chatToShow.classList.remove("hidden"); // Show the chat div corresponding to the selected student ID
                 chatToShow.classList.add("bg-white");
@@ -202,16 +202,13 @@
                 chatContent.scrollTop = chatContent.scrollHeight;
             }
 
-            
+
         }
 
         function sendMessage(currStudId, otherStudId) {
-            //event.preventDefault();
             var user = currStudId + "," + otherStudId;
             var message = document.getElementById("inputMsg(" + otherStudId + ")");
-            //var currentTime = getFormattedDateTime();
 
-            
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("SendMessage", "Chat")',
@@ -226,7 +223,7 @@
                         return console.error(err.toString());
                     });
                     message.value = "";
-                    
+
                 },
                 error: function (xhr, status, error) {
                     alert('err');
