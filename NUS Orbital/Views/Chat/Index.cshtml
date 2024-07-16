@@ -70,7 +70,7 @@
                         </div>
                         <div class="d-flex p-1 mt-2" style="border-top: 1px solid lightgrey">
                             <textarea id="inputMsg(@stud.otherStudent.StudentId)" class="mt-2 w-100 mr-4 border-0" placeholder="Write a message..." oninput="toggleSend(@stud.otherStudent.StudentId)" style="resize:none"></textarea>
-                            <button id="sendButton(@stud.otherStudent.StudentId)" class="btn-cancel" onclick="sendMessage(@Model.currStudent.StudentId, @stud.otherStudent.StudentId)">Send</button>
+                            <button id="sendButton(@stud.otherStudent.StudentId)" class="mt-2 send-button btn-grey" onclick="sendMessage(@Model.currStudent.StudentId, @stud.otherStudent.StudentId)" disabled>&#x27A4;</button>
                         </div>
                     </div>
 
@@ -100,8 +100,12 @@
             var sendButton = document.getElementById('sendButton(' + otherStudId + ')');
             if (inputMsg.value.trim() !== '') {
                 sendButton.disabled = false;
+                sendButton.classList.add('bg-green');
+                sendButton.classList.add('bg-grey');
             } else {
                 sendButton.disabled = true;
+                sendButton.classList.remove('bg-green');
+                sendButton.classList.add('bg-grey');
             }
         }
 
@@ -150,24 +154,24 @@
             if (currUser) {
                 var currUserContent = document.createElement("div");
                 currUserContent.innerHTML = `
-                                                <div class="justify-content-end d-flex w-auto ml-5 mr-3">
-                                                        <div class="mt-1 bg-green border-2 p-2 chatBubble">
-                                                ${message}
-                                            </div>
-                                        </div>
-                                    `
+                                                        <div class="justify-content-end d-flex w-auto ml-5 mr-3">
+                                                                <div class="mt-1 bg-green border-2 p-2 chatBubble">
+                                                        ${message}
+                                                    </div>
+                                                </div>
+                                            `
                 currUser.appendChild(currUserContent);
             }
             var otherUser = document.getElementById("chatContent(" + flipString(user) + ")");
             if (otherUser) {
                 var otherUserContent = document.createElement("div");
                 otherUserContent.innerHTML = `
-                                                <div class="justify-content-start d-flex w-auto mr-5 ml-3">
-                                                        <div class="mt-1 bg-light border-2 p-2 chatBubble">
-                                                ${message}
-                                            </div>
-                                        </div>
-                                    `
+                                                        <div class="justify-content-start d-flex w-auto mr-5 ml-3">
+                                                                <div class="mt-1 bg-light border-2 p-2 chatBubble">
+                                                        ${message}
+                                                    </div>
+                                                </div>
+                                            `
                 otherUser.appendChild(otherUserContent);
             }
             currUser.scrollTop = currUser.scrollHeight;
@@ -223,6 +227,7 @@
                         return console.error(err.toString());
                     });
                     message.value = "";
+                    toggleSend(otherStudId);
 
                 },
                 error: function (xhr, status, error) {
