@@ -24,12 +24,25 @@
     <div class="container">
         @if (Context.Session.GetString("role") == "admin")
         {
-            <button onclick="showAddModule()" id="addModuleButton" class="mt-3">+ Add Module</button>
+            <button onclick="showAddModule()" id="addModuleButton" class="btn-green btn-pill mt-3">+ Add Module</button>
             <form id="addModuleDiv" class="hidden" action="~/Module/AddModule" method="post" enctype="multipart/form-data">
                 <div id="moduleCodeFormat" class="text-danger">Please enter 2-3 alphabets followed by 4 numbers.</div>
-                <input class="w-50 form-control mt-2" placeholder="Module Code..." id="moduleCode" required oninput="toggleAddModuleButton()" name="moduleCode"></input>
-                <input class="w-50 form-control mt-2" placeholder="Module Name..." id="moduleName" required oninput="toggleAddModuleButton()" name="moduleName"></input>
+                <input class="w-100 form-control mt-2" placeholder="Module Code..." id="moduleCode" required oninput="toggleAddModuleButton()" name="moduleCode"></input>
+                <input class="w-100 form-control mt-2" placeholder="Module Name..." id="moduleName" required oninput="toggleAddModuleButton()" name="moduleName"></input>
                 <textarea class="w-100 form-control mt-2" placeholder="Description..." id="description" required oninput="toggleAddModuleButton()" name="description"></textarea>
+                <label class="mt-2">Units</label>
+                <select class="form-control" id="units" name="units">
+                    <option value="0">0</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                </select>
+                <label class="mt-2">Grading Basis</label>
+                <select class="form-control" id="gradingBasis" name="gradingBasis">
+                    <option value="Graded">Graded</option>
+                    <option value="Completed Satisfactory/Unsatisfactory">Completed Satisfactory/Unsatisfactory</option>
+                </select>
                 <input type="checkbox" id="hide" name="hide">
                 <label for="hide">Hide Module From Students</label>
                 <div class="justify-content-end align-items-end d-flex">
@@ -54,7 +67,7 @@
                             <th scope="row">@module.moduleCode</th>
                             <td id="moduleName(@module.moduleName">@module.moduleName</td>
                             <td><a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})">View</a></td>
-                            <td><button class="btn bg-green" onclick="showEditModal('@module.moduleCode', '@module.moduleName', '@module.description', '@module.hidden')">Edit</button></td>
+                            <td><button class="btn bg-green" onclick="showEditModal('@module.moduleCode', '@module.moduleName', '@module.description', '@module.units', '@module.graded', '@module.hidden')">Edit</button></td>
                         </tr>
                     }
                 </tbody>
@@ -83,7 +96,24 @@
                                     <textarea class="form-control" id="descriptionEdit" name="description" required></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <input type="checkbox" id="hideEdit" name="hide">
+                                    <label class="mt-2">Units</label>
+                                    <select class="form-control" id="unitsEdit" name="units">
+                                        <option value="0">0</option>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="8">8</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="mt-2">Grading Basis</label>
+                                    <select class="form-control" id="gradedEdit" name="gradingBasis">
+                                        <option value="Graded">Graded</option>
+                                        <option value="Completed Satisfactory/Unsatisfactory">Completed Satisfactory/Unsatisfactory</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" id="hideEdit" name="hideEdit">
                                     <label for="hideEdit">Hide Module From Students</label>
                                 </div>
                             </div>
@@ -111,11 +141,13 @@
         
     </div>
     <script>
-        function showEditModal(moduleCode, moduleName, description, hidden) {
+        function showEditModal(moduleCode, moduleName, description, units, graded, hidden) {
             // Set the form fields in the modal
             document.getElementById('moduleCodeEdit').value = moduleCode;
             document.getElementById('moduleNameEdit').value = moduleName;
             document.getElementById('descriptionEdit').value = description;
+            document.getElementById('unitsEdit').value = units;
+            document.getElementById('gradedEdit').value = graded;
             document.getElementById('hideEdit').checked = hidden === "True";  // Convert string to boolean
 
             // Show the modal

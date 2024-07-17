@@ -264,8 +264,10 @@ namespace NUS_Orbital.Controllers
             string moduleCode = formData["moduleCode"].ToString();
             string moduleName = formData["moduleName"].ToString();
             string description = formData["description"].ToString();
+            int units = Convert.ToInt32(formData["units"]);
+            bool gradingBasis = formData["gradingBasis"].ToString() == "Graded" ? true :false;
             bool hidden = formData["hide"].Count > 0;
-            moduleContext.AddModule(moduleCode, moduleName, description, hidden);
+            moduleContext.AddModule(moduleCode, moduleName, description, units, gradingBasis, hidden);
 
             return RedirectToAction("Index");
         }
@@ -276,8 +278,10 @@ namespace NUS_Orbital.Controllers
             string moduleCode = formData["moduleCode"].ToString();
             string moduleName = formData["moduleName"].ToString();
             string description = formData["description"].ToString();
+            int units = Convert.ToInt32(formData["units"]);
+            bool gradingBasis = formData["gradingBasis"].ToString() == "Graded" ? true : false;
             bool hidden = formData["hide"].Count > 0;
-            moduleContext.UpdateModule(moduleCode, moduleName, description, hidden);
+            moduleContext.UpdateModule(moduleCode, moduleName, description, units, gradingBasis, hidden);
 
             return RedirectToAction("Index");  // Redirect to the list page
         }

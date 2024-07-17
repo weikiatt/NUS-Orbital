@@ -614,16 +614,18 @@ namespace NUS_Orbital.DAL
             conn.Close();
         }
 
-        public void AddModule(String moduleCode, String moduleName, String description, bool hidden)
+        public void AddModule(String moduleCode, String moduleName, String description, int units, bool gradingBasis, bool hidden)
         {
             StudentDAL studentContext = new StudentDAL();
             SqlCommand cmd = new SqlCommand
-                ("INSERT INTO MODULES(ModuleCode, ModuleName, Description, Hidden) " +
-                "VALUES (@moduleCode, @moduleName, @description, @hidden)", conn);
+                ("INSERT INTO MODULES(ModuleCode, ModuleName, Description, Units, Graded, Hidden) " +
+                "VALUES (@moduleCode, @moduleName, @description, @units, @graded, @hidden)", conn);
 
             cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
             cmd.Parameters.AddWithValue("@moduleName", moduleName);
             cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@units", units);
+            cmd.Parameters.AddWithValue("@graded", gradingBasis);
             cmd.Parameters.AddWithValue("@hidden", hidden);
 
             conn.Open();
@@ -631,13 +633,15 @@ namespace NUS_Orbital.DAL
             conn.Close();
         }
 
-        public void UpdateModule(string moduleCode, string moduleName, string description, bool hidden)
+        public void UpdateModule(string moduleCode, string moduleName, string description, int units, bool gradingBasis, bool hidden)
         {
             SqlCommand cmd = new SqlCommand
-            ("UPDATE MODULES SET ModuleName=@moduleName, Description=@description, Hidden=@hidden WHERE ModuleCode=@moduleCode", conn);
+            ("UPDATE MODULES SET ModuleName=@moduleName, Description=@description, Units=@units, Graded=@graded, Hidden=@hidden WHERE ModuleCode=@moduleCode", conn);
             cmd.Parameters.AddWithValue("@moduleCode", moduleCode);
             cmd.Parameters.AddWithValue("@moduleName", moduleName);
             cmd.Parameters.AddWithValue("@description", description);
+            cmd.Parameters.AddWithValue("@units", units);
+            cmd.Parameters.AddWithValue("@graded", gradingBasis);
             cmd.Parameters.AddWithValue("@hidden", hidden);
             conn.Open();
             cmd.ExecuteNonQuery();
