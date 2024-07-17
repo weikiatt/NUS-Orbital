@@ -158,7 +158,7 @@
                                                     <h5 id="postTitle(@post.postId)">@post.title</h5>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row mt-2">
                                                 <div class="col text-justify">
                                                     <p id="postDescription(@post.postId)">@post.description</p>
                                                 </div>
@@ -166,7 +166,7 @@
                                         </div>
                                         @if (post.file != null && !post.deleted)
                                         {
-                                            <a href="/Module/DownloadPostFile?postId=@post.postId">@post.file.FileName</a>
+                                            <a href="/Module/DownloadPostFile?postId=@post.postId" id="postFile(@post.postId)">@post.file.FileName</a>
                                         }
                                     }
 
@@ -288,7 +288,7 @@
                                                                 </div>
                                                                 @if (comment.file != null && !comment.deleted)
                                                                 {
-                                                                    <a href="/Module/DownloadCommentFile?commentId=@comment.commentId">@comment.file.FileName</a>
+                                                                    <a href="/Module/DownloadCommentFile?commentId=@comment.commentId" id="commentFile(@comment.commentId)">@comment.file.FileName</a>
                                                                 }
                                                             }
                                                             @if (Context.Session.GetString("role") != "admin")
@@ -551,7 +551,8 @@
             toggleCancelEditCommentButton(commentId);
             toggleSaveCommentChangesButton(commentId);
             toggleDeleteCommentButton(commentId);
-
+            var commentFile = document.getElementById('commentFile(' + commentId + ")");
+            commentFile.classList.add("hidden");
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("DeleteComment", "Module")',
@@ -752,6 +753,8 @@
             togglePostCancelEditButton(postId);
             toggleSavePostChangesButton(postId);
             toggleDeletePostButton(postId);
+            var postFile = document.getElementById('postFile(' + postId + ")");
+            postFile.classList.add("hidden");
 
             $.ajax({
                 type: 'POST',
