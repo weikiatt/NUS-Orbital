@@ -69,7 +69,7 @@
                 <div class="d-flex justify-content-between">
                     <button class="btn-green btn-pill mt-2" id="tagButton" type="button" onclick="showTags()">Add Tags</button>
                     <div class="justify-content-end align-items-end d-flex">
-                        <button type="reset" class="btn-cancel btn-pill " id="cancelButton" onclick="showCreatePost()">Cancel</button>
+                        <button type="reset" class="btn-cancel btn-pill " id="cancelButton" onclick="resetPostFileInput()">Cancel</button>
                         <button type="submit" class="btn-green btn-pill mt-2 " disabled id="postButton">Post</button>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                                                 <span class="file-name" id="fileName(@post.postId)">No file chosen</span>
                                             </div>
                                             <div class="justify-content-end align-items-end d-flex">
-                                                <button type="reset" class=" btn-cancel btn-pill" onclick="hideCommentBox(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
+                                                <button type="reset" class=" btn-cancel btn-pill" onclick="resetCommentFileInput(@post.postId)" id="cancelCommentButton(@post.postId)">Cancel</button>
                                                 <button type="submit" class=" btn-green btn-pill mt-2 ml-2" id="commentButton(@post.postId)" disabled>Comment</button>
                                             </div>
                                         </form>
@@ -339,6 +339,12 @@
 
 
     <script>
+        function resetCommentFileInput(postId) {
+            hideCommentBox(postId);
+            document.getElementById('fileInput(' + postId + ')').value = '';
+            updateFileNameComment(postId);
+        }
+
 
         function updateFileNameComment(postId) {
             const fileInput = document.getElementById('fileInput(' + postId + ')');
@@ -348,6 +354,12 @@
             } else {
                 fileName.textContent = 'No file chosen';
             }
+        }
+
+        function resetPostFileInput() {
+            document.getElementById('fileInput').value = '';
+            updateFileName();
+            showCreatePost();
         }
 
         function updateFileName() {
@@ -845,11 +857,10 @@
                     alert('Do not leave inputs blank');
                 }
             });
-
-
-
         }
 
+
+        
 
     </script>
 </body>
