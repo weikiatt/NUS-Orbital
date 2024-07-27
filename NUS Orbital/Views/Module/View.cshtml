@@ -164,10 +164,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (post.file != null && !post.deleted)
-                                        {
-                                            <a href="/Module/DownloadPostFile?postId=@post.postId" id="postFile(@post.postId)">@post.file.FileName</a>
-                                        }
+                                        <div id="postFileDiv(@post.postId)">
+                                            @if (post.file != null && !post.deleted)
+                                            {
+                                                <a href="/Module/DownloadPostFile?postId=@post.postId" id="postFile(@post.postId)">@post.file.FileName</a>
+                                            }
+                                        </div>
+                                        
                                     }
 
                                     <div class="container-fluid">
@@ -286,10 +289,13 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                @if (comment.file != null && !comment.deleted)
-                                                                {
-                                                                    <a href="/Module/DownloadCommentFile?commentId=@comment.commentId" id="commentFile(@comment.commentId)">@comment.file.FileName</a>
-                                                                }
+                                                                <div id="commentFileDiv(@comment.commentId)">
+                                                                    @if (comment.file != null && !comment.deleted)
+                                                                    {
+                                                                        <a href="/Module/DownloadCommentFile?commentId=@comment.commentId" id="commentFile(@comment.commentId)">@comment.file.FileName</a>
+                                                                    }
+                                                                </div>
+                                                               
                                                             }
                                                             @if (Context.Session.GetString("role") != "admin")
                                                             {
@@ -563,7 +569,7 @@
             toggleCancelEditCommentButton(commentId);
             toggleSaveCommentChangesButton(commentId);
             toggleDeleteCommentButton(commentId);
-            var commentFile = document.getElementById('commentFile(' + commentId + ")");
+            var commentFile = document.getElementById('commentFileDiv(' + commentId + ")");
             commentFile.classList.add("hidden");
             $.ajax({
                 type: 'POST',
@@ -583,6 +589,7 @@
                                                             `;
                 },
                 error: function (xhr, status, error) {
+                    alert('error');
                 }
             });
         }
@@ -765,7 +772,7 @@
             togglePostCancelEditButton(postId);
             toggleSavePostChangesButton(postId);
             toggleDeletePostButton(postId);
-            var postFile = document.getElementById('postFile(' + postId + ")");
+            var postFile = document.getElementById('postFileDiv(' + postId + ")");
             postFile.classList.add("hidden");
 
             $.ajax({
