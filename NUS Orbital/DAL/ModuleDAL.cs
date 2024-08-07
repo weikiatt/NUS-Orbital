@@ -81,8 +81,8 @@ namespace NUS_Orbital.DAL
             da.Fill(result, "ModuleCode");
             conn.Close();
             if (result.Tables["ModuleCode"].Rows.Count > 0)
-                return true; // Module code exists
-            return false; // Module code does not exist
+                return true; 
+            return false;
         }
 
         public Module GetModuleDetails(string moduleCode)
@@ -159,8 +159,8 @@ namespace NUS_Orbital.DAL
             da.Fill(result, "PostFiles");
             conn.Close();
             if (result.Tables["PostFiles"].Rows.Count > 0)
-                return true; // Module code exists
-            return false; // Module code does not exist
+                return true;
+            return false;
         }
 
         public FileDataModel GetPostFile(int postId)
@@ -247,18 +247,17 @@ namespace NUS_Orbital.DAL
             List<Comment> comments = new List<Comment>();
             foreach (DataRow row in result.Tables["Comments"].Rows)
             {
+                Comment comment = new Comment();
+                comment.commentId = Convert.ToInt32(row["CommentID"]);
+                comment.commentTime = Convert.ToDateTime(row["CommentTime"]);
+                comment.description = row["Description"].ToString();
+                comment.upvotes = GetNumberOfCommentUpvotes(Convert.ToInt32(row["CommentID"]));
+                comment.postId = Convert.ToInt32(row["PostID"]);
+                comment.student = studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"]));
+                comment.likedByCurrStud = DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.StudentId);
+                comment.edited = Convert.ToInt32(row["Edited"]) == 0 ? false : true;
+                comment.deleted = Convert.ToInt32(row["Deleted"]) == 0 ? false : true;
 
-                Comment comment = new Comment(
-                    Convert.ToInt32(row["CommentID"]),
-                    Convert.ToDateTime(row["CommentTime"]),
-                    row["Description"].ToString(),
-                    GetNumberOfCommentUpvotes(Convert.ToInt32(row["CommentID"])),
-                    Convert.ToInt32(row["PostID"]),
-                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["StudentID"])),
-                    DoesCommentUpvoteExist(Convert.ToInt32(row["CommentID"]), student.StudentId),
-                    Convert.ToInt32(row["Edited"]) == 0 ? false : true,
-                    Convert.ToInt32(row["Deleted"]) == 0 ? false : true
-                );
                 if (DoesCommentFileExist(comment.commentId))
                 {
                     comment.file = GetCommentFile(comment.commentId);
@@ -280,8 +279,8 @@ namespace NUS_Orbital.DAL
             da.Fill(result, "CommentFiles");
             conn.Close();
             if (result.Tables["CommentFiles"].Rows.Count > 0)
-                return true; // Module code exists
-            return false; // Module code does not exist
+                return true; 
+            return false;
         }
 
         public FileDataModel GetCommentFile(int commentId)

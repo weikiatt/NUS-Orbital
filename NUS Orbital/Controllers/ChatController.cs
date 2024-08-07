@@ -31,11 +31,6 @@ namespace NUS_Orbital.Controllers
         [HttpPost]
         public JsonResult SendMessage(int currStudId, int otherStudId, string msg)
         {
-            /*
-            if (msg == "")
-            {
-                return Json(new { success = false });
-            }*/
             DateTime currTime = DateTime.Now;
             chatContext.SendMessage(currStudId, otherStudId, msg, currTime);
             if (!chatContext.DoesChatExist(otherStudId, currStudId))

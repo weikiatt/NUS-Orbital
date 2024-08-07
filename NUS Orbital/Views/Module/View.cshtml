@@ -403,7 +403,6 @@
                 postButton.disabled = true;
             }
         }
-        //document.getElementById("postInput").addEventListener("input", toggleCommentButton);
 
         function showCommentButton(postId) {
             var commentInput = document.getElementById("commentInput(" + postId + ")");
@@ -437,8 +436,6 @@
             var commentButton = document.getElementById("commentButton(" + postId + ")");
             if (!commentBox.classList.contains('hidden')) {
                 commentBox.classList.toggle('hidden');
-                //cancelCommentButton.classList.toggle('hidden');
-                //commentButton.classList.toggle('hidden');
                 commentButton.disabled = true;
             }
         }

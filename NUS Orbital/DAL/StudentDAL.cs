@@ -37,13 +37,12 @@ namespace NUS_Orbital.DAL
             cmd.Parameters.AddWithValue("@password", password);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet result = new DataSet();
-            conn.Open();//error
+            conn.Open();
             da.Fill(result, "LoginInfo");
             conn.Close();
             if (result.Tables["LoginInfo"].Rows.Count > 0)
-                return true; //login info correct
-            else
-                return false;
+                return true;
+            return false;
         }
 
         public bool DoesEmailExist(string email)
@@ -58,8 +57,7 @@ namespace NUS_Orbital.DAL
             conn.Close();
             if (result.Tables["EmailDetails"].Rows.Count > 0)
                 return true;
-            else
-                return false;
+            return false;
         }
 
         public void Add(Student student)

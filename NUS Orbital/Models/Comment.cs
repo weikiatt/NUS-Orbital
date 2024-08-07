@@ -31,6 +31,7 @@ namespace NUS_Orbital.Models
         public bool deleted { get; set; }
         public FileDataModel file { get; set; }
 
+        /*
         public Comment(int commentId, DateTime commentTime, string description, int upvotes, int postId, Student student, bool likedByCurrStud, bool edited, bool deleted)
         {
             this.commentId = commentId;
@@ -42,8 +43,7 @@ namespace NUS_Orbital.Models
             this.likedByCurrStud = likedByCurrStud;
             this.edited = edited;
             this.deleted = deleted;
-        }
-
+        }*/
 
         public string calculateDate(DateTime commentDate)
         {

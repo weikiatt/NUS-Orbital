@@ -57,17 +57,17 @@ namespace NUS_Orbital.DAL
             conn.Open();
             da.Fill(result, "ChatLog");
             conn.Close();
-            List<ChatLog> chatLog = new List<ChatLog>();
+            List<ChatLog> chatLogs = new List<ChatLog>();
             foreach (DataRow row in result.Tables["ChatLog"].Rows)
             {
-                chatLog.Add(new ChatLog(
-                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["SenderID"])),
-                    studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["ReceiverID"])),
-                    row["Description"].ToString(),
-                    Convert.ToDateTime(row["TimeSent"])
-                ));
+                ChatLog chatLog = new ChatLog();
+                chatLog.sender = studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["SenderID"]));
+                chatLog.receiver = studentContext.GetStudentDetailsWithID(Convert.ToInt32(row["ReceiverID"]));
+                chatLog.description = row["Description"].ToString();
+                chatLog.timeSent = Convert.ToDateTime(row["TimeSent"]);
+                chatLogs.Add(chatLog);
             }
-            return chatLog;
+            return chatLogs;
         }
 
         public void SendMessage(int currStudId, int otherStudId, string message, DateTime currentTime)
@@ -110,8 +110,8 @@ namespace NUS_Orbital.DAL
             da.Fill(result, "Chat");
             conn.Close();
             if (result.Tables["Chat"].Rows.Count > 0)
-                return true; // Module code exists
-            return false; // Module code does not exist
+                return true; 
+            return false; 
         }
     }
 }

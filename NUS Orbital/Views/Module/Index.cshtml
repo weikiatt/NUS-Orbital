@@ -132,8 +132,8 @@
                 @foreach (var module in Model)
                 {
                     <a href="@Url.Action("View","Module", new {moduleCode = @module.moduleCode})" class="list-group-item list-group-item-action" id="module(@module.moduleCode">
-                        <h5 class="mb-1 text-green">@module.moduleCode @module.moduleName</h5>
-                        <p class="mb-1">@module.description</p>
+                        <h5 class="mb-1 text-green">@module.moduleCode</h5>
+                        <h6 class="text-secondary">@module.moduleName</h6>
                     </a>
                 }
             </div>
@@ -142,15 +142,12 @@
     </div>
     <script>
         function showEditModal(moduleCode, moduleName, description, units, graded, hidden) {
-            // Set the form fields in the modal
             document.getElementById('moduleCodeEdit').value = moduleCode;
             document.getElementById('moduleNameEdit').value = moduleName;
             document.getElementById('descriptionEdit').value = description;
             document.getElementById('unitsEdit').value = units;
             document.getElementById('gradedEdit').value = graded;
-            document.getElementById('hideEdit').checked = hidden === "True";  // Convert string to boolean
-
-            // Show the modal
+            document.getElementById('hideEdit').checked = hidden === "True";
             $('#editModuleModal').modal('show');
         }
 
@@ -161,16 +158,15 @@
             var moduleCodeFormat = document.getElementById('moduleCodeFormat');
             var submitBtn = document.getElementById('submitBtn');
 
-            // Regex to check 2-3 alphabets followed by 4 numbers
-            var moduleCodeRegex = /^[a-zA-Z]{2,3}\d{4}$/;
-
-            // Check if moduleCode matches the format and description is not empty
+            // Regex to check 2-3 alphabets, 4 numbers, then 0-3 alphabets
+            var moduleCodeRegex = /^[a-zA-Z]{2,3}\d{4}[a-zA-Z]{0,3}$/;
+                
             if (moduleCodeRegex.test(moduleCodeInput.value) && moduleNameInput.value.trim() !== '' && descriptionInput.value.trim() !== '') {
                 submitBtn.disabled = false;
                 moduleCodeFormat.innerHTML = "";
             } else {
                 submitBtn.disabled = true;
-                moduleCodeFormat.innerHTML = moduleCodeRegex.test(moduleCodeInput.value) ? "" : "Please enter 2-3 alphabets followed by 4 numbers";
+                moduleCodeFormat.innerHTML = moduleCodeRegex.test(moduleCodeInput.value) ? "" : "Please enter 2-3 alphabets, followed by 4 numbers (optional: another 1-3 alphabets)";
             }
         }
 
@@ -216,7 +212,7 @@
             const paragraphs = element.querySelectorAll('h5, p');
 
             paragraphs.forEach(function (paragraph) {
-                paragraph.innerHTML = paragraph.textContent; // Reset to original text
+                paragraph.innerHTML = paragraph.textContent; 
             });
         }
 

@@ -37,7 +37,6 @@ namespace NUS_Orbital.Controllers
                 Student currStud = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email"));
                 Module module = moduleContext.GetModuleDetails(ModuleCode);
                 List<Post> postList = moduleContext.GetAllPosts(module, currStud);
-                //List<string> selectedTags = filterTag.Select(tagId => moduleContext.GetTagNameById(Convert.ToInt32(tagId))).ToList();
                 if (filterTag != null && filterTag.Count() > 0)
                 {
                     List<Tag> tags = moduleContext.GetAllTags();
@@ -48,12 +47,7 @@ namespace NUS_Orbital.Controllers
                             tag.filtered = true;
                         }
                     }
-
-                    /*
-                    foreach(int tagId in filterTag)
-                    {
-                        tags.Add(moduleContext.GetTagById(tagId));
-                    }*/
+                    
                     List<Post> finalPostList = new List<Post>();
                     foreach (var post in postList) {
                         if (post.TagExistInPost(filterTag))
@@ -91,7 +85,6 @@ namespace NUS_Orbital.Controllers
             if (description != null)
             {
                 int postId = moduleContext.AddPost(moduleCode, title, description, studentId);
-                //TempData["postid"] = postId;
                 
                 if (formData["tag1"].Count > 0)
                 {
@@ -128,19 +121,6 @@ namespace NUS_Orbital.Controllers
 
             return RedirectToAction("View", "Module", new {ModuleCode = moduleCode});
         }
-
-        /*
-        [HttpPost]
-        public JsonResult Post(string description, string moduleCode)
-        {
-            TempData["TEST"] = "POST TEST";
-            int studentId = studentContext.GetStudentDetailsWithEmail(HttpContext.Session.GetString("Email")).studentId;
-            if (description != null)
-            {
-                moduleContext.AddPost(moduleCode, description, studentId);
-            }
-            return Json(new { success = true });
-        }*/
 
         public ActionResult Comment(IFormCollection formData)
         {
@@ -283,7 +263,7 @@ namespace NUS_Orbital.Controllers
             bool hidden = formData["hide"].Count > 0;
             moduleContext.UpdateModule(moduleCode, moduleName, description, units, gradingBasis, hidden);
 
-            return RedirectToAction("Index");  // Redirect to the list page
+            return RedirectToAction("Index"); 
         }
 
     }
