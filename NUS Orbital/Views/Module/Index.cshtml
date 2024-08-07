@@ -26,7 +26,7 @@
         {
             <button onclick="showAddModule()" id="addModuleButton" class="btn-green btn-pill mt-3">+ Add Module</button>
             <form id="addModuleDiv" class="hidden" action="~/Module/AddModule" method="post" enctype="multipart/form-data">
-                <div id="moduleCodeFormat" class="text-danger">Please enter 2-3 alphabets followed by 4 numbers.</div>
+                <div id="moduleCodeFormat" class="text-danger">Please enter 2-3 alphabets, followed by 4 numbers (optional: another 1-3 alphabets)</div>
                 <input class="w-100 form-control mt-2" placeholder="Module Code..." id="moduleCode" required oninput="toggleAddModuleButton()" name="moduleCode"></input>
                 <input class="w-100 form-control mt-2" placeholder="Module Name..." id="moduleName" required oninput="toggleAddModuleButton()" name="moduleName"></input>
                 <textarea class="w-100 form-control mt-2" placeholder="Description..." id="description" required oninput="toggleAddModuleButton()" name="description"></textarea>
