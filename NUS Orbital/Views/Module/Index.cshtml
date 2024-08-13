@@ -201,7 +201,7 @@
 
         function highlightText(element, query) {
             const regex = new RegExp(`(${query})`, 'gi');
-            const paragraphs = element.querySelectorAll('h5, p');
+            const paragraphs = element.querySelectorAll('h5, h6');
 
             paragraphs.forEach(function (paragraph) {
                 paragraph.innerHTML = paragraph.textContent.replace(regex, '<span class="highlight">$1</span>');
